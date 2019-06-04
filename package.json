@@ -1,11 +1,12 @@
 {
-  "name": "chat-sdk",
+  "name": "nlx-chat-sdk",
   "version": "1.0.0",
   "description": "SDK to talk to NLX bots",
   "main": "lib/src/index.js",
   "scripts": {
     "start:simple": "parcel examples/simple.html",
     "start:with-react": "parcel examples/with-react.html",
+    "start:widget": "parcel examples/widget.html",
     "build": "rm -rf lib && mkdir lib && tsc && npm run build-clean",
     "build-clean": "rm -rf lib/examples"
   },
@@ -15,9 +16,15 @@
     "@types/node": "^11.13.8",
     "@types/react": "^16.8.15",
     "@types/react-dom": "^16.8.4",
+    "@types/styled-components": "^4.1.15",
     "parcel": "^1.12.3",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
     "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "@emotion/core": "^10.0.10",
+    "@emotion/styled": "^10.0.11",
+    "emotion-theming": "^10.0.10",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }

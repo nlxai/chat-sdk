@@ -57,7 +57,7 @@ Reset the conversation. This makes sure that information previously collected by
 We provide a [React](https://reactjs.org/) example in TypeScript to illustrate how the project works in a modern web application framework. This implementation uses our `useChat` [hook](https://reactjs.org/docs/hooks-intro.html) which you can use to build your own chat widget:
 
 ```jsx
-import { useChat } from "chat-sdk/react-utils";
+import { useChat } from "nlx-chat-sdk/react-utils";
 
 const ChatWidget = () => {
   const chat = useChat({
@@ -83,6 +83,10 @@ Do you work with Vue? React without hooks? Custom elements? Elm? Let us know wha
 ## TypeScript
 
 This SDK is written in TypeScript so you can use our type definitions in your project.
+
+## Widget (WIP)
+
+We are working on a styled, themeable chat widget. Stay tuned!
 
 ## Contributing
 
