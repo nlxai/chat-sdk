@@ -4,7 +4,7 @@ const botUrl = process.env.BOT_URL as string;
 
 const authorization = process.env.AUTHORIZATION as string;
 
-const testConfig = {
+const testConfig: Config = {
   botUrl,
   headers: {
     authorization
@@ -13,7 +13,7 @@ const testConfig = {
 
 const convo = createConversation(testConfig);
 
-convo.sendMessage("I want seed");
+convo.sendText("I want seed");
 
 convo.subscribe(messages => {
   console.log(messages);

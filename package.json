@@ -2,11 +2,12 @@
   "name": "chat-sdk",
   "version": "1.0.0",
   "description": "SDK to talk to NLX bots",
-  "main": "lib/index.js",
+  "main": "lib/src/index.js",
   "scripts": {
     "start:simple": "parcel examples/simple.html",
     "start:with-react": "parcel examples/with-react.html",
-    "build": "rm -rf lib && mkdir lib && tsc && mv lib/src/index.js lib/index.js && rm -rf lib/examples"
+    "build": "rm -rf lib && mkdir lib && tsc && npm run build-clean",
+    "build-clean": "rm -rf lib/examples"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",

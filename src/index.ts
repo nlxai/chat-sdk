@@ -5,12 +5,11 @@ export interface Config {
   };
 }
 
-export interface State {
-  messages: Message[];
-}
+export type State = Message[];
 
 export interface Conversation {
-  sendMessage: (text: string) => void;
+  sendText: (text: string) => void;
+  sendChoice: (choiceId: string) => void;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
   unsubscribeAll: () => void;
@@ -24,11 +23,10 @@ interface InternalState {
   conversationId?: string;
 }
 
-const fromInternal = (internalState: InternalState): State => ({
-  messages: internalState.messages
-});
+const fromInternal = (internalState: InternalState): State =>
+  internalState.messages;
 
-type Message = BotMessage | UserMessage;
+export type Message = BotMessage | UserMessage;
 
 interface Choice {
   choiceId: string;
@@ -40,20 +38,43 @@ interface ResponseMessage {
   choices?: Choice[];
 }
 
-interface BotMessage {
+export interface BotMessage {
   author: "bot";
   receivedAt: Time;
   text: string;
   choices: Choice[];
 }
 
-interface UserMessage {
+export type UserMessagePayload =
+  | {
+      type: "text";
+      text: string;
+    }
+  | {
+      type: "choice";
+      choiceId: string;
+      choiceText: string;
+    };
+
+export interface UserMessage {
   author: "user";
   receivedAt: Time;
-  text: string;
+  payload: UserMessagePayload;
 }
 
 type Subscriber = (state: State) => void;
+
+const findChoice = (messages: Message[], choiceId: string): Choice | null => {
+  if (messages.length === 0) {
+    return null;
+  }
+  const [last, ...restReversed] = [ ...messages ].reverse();
+  return (
+    (last.author === "bot" &&
+      last.choices.find(choice => choice.choiceId === choiceId)) ||
+    findChoice(restReversed.reverse(), choiceId)
+  );
+};
 
 const createConversation = (config: Config): Conversation => {
   let state: InternalState = {
@@ -69,7 +90,20 @@ const createConversation = (config: Config): Conversation => {
   };
   let subscribers: Subscriber[] = [];
   return {
-    sendMessage: text => {
+    sendText: text => {
+      setState({
+        messages: [
+          ...state.messages,
+          {
+            author: "user",
+            receivedAt: new Date().getTime(),
+            payload: {
+              type: "text",
+              text
+            }
+          }
+        ]
+      });
       fetch(config.botUrl, {
         method: "POST",
         headers: {
@@ -81,6 +115,53 @@ const createConversation = (config: Config): Conversation => {
           request: {
             unstructured: {
               text
+            }
+          }
+        })
+      })
+        .then(res => res.json())
+        .then(response => {
+          setState({
+            conversationId: response.conversationId,
+            messages: [
+              ...state.messages,
+              ...response.messages.map((message: ResponseMessage) => ({
+                author: "bot",
+                receivedAt: new Date().getTime(),
+                text: message.text,
+                choices: message.choices || []
+              }))
+            ]
+          });
+        });
+    },
+    sendChoice: choiceId => {
+      const choice = findChoice(state.messages, choiceId);
+      setState({
+        messages: [
+          ...state.messages,
+          {
+            author: "user",
+            receivedAt: new Date().getTime(),
+            payload: {
+              type: "choice",
+              choiceId,
+              choiceText: choice ? choice.choiceText : "Selection"
+            }
+          }
+        ]
+      });
+      fetch(config.botUrl, {
+        method: "POST",
+        headers: {
+          ...config.headers,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          conversationId: state.conversationId,
+          request: {
+            structured: {
+              choiceId
             }
           }
         })
