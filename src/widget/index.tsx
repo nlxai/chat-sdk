@@ -17,17 +17,24 @@ const styled = genericStyled as CreateStyled<Theme>;
 
 const Widget: React.SFC<Config> = props => {
   const chat = useChat(props);
+  const submit =
+    chat &&
+    chat.inputValue !== "" &&
+    (() => {
+      chat.sendText(chat.inputValue);
+      chat.setInputValue("");
+    });
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container>
         {!chat ? (
-          <p>Loading..</p>
+          <></>
         ) : (
           <>
             <Messages>
               {chat.messages.map((message, index) =>
                 message.author === "bot" ? (
-                  <div className="nw-bot-message" key={index}>
+                  <Message type="bot" key={index}>
                     {message.text}
                     {message.choices.map((choice, choiceIndex) => (
                       <button
@@ -39,13 +46,13 @@ const Widget: React.SFC<Config> = props => {
                         {choice.choiceText}
                       </button>
                     ))}
-                  </div>
+                  </Message>
                 ) : (
-                  <div key={index} className="nw-user-message">
+                  <Message type="user" key={index}>
                     {message.payload.type === "text"
                       ? message.payload.text
                       : message.payload.choiceText}
-                  </div>
+                  </Message>
                 )
               )}
             </Messages>
@@ -55,14 +62,17 @@ const Widget: React.SFC<Config> = props => {
                 onChange={e => {
                   chat.setInputValue(e.target.value);
                 }}
+                onKeyPress={e => {
+                  if (e.key === "Enter" && submit) {
+                    submit();
+                  }
+                }}
               />
               <Button
                 onClick={() => {
-                  if (!chat) {
-                    return;
+                  if (submit) {
+                    submit();
                   }
-                  chat.sendText(chat.inputValue);
-                  chat.setInputValue("");
                 }}
               >
                 Send
@@ -83,9 +93,25 @@ const Container = styled.div<{}>`
 
 const Messages = styled.div<{}>`
   height: calc(100% - 40px);
+  padding: 10px;
+  box-sizing: border-box;
+
+  & > * {
+    margin-bottom: 10px;
+  }
+
+  & > :last-child {
+    margin-bottom: 0px;
+  }
 `;
 
-const Bottom = styled.div`
+const Message = styled.div<{ type: "user" | "bot" }>`
+  background-color: ${props => props.theme.color};
+  padding: 4px 10px;
+  ${props => props.type === "user" ? "margin-left: 20px;" : "margin-right: 20px;"}
+`;
+
+const Bottom = styled.div<{}>`
   height: 40px;
   display: flex;
   align-items: center;
@@ -93,15 +119,13 @@ const Bottom = styled.div`
   padding: 0 10px;
 `;
 
-const Message = styled.div``;
-
-const Button = styled.button`
+const Button = styled.button<{}>`
   height: 28px;
   border: 0;
   box-shadow: none;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{}>`
   display: block;
   flex: 1;
   height: 28px;
