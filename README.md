@@ -84,9 +84,46 @@ Do you work with Vue? React without hooks? Custom elements? Elm? Let us know wha
 
 This SDK is written in TypeScript so you can use our type definitions in your project.
 
-## Widget (WIP)
+## Widget
 
-We are working on a styled, themeable chat widget. Stay tuned!
+This package also exports a themeable widget build in React. Use it as follows:
+
+```jsx
+import { Widget } from "nlx-chat-sdk/widget";
+
+render((
+  <Widget
+    botUrl=""
+  />
+), document.getElementById("app"));
+```
+
+Or even simpler:
+
+```jsx
+import standalone from "nlx-chat-sdk/widget";
+
+standalone({
+  botUrl: ""
+})
+```
+
+### Usage without modules
+
+If you build the widget by running `npm run build:standalone`, you get a single file in `dist-standalone/widget.js`. Use this as follows:
+
+```html
+<body>
+  <script src="dist-standalone/widget.js"></script>
+  <script>
+    chat.default({
+      botUrl: ""
+    })
+  </script>
+</body>
+```
+
+This will render the widget as the last element in the body.
 
 ## Contributing
 

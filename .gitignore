@@ -5,4 +5,5 @@ yarn.lock
 .cache
 .env
 dist
+dist-standalone
 lib

@@ -10,6 +10,7 @@ export const useChat = (
   sendText: Conversation["sendText"];
   sendChoice: Conversation["sendChoice"];
   reset: Conversation["reset"];
+  messagesContainerRef: React.Ref<HTMLDivElement> | null;
 } | null => {
   const [conversation, setConversation] = React.useState<null | Conversation>(
     null
@@ -18,6 +19,8 @@ export const useChat = (
   const [messages, setMessages] = React.useState<Message[]>([]);
 
   const [inputValue, setInputValue] = React.useState<string>("");
+
+  const messagesContainerRef = React.useRef(null);
 
   React.useEffect(() => {
     setConversation(createConversation(config));
@@ -34,6 +37,15 @@ export const useChat = (
     };
   }, [conversation]);
 
+  React.useEffect(() => {
+    const node =
+      messagesContainerRef !== null &&
+      (messagesContainerRef as { current: HTMLElement | null }).current;
+    if (node) {
+      node.scrollTop = node.scrollHeight;
+    }
+  }, [messages]);
+
   if (!conversation) {
     return null;
   }
@@ -44,6 +56,7 @@ export const useChat = (
     sendText: conversation.sendText,
     sendChoice: conversation.sendChoice,
     reset: conversation.reset,
+    messagesContainerRef: messagesContainerRef,
     messages
   };
 };

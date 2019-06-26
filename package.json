@@ -7,8 +7,8 @@
     "start:simple": "parcel examples/simple.html",
     "start:with-react": "parcel examples/with-react.html",
     "start:widget": "parcel examples/widget.html",
-    "build": "rm -rf lib && mkdir lib && tsc && npm run build-clean",
-    "build-clean": "rm -rf lib/examples"
+    "build:package": "rm -rf lib && mkdir lib && tsc && rm -rf lib/examples",
+    "build:standalone": "rm -rf dist-standalone && mkdir dist-standalone && node build.js"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
@@ -17,9 +17,12 @@
     "@types/react": "^16.8.15",
     "@types/react-dom": "^16.8.4",
     "@types/styled-components": "^4.1.15",
+    "browserify": "^16.2.3",
     "parcel": "^1.12.3",
     "prettier": "^1.18.2",
-    "typescript": "^3.4.5"
+    "tsify": "^4.0.1",
+    "typescript": "^3.4.5",
+    "uglifyify": "^5.0.1"
   },
   "dependencies": {
     "@emotion/core": "^10.0.10",
