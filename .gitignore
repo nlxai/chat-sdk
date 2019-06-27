@@ -6,4 +6,5 @@ yarn.lock
 .env
 dist
 dist-standalone
+standalone
 lib

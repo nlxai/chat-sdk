@@ -1,26 +1,41 @@
+import tinycolor from "tinycolor2";
 import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import createConversation, { Config, Conversation, Message } from "../index";
 import { useChat } from "../react-utils";
 import genericStyled, { CreateStyled } from "@emotion/styled";
 import { ThemeProvider } from "emotion-theming";
+import { CloseIcon, ChatIcon, AirplaneIcon } from "./icons";
+import * as utils from "./utils";
+
+interface Props {
+  config: Config;
+  theme?: Partial<Theme>;
+  chatIcon?: string;
+  titleBar?: {
+    logo?: string;
+    title: string;
+  };
+}
 
 interface Theme {
   primaryColor: string;
-  userMessageColor: string;
-  botMessageColor: string;
+  darkMessageColor: string;
+  lightMessageColor: string;
+  fontFamily: string;
 }
 
 const defaultTheme: Theme = {
   primaryColor: "#003377",
-  userMessageColor: "#003377",
-  botMessageColor: "#EFEFEF"
+  darkMessageColor: "#003377",
+  lightMessageColor: "#EFEFEF",
+  fontFamily: "'Source Sans Pro', sans-serif"
 };
 
 const styled = genericStyled as CreateStyled<Theme>;
 
-const standalone = (
-  config: Config
+export const standalone = (
+  props: Props
 ): {
   teardown: () => void;
 } => {
@@ -28,7 +43,7 @@ const standalone = (
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${largeZIndex};`);
   document.body.appendChild(node);
-  render(<Widget {...config} />, node);
+  render(<Widget {...props} />, node);
   return {
     teardown: () => {
       unmountComponentAtNode(node);
@@ -36,8 +51,8 @@ const standalone = (
   };
 };
 
-export const Widget: React.SFC<Config> = props => {
-  const chat = useChat(props);
+export const Widget: React.SFC<Props> = props => {
+  const chat = useChat(props.config);
 
   const [expanded, setExpanded] = React.useState(false);
 
@@ -69,65 +84,79 @@ export const Widget: React.SFC<Config> = props => {
       chat.setInputValue("");
     });
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={{ ...defaultTheme, ...(props.theme || {}) }}>
       <>
         {expanded && chat && (
           <Container>
-            <>
-              <Messages ref={chat.messagesContainerRef}>
-                {chat.messages.map((message, index) =>
-                  message.author === "bot" ? (
-                    <Message type="bot" key={index}>
-                      {message.text}
-                      {message.choices.length > 0 && (
-                        <ChoicesContainer>
-                          {message.choices.map((choice, choiceIndex) => (
-                            <ChoiceButton
-                              key={choiceIndex}
-                              onClick={() => {
-                                chat.sendChoice(choice.choiceId);
-                              }}
-                            >
-                              {choice.choiceText}
-                            </ChoiceButton>
-                          ))}
-                        </ChoicesContainer>
-                      )}
-                    </Message>
-                  ) : (
-                    <Message type="user" key={index}>
-                      {message.payload.type === "text"
-                        ? message.payload.text
-                        : message.payload.choiceText}
-                    </Message>
+            <Main ref={chat.messagesContainerRef}>
+              {props.titleBar && (
+                <TitleBar>
+                  <Title>{props.titleBar.title}</Title>
+                </TitleBar>
+              )}
+              <MessageGroups>
+                {utils
+                  .groupWhile(
+                    chat.messages,
+                    (prev, current) => prev.author !== current.author
                   )
-                )}
-              </Messages>
-              <Bottom>
-                <Input
-                  ref={inputRef}
-                  value={chat.inputValue}
-                  placeholder="Say something.."
-                  onChange={e => {
-                    chat.setInputValue(e.target.value);
-                  }}
-                  onKeyPress={e => {
-                    if (e.key === "Enter" && submit) {
-                      submit();
-                    }
-                  }}
-                />
-                <Button
-                  onClick={() => {
-                    if (submit) {
-                      submit();
-                    }
-                  }}
-                >
-                  Send
-                </Button>
-              </Bottom>
-            </>
+                  .map((group, index) => (
+                    <MessageGroup>
+                      {group.map((message, index) =>
+                        message.author === "bot" ? (
+                          <Message type="bot" key={index}>
+                            {message.text}
+                            {message.choices.length > 0 && (
+                              <ChoicesContainer>
+                                {message.choices.map((choice, choiceIndex) => (
+                                  <ChoiceButton
+                                    key={choiceIndex}
+                                    onClick={() => {
+                                      chat.sendChoice(choice.choiceId);
+                                    }}
+                                  >
+                                    {choice.choiceText}
+                                  </ChoiceButton>
+                                ))}
+                              </ChoicesContainer>
+                            )}
+                          </Message>
+                        ) : (
+                          <Message type="user" key={index}>
+                            {message.payload.type === "text"
+                              ? message.payload.text
+                              : message.payload.choiceText}
+                          </Message>
+                        )
+                      )}
+                    </MessageGroup>
+                  ))}
+              </MessageGroups>
+            </Main>
+            <Bottom>
+              <Input
+                ref={inputRef}
+                value={chat.inputValue}
+                placeholder="Say something.."
+                onChange={e => {
+                  chat.setInputValue(e.target.value);
+                }}
+                onKeyPress={e => {
+                  if (e.key === "Enter" && submit) {
+                    submit();
+                  }
+                }}
+              />
+              <IconButton
+                onClick={() => {
+                  if (submit) {
+                    submit();
+                  }
+                }}
+              >
+                <AirplaneIcon />
+              </IconButton>
+            </Bottom>
           </Container>
         )}
         <Pin
@@ -135,7 +164,13 @@ export const Widget: React.SFC<Config> = props => {
             setExpanded(!expanded);
           }}
         >
-          {expanded && <CloseIcon />}
+          {expanded ? (
+            <CloseIcon />
+          ) : props.chatIcon ? (
+            <img src={props.chatIcon} />
+          ) : (
+            <ChatIcon />
+          )}
         </Pin>
       </>
     </ThemeProvider>
@@ -161,21 +196,36 @@ const Container = styled.div<{}>`
   border-radius: 10px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
 
-  > * {
-    font-family: "Source Sans Pro", sans-serif;
+  & > *,
+  & > button {
+    font-family: ${props => props.theme.fontFamily};
   }
 `;
 
-const Messages = styled.div<{}>`
+const Main = styled.div<{}>`
   height: calc(100% - ${bottomHeight}px);
+  overflow: auto;
+`;
+
+const MessageGroups = styled.div<{}>`
   padding: 20px;
   box-sizing: border-box;
-  overflow: auto;
+
+  & > * {
+    margin-bottom: 20px;
+  }
+
+  & > :last-child {
+    margin-bottom: 0px;
+  }
+`;
+
+const MessageGroup = styled.div<{}>`
   display: flex;
   flex-direction: column;
 
   & > * {
-    margin-bottom: 10px;
+    margin-bottom: 3px;
   }
 
   & > :last-child {
@@ -186,8 +236,8 @@ const Messages = styled.div<{}>`
 const Message = styled.div<{ type: "user" | "bot" }>`
   background-color: ${props =>
     props.type === "user"
-      ? props.theme.userMessageColor
-      : props.theme.botMessageColor};
+      ? props.theme.darkMessageColor
+      : props.theme.lightMessageColor};
   color: ${props => (props.type === "user" ? "#FFF" : "#000")};
   font-size: ${fontSize}px;
   padding: 6px 10px;
@@ -227,10 +277,11 @@ const hoverBg = `
   }
 `;
 
-const Button = styled.button<{}>`
+const IconButton = styled.button<{}>`
   height: 35px;
+  width: 35px;
   border-radius: 18px;
-  padding: 0 14px;
+  padding: 8px;
   font-size: ${fontSize}px;
   border: 0;
   box-shadow: none;
@@ -255,11 +306,16 @@ const Input = styled.input<{}>`
   padding: 0 14px;
   border: 1px solid #cecece;
   font-size: ${fontSize}px;
+  font-family: ${props => props.theme.fontFamily};
 
   :focus {
     outline: none;
     border: 1px solid ${props => props.theme.primaryColor};
-    box-shadow: 0 0 0 3px rgba(0, 0, 255, 0.2);
+    box-shadow: 0 0 0 3px
+      ${props =>
+        tinycolor(props.theme.primaryColor)
+          .setAlpha(0.15)
+          .toRgbString()};
   }
 `;
 
@@ -273,12 +329,17 @@ const Pin = styled.button<{}>`
   height: 60px;
   border-radius: 30px;
   cursor: pointer;
-  padding: 20px;
+  padding: 15px;
   color: #fff;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.6);
 
   :focus {
     outline: none;
+  }
+
+  > img {
+    max-width: 30px;
+    max-height: 30px;
   }
 
   ${hoverBg}
@@ -301,14 +362,15 @@ const ChoiceButton = styled.button<{}>`
   height: 30px;
   border-radius: 15px;
   border: 1px solid ${props => props.theme.primaryColor};
-  background-color: #FFF;
+  background-color: #fff;
   color: ${props => props.theme.primaryColor};
   font-size: ${fontSize}px;
+  font-family: ${props => props.theme.fontFamily};
   padding: 0 10px;
   cursor: pointer;
 
   :hover {
-    background-color: #EFEFEF;
+    background-color: #efefef;
   }
 
   :focus {
@@ -317,10 +379,22 @@ const ChoiceButton = styled.button<{}>`
   }
 `;
 
-const CloseIcon = () => (
-  <svg viewBox="0 0 360 360" stroke="none" fill="currentColor">
-    <path d="M180,151.716l105.858,-105.858c9.428,9.428 18.856,18.856 28.284,28.284l-105.858,105.858l105.858,105.858l-28.284,28.284l-105.858,-105.858l-105.858,105.858l-28.284,-28.284l105.858,-105.858l-105.858,-105.858l28.284,-28.284l105.858,105.858Z" />
-  </svg>
-);
+const TitleBar = styled.div<{}>`
+  height: 40px;
+  padding: 0 20px;
+  border-bottom: 1px solid #cecece;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`;
 
-export default standalone;
+const Title = styled.p<{}>`
+  font-size: 18px;
+  font-weight: bold;
+  font-family: ${props => props.theme.fontFamily};
+`;
+
+const TitleIcon = styled.img<{}>`
+  width: 28px;
+  height: 28px;
+`;

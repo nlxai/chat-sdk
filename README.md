@@ -76,7 +76,7 @@ See [full example](examples/with-react.tsx).
 
 The API of the hook is similar to the vanilla API. It leaves out subscribe and unsubscribe methods as they are used internally in effect hooks, making sure things are properly cleaned up. Instead, messages are readily available in the `chat.messages` field, and we added state hooks for taking care of the value of the chat input field. You are free to not use these and manage things on your own.
 
-## Usage with *
+## Usage with \*
 
 Do you work with Vue? React without hooks? Custom elements? Elm? Let us know what framework you are looking to build web-based chat applications with so we can look into making utilities for those.
 
@@ -91,34 +91,32 @@ This package also exports a themeable widget build in React. Use it as follows:
 ```jsx
 import { Widget } from "nlx-chat-sdk/widget";
 
-render((
-  <Widget
-    botUrl=""
-  />
-), document.getElementById("app"));
+render(<Widget botUrl="" />, document.getElementById("app"));
 ```
 
 Or even simpler:
 
 ```jsx
-import standalone from "nlx-chat-sdk/widget";
+import { standalone } from "nlx-chat-sdk/widget";
 
 standalone({
   botUrl: ""
-})
+});
 ```
 
 ### Usage without modules
 
-If you build the widget by running `npm run build:standalone`, you get a single file in `dist-standalone/widget.js`. Use this as follows:
+If you build the widget by running `npm run build:standalone`, you get a single file in `standalone/VERSION/nlx-chat.js`. Use this as follows:
 
 ```html
 <body>
-  <script src="dist-standalone/widget.js"></script>
+  <script src="standalone/VERSION/nlx-chat.js"></script>
   <script>
-    chat.default({
-      botUrl: ""
-    })
+    window.chat.standalone({
+      config: {
+        botUrl: ""
+      }
+    });
   </script>
 </body>
 ```
@@ -131,4 +129,4 @@ Issues and feature requests are always welcome.
 
 ## License
 
-MIT
+MIT.

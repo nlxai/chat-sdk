@@ -1,6 +1,6 @@
 {
   "name": "nlx-chat-sdk",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "SDK to talk to NLX bots",
   "main": "lib/src/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "start:with-react": "parcel examples/with-react.html",
     "start:widget": "parcel examples/widget.html",
     "build:package": "rm -rf lib && mkdir lib && tsc && rm -rf lib/examples",
-    "build:standalone": "rm -rf dist-standalone && mkdir dist-standalone && node build.js"
+    "build:standalone": "node build.js",
+    "prepublish": "npm run build:package && npm run build:standalone"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
@@ -16,7 +17,8 @@
     "@types/node": "^11.13.8",
     "@types/react": "^16.8.15",
     "@types/react-dom": "^16.8.4",
-    "@types/styled-components": "^4.1.15",
+    "@types/tinycolor2": "^1.4.2",
+    "aliasify": "^2.1.0",
     "browserify": "^16.2.3",
     "parcel": "^1.12.3",
     "prettier": "^1.18.2",
@@ -29,6 +31,7 @@
     "@emotion/styled": "^10.0.11",
     "emotion-theming": "^10.0.10",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "tinycolor2": "^1.4.1"
   }
 }

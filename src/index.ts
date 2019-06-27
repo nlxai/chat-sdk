@@ -1,9 +1,12 @@
 export interface Config {
   botUrl: string;
+  failureMessages?: string[];
   headers: {
     [key: string]: string;
   };
 }
+
+const defaultFailureMessages = ["There was a problem"];
 
 export type State = Message[];
 
@@ -68,7 +71,7 @@ const findChoice = (messages: Message[], choiceId: string): Choice | null => {
   if (messages.length === 0) {
     return null;
   }
-  const [last, ...restReversed] = [ ...messages ].reverse();
+  const [last, ...restReversed] = [...messages].reverse();
   return (
     (last.author === "bot" &&
       last.choices.find(choice => choice.choiceId === choiceId)) ||
@@ -88,6 +91,23 @@ const createConversation = (config: Config): Conversation => {
     };
     subscribers.forEach(subscriber => subscriber(fromInternal(state)));
   };
+
+  const failureHandler = () => {
+    setState({
+      messages: [
+        ...state.messages,
+        ...(config.failureMessages || defaultFailureMessages).map(
+          (messageBody: string): BotMessage => ({
+            author: "bot",
+            receivedAt: new Date().getTime(),
+            text: messageBody,
+            choices: []
+          })
+        )
+      ]
+    });
+  };
+
   let subscribers: Subscriber[] = [];
   return {
     sendText: text => {
@@ -133,7 +153,8 @@ const createConversation = (config: Config): Conversation => {
               }))
             ]
           });
-        });
+        })
+        .catch(failureHandler);
     },
     sendChoice: choiceId => {
       const choice = findChoice(state.messages, choiceId);
@@ -180,7 +201,8 @@ const createConversation = (config: Config): Conversation => {
               }))
             ]
           });
-        });
+        })
+        .catch(failureHandler);
     },
     subscribe: subscriber => {
       subscribers = [...subscribers, subscriber];
