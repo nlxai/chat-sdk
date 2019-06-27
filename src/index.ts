@@ -1,3 +1,71 @@
+// Domain
+
+interface Choice {
+  choiceId: string;
+  choiceText: string;
+}
+
+interface ResponseMessage {
+  text: string;
+  choices?: Choice[];
+}
+
+export interface BotMessage {
+  author: "bot";
+  receivedAt: Time;
+  text: string;
+  choices: Choice[];
+  selectedChoice: SelectedChoice;
+}
+
+export type UserMessagePayload =
+  | {
+      type: "text";
+      text: string;
+    }
+  | {
+      type: "choice";
+      choiceId: string;
+      choiceText: string;
+    };
+
+export interface UserMessage {
+  author: "user";
+  receivedAt: Time;
+  payload: UserMessagePayload;
+}
+
+export type SelectedChoice = undefined | { choiceId?: string };
+
+export type Message = BotMessage | UserMessage;
+
+export type Time = number;
+
+export const findSelectedChoice = (
+  botMessage: BotMessage,
+  allMessages: Message[]
+): SelectedChoice => {
+  if (allMessages.length === 0) {
+    return undefined;
+  }
+  const [head, ...tail] = allMessages;
+  if (head.receivedAt <= botMessage.receivedAt) {
+    return findSelectedChoice(botMessage, tail);
+  }
+  if (head.author === "bot" && head.choices.length > 0) {
+    return { choiceId: undefined };
+  }
+  if (head.author === "bot") {
+    return findSelectedChoice(botMessage, tail);
+  }
+  if (head.payload.type === "choice") {
+    return { choiceId: head.payload.choiceId };
+  }
+  return findSelectedChoice(botMessage, tail);
+};
+
+// Config and state
+
 export interface Config {
   botUrl: string;
   failureMessages?: string[];
@@ -19,8 +87,6 @@ export interface Conversation {
   reset: () => void;
 }
 
-type Time = number;
-
 interface InternalState {
   messages: Message[];
   conversationId?: string;
@@ -28,42 +94,6 @@ interface InternalState {
 
 const fromInternal = (internalState: InternalState): State =>
   internalState.messages;
-
-export type Message = BotMessage | UserMessage;
-
-interface Choice {
-  choiceId: string;
-  choiceText: string;
-}
-
-interface ResponseMessage {
-  text: string;
-  choices?: Choice[];
-}
-
-export interface BotMessage {
-  author: "bot";
-  receivedAt: Time;
-  text: string;
-  choices: Choice[];
-}
-
-export type UserMessagePayload =
-  | {
-      type: "text";
-      text: string;
-    }
-  | {
-      type: "choice";
-      choiceId: string;
-      choiceText: string;
-    };
-
-export interface UserMessage {
-  author: "user";
-  receivedAt: Time;
-  payload: UserMessagePayload;
-}
 
 type Subscriber = (state: State) => void;
 
@@ -101,7 +131,8 @@ const createConversation = (config: Config): Conversation => {
             author: "bot",
             receivedAt: new Date().getTime(),
             text: messageBody,
-            choices: []
+            choices: [],
+            selectedChoice: undefined
           })
         )
       ]
@@ -158,19 +189,20 @@ const createConversation = (config: Config): Conversation => {
     },
     sendChoice: choiceId => {
       const choice = findChoice(state.messages, choiceId);
-      setState({
-        messages: [
-          ...state.messages,
-          {
-            author: "user",
-            receivedAt: new Date().getTime(),
-            payload: {
-              type: "choice",
-              choiceId,
-              choiceText: choice ? choice.choiceText : "Selection"
-            }
+      const newMessages: Message[] = [
+        ...state.messages,
+        {
+          author: "user",
+          receivedAt: new Date().getTime(),
+          payload: {
+            type: "choice",
+            choiceId,
+            choiceText: choice ? choice.choiceText : "Selection"
           }
-        ]
+        }
+      ];
+      setState({
+        messages: newMessages
       });
       fetch(config.botUrl, {
         method: "POST",

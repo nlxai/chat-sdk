@@ -1,7 +1,12 @@
 import tinycolor from "tinycolor2";
 import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import createConversation, { Config, Conversation, Message } from "../index";
+import createConversation, {
+  Config,
+  Conversation,
+  Message,
+  findSelectedChoice
+} from "../index";
 import { useChat } from "../react-utils";
 import genericStyled, { CreateStyled } from "@emotion/styled";
 import { ThemeProvider } from "emotion-theming";
@@ -22,6 +27,7 @@ interface Theme {
   primaryColor: string;
   darkMessageColor: string;
   lightMessageColor: string;
+  white: string;
   fontFamily: string;
 }
 
@@ -29,6 +35,7 @@ const defaultTheme: Theme = {
   primaryColor: "#003377",
   darkMessageColor: "#003377",
   lightMessageColor: "#EFEFEF",
+  white: "#FFF",
   fontFamily: "'Source Sans Pro', sans-serif"
 };
 
@@ -97,23 +104,45 @@ export const Widget: React.SFC<Props> = props => {
               <MessageGroups>
                 {utils
                   .groupWhile(
-                    chat.messages,
+                    chat.messages.filter(
+                      message =>
+                        !(
+                          message.author === "user" &&
+                          message.payload.type === "choice"
+                        )
+                    ),
                     (prev, current) => prev.author !== current.author
                   )
-                  .map((group, index) => (
-                    <MessageGroup>
-                      {group.map((message, index) =>
+                  .map((group, groupIndex) => (
+                    <MessageGroup key={groupIndex}>
+                      {group.map((message, groupMessageIndex) =>
                         message.author === "bot" ? (
-                          <Message type="bot" key={index}>
+                          <Message type="bot" key={groupMessageIndex}>
                             {message.text}
                             {message.choices.length > 0 && (
                               <ChoicesContainer>
                                 {message.choices.map((choice, choiceIndex) => (
                                   <ChoiceButton
                                     key={choiceIndex}
-                                    onClick={() => {
-                                      chat.sendChoice(choice.choiceId);
-                                    }}
+                                    {...(() => {
+                                      const selectedChoice = findSelectedChoice(
+                                        message,
+                                        chat.messages
+                                      );
+                                      return selectedChoice
+                                        ? {
+                                            disabled: true,
+                                            selected:
+                                              selectedChoice &&
+                                              selectedChoice.choiceId ===
+                                                choice.choiceId
+                                          }
+                                        : {
+                                            onClick: () => {
+                                              chat.sendChoice(choice.choiceId);
+                                            }
+                                          };
+                                    })()}
                                   >
                                     {choice.choiceText}
                                   </ChoiceButton>
@@ -122,11 +151,11 @@ export const Widget: React.SFC<Props> = props => {
                             )}
                           </Message>
                         ) : (
-                          <Message type="user" key={index}>
-                            {message.payload.type === "text"
-                              ? message.payload.text
-                              : message.payload.choiceText}
-                          </Message>
+                          message.payload.type === "text" && (
+                            <Message type="user" key={groupMessageIndex}>
+                              {message.payload.text}
+                            </Message>
+                          )
                         )
                       )}
                     </MessageGroup>
@@ -148,6 +177,7 @@ export const Widget: React.SFC<Props> = props => {
                 }}
               />
               <IconButton
+                disabled={Boolean(!submit)}
                 onClick={() => {
                   if (submit) {
                     submit();
@@ -238,7 +268,7 @@ const Message = styled.div<{ type: "user" | "bot" }>`
     props.type === "user"
       ? props.theme.darkMessageColor
       : props.theme.lightMessageColor};
-  color: ${props => (props.type === "user" ? "#FFF" : "#000")};
+  color: ${props => (props.type === "user" ? props.theme.white : "#000")};
   font-size: ${fontSize}px;
   padding: 6px 10px;
   width: fit-content;
@@ -277,22 +307,35 @@ const hoverBg = `
   }
 `;
 
-const IconButton = styled.button<{}>`
+const focusShadow = (theme: Theme) => `
+  box-shadow: 0 0 0 3px ${tinycolor(theme.primaryColor)
+    .setAlpha(0.15)
+    .toRgbString()};
+`;
+
+const IconButton = styled.button<{ disabled?: boolean }>`
   height: 35px;
   width: 35px;
   border-radius: 18px;
   padding: 8px;
   font-size: ${fontSize}px;
+  ${props =>
+    props.disabled
+      ? `
+  opacity: 0.6;
+  `
+      : `
+  `}
   border: 0;
   box-shadow: none;
   background-color: ${props => props.theme.primaryColor};
-  color: #fff;
+  color: ${props => props.theme.white};
   position: relative;
   cursor: pointer;
 
   :focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 0, 255, 0.2);
+    ${props => focusShadow(props.theme)}
   }
 
   ${hoverBg}
@@ -311,11 +354,7 @@ const Input = styled.input<{}>`
   :focus {
     outline: none;
     border: 1px solid ${props => props.theme.primaryColor};
-    box-shadow: 0 0 0 3px
-      ${props =>
-        tinycolor(props.theme.primaryColor)
-          .setAlpha(0.15)
-          .toRgbString()};
+    ${props => focusShadow(props.theme)}
   }
 `;
 
@@ -330,7 +369,7 @@ const Pin = styled.button<{}>`
   border-radius: 30px;
   cursor: pointer;
   padding: 15px;
-  color: #fff;
+  color: ${props => props.theme.white};
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.6);
 
   :focus {
@@ -357,25 +396,42 @@ const ChoicesContainer = styled.div<{}>`
   }
 `;
 
-const ChoiceButton = styled.button<{}>`
-  background-color: ${props => props.theme.primaryColor};
-  height: 30px;
-  border-radius: 15px;
-  border: 1px solid ${props => props.theme.primaryColor};
-  background-color: #fff;
-  color: ${props => props.theme.primaryColor};
-  font-size: ${fontSize}px;
-  font-family: ${props => props.theme.fontFamily};
-  padding: 0 10px;
+const ChoiceButton = styled.button<{ disabled?: boolean; selected?: boolean }>`
+  ${props =>
+    props.selected
+      ? `
+  background-color: ${props.theme.primaryColor};
+  color: ${props.theme.white};
+  `
+      : `
+  background-color: ${props.theme.white};
+  color: ${props.theme.primaryColor};
+  `}
+  ${props =>
+    props.disabled
+      ? `
+  opacity: 0.4;
+      `
+      : `
   cursor: pointer;
-
   :hover {
     background-color: #efefef;
   }
 
   :focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 0, 255, 0.2);
+    ${focusShadow(props.theme)}
+  }
+      `}
+  height: 30px;
+  border-radius: 15px;
+  border: 1px solid ${props => props.theme.primaryColor};
+  font-size: ${fontSize}px;
+  font-family: ${props => props.theme.fontFamily};
+  padding: 0 10px;
+
+  :focus {
+    outline: none;
   }
 `;
 
