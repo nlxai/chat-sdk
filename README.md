@@ -86,42 +86,7 @@ This SDK is written in TypeScript so you can use our type definitions in your pr
 
 ## Widget
 
-This package also exports a themeable widget build in React. Use it as follows:
-
-```jsx
-import { Widget } from "nlx-chat-sdk/widget";
-
-render(<Widget botUrl="" />, document.getElementById("app"));
-```
-
-Or even simpler:
-
-```jsx
-import { standalone } from "nlx-chat-sdk/widget";
-
-standalone({
-  botUrl: ""
-});
-```
-
-### Usage without modules
-
-If you build the widget by running `npm run build:standalone`, you get a single file in `standalone/VERSION/nlx-chat.js`. Use this as follows:
-
-```html
-<body>
-  <script src="standalone/VERSION/nlx-chat.js"></script>
-  <script>
-    window.chat.standalone({
-      config: {
-        botUrl: ""
-      }
-    });
-  </script>
-</body>
-```
-
-This will render the widget as the last element in the body.
+This package also exports a themeable widget build in React. [Docs here](src/widget/README.md).
 
 ## Contributing
 

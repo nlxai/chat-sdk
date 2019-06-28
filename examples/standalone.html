@@ -1,10 +1,13 @@
 <body>
-  <script src="https://unpkg.com/nlx-chat-sdk@0.0.1/lib/src/umd/nlx-chat-widget.js"></script>
+  <script src="https://unpkg.com/nlx-chat-sdk@0.0.3/lib/umd/widget.js"></script>
   <script>
     chat.standalone({
       config: {
         botUrl:
           "https://bots.dev.nlx.ai/c/6fh2ulL4yGHjdSRqp2eY7/I9olOWmTBvGgzEH1rm8Mm"
+      },
+      titleBar: {
+        title: "Support chat"
       },
     });
   </script>

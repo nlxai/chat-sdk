@@ -12,24 +12,7 @@ import genericStyled, { CreateStyled } from "@emotion/styled";
 import { ThemeProvider } from "emotion-theming";
 import { CloseIcon, ChatIcon, AirplaneIcon } from "./icons";
 import * as utils from "./utils";
-
-interface Props {
-  config: Config;
-  theme?: Partial<Theme>;
-  chatIcon?: string;
-  titleBar?: {
-    logo?: string;
-    title: string;
-  };
-}
-
-interface Theme {
-  primaryColor: string;
-  darkMessageColor: string;
-  lightMessageColor: string;
-  white: string;
-  fontFamily: string;
-}
+import { Props, Theme } from "./types";
 
 const defaultTheme: Theme = {
   primaryColor: "#003377",

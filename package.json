@@ -1,15 +1,16 @@
 {
   "name": "nlx-chat-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SDK to talk to NLX bots",
-  "main": "lib/src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "start:simple": "parcel examples/simple.html",
     "start:with-react": "parcel examples/with-react.html",
     "start:widget": "parcel examples/widget.html",
-    "build:package": "rm -rf lib && mkdir lib && tsc && rm -rf lib/examples",
+    "build:package": "rm -rf lib && mkdir lib && tsc && mv lib/src/* lib && rm -rf lib/examples lib/src",
     "build:standalone": "node build.js",
-    "prepublish": "npm run build:package && npm run build:standalone"
+    "build": "npm run build:package && npm run build:standalone",
+    "prepublish": "npm run build"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",

@@ -2,7 +2,7 @@ const packageJson = require("./package.json");
 const browserify = require("browserify");
 const fs = require("fs");
 
-fs.mkdir("lib/src/umd", () => {
+fs.mkdir("lib/umd", () => {
   browserify({
     standalone: "chat"
   })
@@ -14,6 +14,6 @@ fs.mkdir("lib/src/umd", () => {
       console.error(error.toString());
     })
     .pipe(
-      fs.createWriteStream(`lib/src/umd/nlx-chat-widget.js`)
+      fs.createWriteStream("lib/umd/widget.js")
     );
 });
