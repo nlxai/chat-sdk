@@ -81,6 +81,9 @@ export const Widget: React.SFC<Props> = props => {
             <Main ref={chat.messagesContainerRef}>
               {props.titleBar && (
                 <TitleBar>
+                  {props.titleBar.logo && (
+                    <TitleIcon src={props.titleBar.logo} />
+                  )}
                   <Title>{props.titleBar.title}</Title>
                 </TitleBar>
               )}
@@ -428,12 +431,13 @@ const TitleBar = styled.div<{}>`
 `;
 
 const Title = styled.p<{}>`
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   font-family: ${props => props.theme.fontFamily};
 `;
 
 const TitleIcon = styled.img<{}>`
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
 `;
