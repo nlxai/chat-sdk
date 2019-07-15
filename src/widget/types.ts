@@ -10,6 +10,7 @@ export interface Props {
     logo?: string;
     title: string;
   };
+  inputPlaceholder?: string;
 }
 
 // Colors may be in any CSS-compatible format like rgb(50, 50, 50) or #aaa

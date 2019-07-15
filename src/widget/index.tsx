@@ -19,7 +19,7 @@ const defaultTheme: Theme = {
   primaryColor: "#003377",
   darkMessageColor: "#003377",
   lightMessageColor: "#EFEFEF",
-  white: "#FFF",
+  white: "#FFFFFF",
   fontFamily: "'Source Sans Pro', sans-serif"
 };
 
@@ -105,7 +105,11 @@ export const Widget: React.SFC<Props> = props => {
                       {group.map((message, groupMessageIndex) =>
                         message.author === "bot" ? (
                           <Message type="bot" key={groupMessageIndex}>
-                            <MessageBody dangerouslySetInnerHTML={{__html: snarkdown(message.text)}}/>
+                            <MessageBody
+                              dangerouslySetInnerHTML={{
+                                __html: snarkdown(message.text)
+                              }}
+                            />
                             {message.choices.length > 0 && (
                               <ChoicesContainer>
                                 {message.choices.map((choice, choiceIndex) => (
@@ -140,7 +144,11 @@ export const Widget: React.SFC<Props> = props => {
                         ) : (
                           message.payload.type === "text" && (
                             <Message type="user" key={groupMessageIndex}>
-                              <MessageBody dangerouslySetInnerHTML={{__html: snarkdown(message.payload.text)}}/>
+                              <MessageBody
+                                dangerouslySetInnerHTML={{
+                                  __html: snarkdown(message.payload.text)
+                                }}
+                              />
                             </Message>
                           )
                         )
@@ -153,7 +161,7 @@ export const Widget: React.SFC<Props> = props => {
               <Input
                 ref={inputRef}
                 value={chat.inputValue}
-                placeholder="Say something.."
+                placeholder={props.inputPlaceholder || "Say something.."}
                 onChange={e => {
                   chat.setInputValue(e.target.value);
                 }}
@@ -268,14 +276,15 @@ const Message = styled.div<{ type: "user" | "bot" }>`
 const MessageBody = styled.p<{}>`
   margin: 0;
   font-size: ${fontSize}px;
-  a, a:visited {
+  a,
+  a:visited {
     color: inherit;
   }
   img {
     max-width: 80px;
     max-height: 60px;
   }
-`
+`;
 
 const Bottom = styled.div<{}>`
   height: ${bottomHeight}px;

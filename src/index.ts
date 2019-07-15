@@ -69,6 +69,7 @@ export const findSelectedChoice = (
 export interface Config {
   botUrl: string;
   failureMessages?: string[];
+  greetingMessages?: string[];
   headers: {
     [key: string]: string;
   };
@@ -111,7 +112,13 @@ const findChoice = (messages: Message[], choiceId: string): Choice | null => {
 
 const createConversation = (config: Config): Conversation => {
   let state: InternalState = {
-    messages: [],
+    messages: (config.greetingMessages || []).map(greetingMessage => ({
+      author: "bot",
+      receivedAt: new Date().getTime(),
+      text: greetingMessage,
+      choices: [],
+      selectedChoice: undefined
+    })),
     conversationId: undefined
   };
   const setState = (change: Partial<InternalState>): void => {
