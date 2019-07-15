@@ -1,4 +1,5 @@
 import tinycolor from "tinycolor2";
+import snarkdown from "snarkdown";
 import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import createConversation, {
@@ -104,7 +105,7 @@ export const Widget: React.SFC<Props> = props => {
                       {group.map((message, groupMessageIndex) =>
                         message.author === "bot" ? (
                           <Message type="bot" key={groupMessageIndex}>
-                            {message.text}
+                            <MessageBody dangerouslySetInnerHTML={{__html: snarkdown(message.text)}}/>
                             {message.choices.length > 0 && (
                               <ChoicesContainer>
                                 {message.choices.map((choice, choiceIndex) => (
@@ -139,7 +140,7 @@ export const Widget: React.SFC<Props> = props => {
                         ) : (
                           message.payload.type === "text" && (
                             <Message type="user" key={groupMessageIndex}>
-                              {message.payload.text}
+                              <MessageBody dangerouslySetInnerHTML={{__html: snarkdown(message.payload.text)}}/>
                             </Message>
                           )
                         )
@@ -211,6 +212,7 @@ const Container = styled.div<{}>`
   height: calc(100vh - 120px);
   border-radius: 10px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
+  background-color: ${props => props.theme.white};
 
   & > *,
   & > button {
@@ -255,7 +257,6 @@ const Message = styled.div<{ type: "user" | "bot" }>`
       ? props.theme.darkMessageColor
       : props.theme.lightMessageColor};
   color: ${props => (props.type === "user" ? props.theme.white : "#000")};
-  font-size: ${fontSize}px;
   padding: 6px 10px;
   width: fit-content;
   ${props =>
@@ -263,6 +264,18 @@ const Message = styled.div<{ type: "user" | "bot" }>`
       ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
       : "margin-right: 20px; margin-left: 0; border-radius: 10px 10px 10px 0; align-self: flex-start;"}
 `;
+
+const MessageBody = styled.p<{}>`
+  margin: 0;
+  font-size: ${fontSize}px;
+  a, a:visited {
+    color: inherit;
+  }
+  img {
+    max-width: 80px;
+    max-height: 60px;
+  }
+`
 
 const Bottom = styled.div<{}>`
   height: ${bottomHeight}px;
