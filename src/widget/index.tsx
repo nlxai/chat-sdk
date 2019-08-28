@@ -45,7 +45,9 @@ export const standalone = (
 export const Widget: React.SFC<Props> = props => {
   const chat = useChat(props.config);
 
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(
+    Boolean(props.initiallyExpanded)
+  );
 
   const inputRef = React.useRef(null);
 

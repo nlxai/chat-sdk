@@ -1,6 +1,4 @@
-import createConversation, {
-  Config
-} from "../index";
+import createConversation, { Config } from "../index";
 
 export interface Props {
   config: Config;
@@ -11,6 +9,7 @@ export interface Props {
     title: string;
   };
   inputPlaceholder?: string;
+  initiallyExpanded?: boolean;
 }
 
 // Colors may be in any CSS-compatible format like rgb(50, 50, 50) or #aaa
