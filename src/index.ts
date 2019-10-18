@@ -1,3 +1,5 @@
+import "whatwg-fetch";
+
 // Domain
 
 interface Choice {
