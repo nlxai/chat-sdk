@@ -1,5 +1,9 @@
-import "promise-polyfill";
+import Promise from "promise-polyfill";
 import "whatwg-fetch";
+
+if (!global.Promise) {
+  global.Promise = Promise;
+}
 
 // Domain
 
