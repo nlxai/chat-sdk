@@ -71,7 +71,7 @@ export const Widget: React.SFC<Props> = props => {
 
   const submit =
     chat &&
-    chat.inputValue !== "" &&
+    chat.inputValue.replace(/ /gi, "") !== "" &&
     (() => {
       chat.sendText(chat.inputValue);
       chat.setInputValue("");
@@ -268,7 +268,7 @@ const Message = styled.div<{ type: "user" | "bot" }>`
       : props.theme.lightMessageColor};
   color: ${props => (props.type === "user" ? props.theme.white : "#000")};
   padding: 6px 10px;
-  width: fit-content;
+  max-width: calc(100% - 20px);
   ${props =>
     props.type === "user"
       ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
