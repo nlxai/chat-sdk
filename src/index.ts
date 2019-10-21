@@ -82,7 +82,7 @@ export interface Config {
   };
 }
 
-const defaultFailureMessages = ["There was a problem"];
+const defaultFailureMessages = ["We encountered an issue while contacting the server. Please try again in a few moments."];
 
 export type State = Message[];
 
