@@ -1,5 +1,6 @@
 import Promise from "promise-polyfill";
 import "whatwg-fetch";
+import find from "ramda/src/find";
 
 if (!global.Promise) {
   global.Promise = Promise;
@@ -82,7 +83,9 @@ export interface Config {
   };
 }
 
-const defaultFailureMessages = ["We encountered an issue while contacting the server. Please try again in a few moments."];
+const defaultFailureMessages = [
+  "We encountered an issue while contacting the server. Please try again in a few moments."
+];
 
 export type State = Message[];
 
@@ -112,7 +115,7 @@ const findChoice = (messages: Message[], choiceId: string): Choice | null => {
   const [last, ...restReversed] = [...messages].reverse();
   return (
     (last.author === "bot" &&
-      last.choices.find(choice => choice.choiceId === choiceId)) ||
+      find(choice => choice.choiceId === choiceId, last.choices)) ||
     findChoice(restReversed.reverse(), choiceId)
   );
 };
