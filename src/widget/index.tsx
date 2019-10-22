@@ -69,6 +69,30 @@ export const Widget: React.SFC<Props> = props => {
     };
   }, []);
 
+  const downloadNodeRef = React.useRef(null);
+
+  const downloadNode = (
+    <a
+      style={{ display: "none" }}
+      ref={downloadNodeRef}
+      href={window.URL.createObjectURL(
+        new Blob(
+          [
+            chat
+              ? chat.messages
+                  .map(message => JSON.stringify(message, null, 0))
+                  .join("\n\n")
+              : ""
+          ],
+          { type: "text/plain" }
+        )
+      )}
+      download="chat.txt"
+    >
+      Download
+    </a>
+  );
+
   const submit =
     chat &&
     chat.inputValue.replace(/ /gi, "") !== "" &&
@@ -88,6 +112,20 @@ export const Widget: React.SFC<Props> = props => {
                     <TitleIcon src={props.titleBar.logo} />
                   )}
                   <Title>{props.titleBar.title}</Title>
+                  {false && (
+                    <>
+                      {downloadNode}
+                      <button
+                        onClick={() => {
+                          downloadNodeRef &&
+                            downloadNodeRef.current &&
+                            (downloadNodeRef as any).current.click();
+                        }}
+                      >
+                        Download
+                      </button>
+                    </>
+                  )}
                 </TitleBar>
               )}
               <MessageGroups>
