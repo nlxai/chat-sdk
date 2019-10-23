@@ -5,6 +5,7 @@ export interface Props {
   theme?: Partial<Theme>;
   chatIcon?: string;
   titleBar?: {
+    downloadable?: boolean;
     logo?: string;
     title: string;
   };
