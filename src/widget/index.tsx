@@ -105,8 +105,7 @@ export const Widget: React.SFC<Props> = props => {
                       >
                         Download
                       </a>
-                      <C.DiscreteIconButton
-                        title="Download chat"
+                      <C.DiscreteButton
                         onClick={() => {
                           downloadNodeRef &&
                             downloadNodeRef.current &&
@@ -114,7 +113,8 @@ export const Widget: React.SFC<Props> = props => {
                         }}
                       >
                         <DownloadIcon />
-                      </C.DiscreteIconButton>
+                        <span>Download</span>
+                      </C.DiscreteButton>
                     </>
                   )}
                 </C.TitleBar>

@@ -34,6 +34,18 @@ export const html = (messages: Message[], props: Props): string => {
     align-items: center;
   }
 
+  .choices {
+    margin-top: 6px;
+  }
+
+  .choices button {
+    margin-right: 10px;
+    background-color: white;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid #898989;
+  }
+
   .messages-container {
     max-width: 600px;
     display: flex;
@@ -78,7 +90,11 @@ export const html = (messages: Message[], props: Props): string => {
   }
 
   .message {
-    padding: 6px;
+    padding: 6px 12px;
+  }
+
+  .message p {
+    margin: 0;
   }
 
   .message--user {
@@ -127,7 +143,18 @@ const messageToHtml = (message: Message): string =>
     ? `
 <div class="message-container message-container--bot">
   <div class="message message--bot">
-    ${snarkdown(message.text)}
+    <p>${snarkdown(message.text)}</p>
+    ${
+      message.choices && message.choices.length > 0
+        ? `<div class="choices">${message.choices
+            .map(
+              choice => `
+    <button>${choice.choiceText}</button>
+    `
+            )
+            .join("")}</div>`
+        : ""
+    }
   </div>
   <div class="timestamp">${new Date(message.receivedAt).toLocaleString()}</div>
 </div>
@@ -135,11 +162,11 @@ const messageToHtml = (message: Message): string =>
     : `
 <div class="message-container message-container--user">
   <div class="message message--user">
-    ${
+    <p>${
       message.payload.type === "text"
         ? snarkdown(message.payload.text)
         : message.payload.choiceText
-    }
+    }</p>
   </div>
   <div class="timestamp">${new Date(message.receivedAt).toLocaleString()}</div>
 </div>

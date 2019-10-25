@@ -199,7 +199,10 @@ export const ChoicesContainer = styled.div<{}>`
   }
 `;
 
-export const ChoiceButton = styled.button<{ disabled?: boolean; selected?: boolean }>`
+export const ChoiceButton = styled.button<{
+  disabled?: boolean;
+  selected?: boolean;
+}>`
   ${props =>
     props.selected
       ? `
@@ -274,6 +277,29 @@ export const DiscreteIconButton = styled.button<{}>`
   :focus {
     outline: none;
     box-shadow: 0 0 0 3px #dedede;
+  }
+`;
+
+export const DiscreteButton = styled.button<{}>`
+  color: #ababab;
+  border: 1px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 4px 8px;
+  :hover {
+    color: #000000;
+  }
+  :focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #dedede;
+  }
+  > svg {
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
   }
 `;
 

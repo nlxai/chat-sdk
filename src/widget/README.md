@@ -58,7 +58,10 @@ The URL of an image you can set to override the default chat icon in the chat pi
 
 ### `titleBar`
 
-Renders an optional title bar at the top. If the object is provided, there is a mandatory `title` field and an optional `icon` field.
+Renders an optional title bar at the top. If the object is provided, it has the following fields:
+* `title` (mandatory): title text.
+* `icon` (optional): a URL for an icon image.
+* `downloadable` (optional): if set to true, the title bar will include a button that allows chat history to be downloaded.
 
 A complete example of the configuration options can be found [here](../../examples/standalone.html).
 
