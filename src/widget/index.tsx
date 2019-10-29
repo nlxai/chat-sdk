@@ -95,7 +95,15 @@ export const Widget: React.SFC<Props> = props => {
                         ref={downloadNodeRef}
                         href={window.URL.createObjectURL(
                           new Blob(
-                            [chat ? transcript.html(chat.messages, props) : ""],
+                            [
+                              chat
+                                ? transcript.html({
+                                    messages: chat.messages,
+                                    titleBar: props.titleBar,
+                                    conversationId: chat.currentConversationId()
+                                  })
+                                : ""
+                            ],
                             {
                               type: "text/plain"
                             }

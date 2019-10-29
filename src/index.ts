@@ -95,6 +95,7 @@ export interface Conversation {
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
   unsubscribeAll: () => void;
+  currentConversationId: () => string | undefined;
   reset: () => void;
 }
 
@@ -252,6 +253,9 @@ const createConversation = (config: Config): Conversation => {
           });
         })
         .catch(failureHandler);
+    },
+    currentConversationId: () => {
+      return state.conversationId;
     },
     subscribe: subscriber => {
       subscribers = [...subscribers, subscriber];

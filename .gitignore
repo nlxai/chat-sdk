@@ -6,3 +6,4 @@ yarn.lock
 .env
 dist
 lib
+index.html

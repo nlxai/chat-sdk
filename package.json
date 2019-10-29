@@ -8,8 +8,9 @@
     "start:with-react": "parcel examples/with-react.html",
     "start:widget": "parcel examples/widget.html",
     "build:package": "rm -rf lib && mkdir lib && tsc && mv lib/src/* lib && rm -rf lib/examples lib/src",
-    "build:standalone": "node build.js",
+    "build:standalone": "node bin/build.js",
     "build": "npm run build:package && npm run build:standalone",
+    "test-transcript": "npm run build:package && node bin/test-transcript.js && open index.html",
     "prepublish": "npm run build"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
@@ -24,6 +25,7 @@
     "browserify": "^16.2.3",
     "parcel": "^1.12.3",
     "prettier": "^1.18.2",
+    "ts-node": "^8.4.1",
     "tsify": "^4.0.1",
     "typescript": "^3.4.5",
     "uglifyify": "^5.0.1"

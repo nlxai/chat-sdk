@@ -9,6 +9,7 @@ export const useChat = (
   setInputValue: (val: string) => void;
   sendText: Conversation["sendText"];
   sendChoice: Conversation["sendChoice"];
+  currentConversationId: Conversation["currentConversationId"];
   reset: Conversation["reset"];
   messagesContainerRef: React.Ref<HTMLDivElement> | null;
 } | null => {
@@ -53,6 +54,7 @@ export const useChat = (
   return {
     inputValue,
     setInputValue,
+    currentConversationId: conversation.currentConversationId,
     sendText: conversation.sendText,
     sendChoice: conversation.sendChoice,
     reset: conversation.reset,

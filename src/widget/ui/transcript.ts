@@ -3,7 +3,15 @@ import { Message } from "../../index";
 import { defaultTheme } from "./constants";
 import { Props } from "../types";
 
-export const html = (messages: Message[], props: Props): string => {
+export const html = ({
+  messages,
+  titleBar,
+  conversationId
+}: {
+  messages: Message[];
+  titleBar: Props["titleBar"];
+  conversationId?: string;
+}): string => {
   return `
 <head>
 <style>
@@ -17,7 +25,7 @@ export const html = (messages: Message[], props: Props): string => {
   .header {
     max-width: 600px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
     margin-bottom: 20px;
   }
@@ -26,12 +34,16 @@ export const html = (messages: Message[], props: Props): string => {
     width: 30px;
     height: 30px;
     margin-right: 10px;
-    align-items: center;
   }
 
-  .header h1 {
+  p {
+    font-size: 16px;
     margin: 0;
-    align-items: center;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin: 0;
   }
 
   .choices {
@@ -46,8 +58,15 @@ export const html = (messages: Message[], props: Props): string => {
     border: 1px solid #898989;
   }
 
-  .messages-container {
+  .container {
     max-width: 600px;
+    padding: 20px;
+    border: 1px solid #cecece;
+    border-radius: 4px;
+    margin: 30px 0;
+  }
+
+  .messages-container {
     display: flex;
     flex-direction: column;
   }
@@ -112,17 +131,17 @@ export const html = (messages: Message[], props: Props): string => {
 </head>
 <body>
 ${
-  props.titleBar
+  titleBar
     ? `
 <header class="header">
 ${
-  props.titleBar.logo
+  titleBar.logo
     ? `
-<img src="${props.titleBar.logo}" alt="Logo"></img>
+<img src="${titleBar.logo}" alt="Logo"></img>
 `
-    : ``
+    : ""
 }
-  <h1>${props.titleBar.title}</h1>
+  <h1>${titleBar.title}</h1>
 </header>
 `
     : `
@@ -131,7 +150,16 @@ ${
 </header>
 `
 }
-<div class="messages-container">
+${
+  conversationId
+    ? `
+<div class="container info-container">
+  <p>Conversation ID: ${conversationId}</p>
+</div>
+`
+    : ""
+}
+<div class="container messages-container">
   ${messages.map(messageToHtml).join("\n\n")}
 </div>
 </body>
