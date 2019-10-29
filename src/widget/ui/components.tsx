@@ -257,27 +257,9 @@ export const TitleContainer = styled.div<{}>`
 `;
 
 export const Title = styled.p<{}>`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   font-family: ${props => props.theme.fontFamily};
-`;
-
-export const DiscreteIconButton = styled.button<{}>`
-  width: 22px;
-  height: 22px;
-  display: block;
-  padding: 2px;
-  color: #ababab;
-  border: 0;
-  cursor: pointer;
-  background: none;
-  :hover {
-    color: #000000;
-  }
-  :focus {
-    outline: none;
-    box-shadow: 0 0 0 3px #dedede;
-  }
 `;
 
 export const DiscreteButton = styled.button<{}>`
@@ -289,6 +271,7 @@ export const DiscreteButton = styled.button<{}>`
   text-transform: uppercase;
   border-radius: 4px;
   padding: 4px 8px;
+  background: none;
   :hover {
     color: #000000;
   }
@@ -304,7 +287,7 @@ export const DiscreteButton = styled.button<{}>`
 `;
 
 export const TitleIcon = styled.img<{}>`
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   margin-right: 6px;
 `;

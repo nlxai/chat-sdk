@@ -12,7 +12,7 @@ standalone({
     greetingMessages: ["Hi there"]
   },
   titleBar: {
-    title: "Support chat",
+    title: "Support Chat",
     downloadable: true,
     logo:
       "https://images.unsplash.com/photo-1558470622-bd37a3c489e7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80"
