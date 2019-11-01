@@ -1,3 +1,4 @@
+import * as React from "react";
 import genericStyled, { CreateStyled } from "@emotion/styled";
 import { Theme } from "../types";
 import * as constants from "./constants";
@@ -186,6 +187,83 @@ export const Pin = styled.button<{}>`
 
   ${hoverBg}
 `;
+
+// PinBubble
+
+export const PinBubble: React.SFC<{
+  content: string;
+  onClick: () => void;
+}> = props => (
+  <PinBubbleContainer>
+    <PinBubbleButton onClick={props.onClick}>
+      <span>×</span>
+    </PinBubbleButton>
+    {props.content}
+  </PinBubbleContainer>
+);
+
+export const PinBubbleContainer = styled.div<{}>`
+  position: fixed;
+  bottom: 92px;
+  right: 20px;
+  border-radius: 6px;
+  box-sizing: border-box;
+  width: fit-content;
+  white-space: pre;
+  font-family: ${props => props.theme.fontFamily};
+  height: 30px;
+  font-size: 16px;
+  display: flex;
+  line-height: 1;
+  padding: 6px 8px;
+  background-color: #000;
+  color: #fff;
+  ::after {
+    position: absolute;
+    top: 30px;
+    right: 26px;
+    content: " ";
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #000;
+  }
+`;
+
+export const PinBubbleButton = styled.button<{}>`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  position: absolute;
+  top: -30px;
+  right: 0px;
+  border: 0;
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  span {
+    font-size: 18px;
+    line-height: 0.9;
+    padding: 0;
+    margin: auto;
+    position: relative;
+    top: -1px;
+  }
+  :hover {
+    background-color: #232323;
+  }
+  :focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #ababab;
+  }
+`;
+
+//
 
 export const ChoicesContainer = styled.div<{}>`
   margin-top: 10px;

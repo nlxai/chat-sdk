@@ -37,11 +37,17 @@ export const standalone = (
 };
 
 export const Widget: React.SFC<Props> = props => {
+  // Chat
+
   const chat = useChat(props.config);
+
+  // Expanded state
 
   const [expanded, setExpanded] = React.useState(
     Boolean(props.initiallyExpanded)
   );
+
+  // Input focus
 
   const inputRef = React.useRef(null);
 
@@ -50,6 +56,8 @@ export const Widget: React.SFC<Props> = props => {
       (inputRef as any).current.focus();
     }
   }, [expanded, chat && chat.messages]);
+
+  // Escape handling
 
   React.useEffect(() => {
     const handler = (ev: KeyboardEvent) => {
@@ -63,6 +71,22 @@ export const Widget: React.SFC<Props> = props => {
     };
   }, []);
 
+  // Bubble
+
+  const [bubble, setBubble] = React.useState(false);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setBubble(true);
+    }, 3000);
+
+    setTimeout(() => {
+      setBubble(false);
+    }, 20000);
+  }, []);
+
+  // Download
+
   const downloadNodeRef = React.useRef(null);
 
   const submit =
@@ -72,11 +96,20 @@ export const Widget: React.SFC<Props> = props => {
       chat.sendText(chat.inputValue);
       chat.setInputValue("");
     });
+
   return (
     <ThemeProvider
       theme={{ ...constants.defaultTheme, ...(props.theme || {}) }}
     >
       <>
+        {!expanded && bubble && props.bubble ? (
+          <C.PinBubble
+            onClick={() => {
+              setBubble(false);
+            }}
+            content={props.bubble}
+          />
+        ) : null}
         {expanded && chat && (
           <C.Container>
             <C.Main ref={chat.messagesContainerRef}>

@@ -11,6 +11,7 @@ standalone({
     },
     greetingMessages: ["Hi there"]
   },
+  bubble: "Need help?",
   titleBar: {
     title: "Support Chat",
     downloadable: true,

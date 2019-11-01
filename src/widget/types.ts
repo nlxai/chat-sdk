@@ -9,6 +9,7 @@ export interface Props {
     logo?: string;
     title: string;
   };
+  bubble?: string;
   inputPlaceholder?: string;
   initiallyExpanded?: boolean;
 }

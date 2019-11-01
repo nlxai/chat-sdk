@@ -42,7 +42,7 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
 
 ## Configuration
 
-Initiating the chat takes the following parameters:
+Initiating the chat takes the following parameters (see [type definition](types.ts) for details):
 
 ### `config`
 
@@ -50,7 +50,7 @@ The configuration of the chat itself, containing `botUrl` and request headers.
 
 ### `theme`
 
-Overrides for the visual theme constants. See [theme type definition](types.ts) for details.
+Overrides for the visual theme constants. See [Theme type definition](types.ts) for details.
 
 ### `chatIcon`
 
@@ -62,6 +62,10 @@ Renders an optional title bar at the top. If the object is provided, it has the 
 * `title` (mandatory): title text.
 * `icon` (optional): a URL for an icon image.
 * `downloadable` (optional): if set to true, the title bar will include a button that allows chat history to be downloaded.
+
+### `bubble`
+
+When set to a non-empty string, a small bubble will appear above the chat pin when the chat is not expanded, helping the user understand what the chat is for. This bubble appears 3s after the chat is loaded, and disappears after 20s.
 
 A complete example of the configuration options can be found [here](../../examples/standalone.html).
 
