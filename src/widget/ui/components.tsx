@@ -174,7 +174,7 @@ export const Pin = styled.button<{}>`
   cursor: pointer;
   padding: 15px;
   color: ${props => props.theme.white};
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.6);
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.4);
 
   :focus {
     outline: none;
@@ -191,10 +191,11 @@ export const Pin = styled.button<{}>`
 // PinBubble
 
 export const PinBubble: React.SFC<{
+  isActive: boolean;
   content: string;
   onClick: () => void;
 }> = props => (
-  <PinBubbleContainer>
+  <PinBubbleContainer isActive={props.isActive}>
     <PinBubbleButton onClick={props.onClick}>
       <span>×</span>
     </PinBubbleButton>
@@ -202,7 +203,7 @@ export const PinBubble: React.SFC<{
   </PinBubbleContainer>
 );
 
-export const PinBubbleContainer = styled.div<{}>`
+export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   position: fixed;
   bottom: 92px;
   right: 20px;
@@ -210,44 +211,67 @@ export const PinBubbleContainer = styled.div<{}>`
   box-sizing: border-box;
   width: fit-content;
   white-space: pre;
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
   font-family: ${props => props.theme.fontFamily};
-  height: 30px;
+  height: 35px;
   font-size: 16px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
-  padding: 6px 8px;
-  background-color: #000;
+  padding: 0px 16px 0px 0px;
+  background-color: ${props =>
+    tinycolor(props.theme.primaryColor)
+      .darken(10)
+      .toRgbString()};
   color: #fff;
+  transition: opacity 0.2s, transform 0.2s;
+  ${props =>
+    props.isActive
+      ? `
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    pointer-events: all;
+    `
+      : `
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    pointer-events: none;
+  `}
   ::after {
     position: absolute;
-    top: 30px;
+    top: 35px;
     right: 26px;
     content: " ";
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid #000;
+    border-top: 6px solid
+      ${props =>
+        tinycolor(props.theme.primaryColor)
+          .darken(10)
+          .toRgbString()};
   }
 `;
 
 export const PinBubbleButton = styled.button<{}>`
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  position: absolute;
-  top: -30px;
-  right: 0px;
+  width: 35px;
+  height: 35px;
   border: 0;
-  background-color: #000;
   color: #fff;
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 8px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  background: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
   span {
-    font-size: 18px;
+    font-size: 22px;
     line-height: 0.9;
     padding: 0;
     margin: auto;
@@ -255,11 +279,11 @@ export const PinBubbleButton = styled.button<{}>`
     top: -1px;
   }
   :hover {
-    background-color: #232323;
+    background-color: rgba(255, 255, 255, 0.1);
   }
   :focus {
     outline: none;
-    box-shadow: 0 0 0 3px #ababab;
+    box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.2);
   }
 `;
 

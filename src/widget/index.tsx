@@ -102,8 +102,9 @@ export const Widget: React.SFC<Props> = props => {
       theme={{ ...constants.defaultTheme, ...(props.theme || {}) }}
     >
       <>
-        {!expanded && bubble && props.bubble ? (
+        {props.bubble ? (
           <C.PinBubble
+            isActive={!expanded && bubble}
             onClick={() => {
               setBubble(false);
             }}
