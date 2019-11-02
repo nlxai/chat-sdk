@@ -1,6 +1,6 @@
 {
   "name": "nlx-chat-sdk",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "SDK to talk to NLX bots",
   "main": "lib/index.js",
   "scripts": {
