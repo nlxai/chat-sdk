@@ -1,4 +1,4 @@
-import createConversation, { Config } from "../index";
+import createConversation, { Config, ConversationHandler } from "../index";
 
 export interface Props {
   config: Config;
@@ -12,6 +12,7 @@ export interface Props {
   bubble?: string;
   inputPlaceholder?: string;
   initiallyExpanded?: boolean;
+  lowLevel?: (conversationHandler: ConversationHandler) => void;
 }
 
 // Colors may be in any CSS-compatible format like rgb(50, 50, 50) or #aaa

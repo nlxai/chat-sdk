@@ -2,7 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import createConversation, {
   Config,
-  Conversation,
+  ConversationHandler,
   Message
 } from "../src/index";
 import { useChat } from "../src/react-utils";
@@ -33,7 +33,7 @@ const App = () => {
               <button
                 key={choiceIndex}
                 onClick={() => {
-                  chat.sendChoice(choice.choiceId);
+                  chat.conversationHandler.sendChoice(choice.choiceId);
                 }}
               >
                 {choice.choiceText}
@@ -59,7 +59,7 @@ const App = () => {
           if (!chat) {
             return;
           }
-          chat.sendText(chat.inputValue);
+          chat.conversationHandler.sendText(chat.inputValue);
           chat.setInputValue("");
         }}
       >

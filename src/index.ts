@@ -89,7 +89,7 @@ const defaultFailureMessages = [
 
 export type State = Message[];
 
-export interface Conversation {
+export interface ConversationHandler {
   sendText: (text: string) => void;
   sendChoice: (choiceId: string) => void;
   subscribe: (subscriber: Subscriber) => void;
@@ -107,7 +107,12 @@ interface InternalState {
 const fromInternal = (internalState: InternalState): State =>
   internalState.messages;
 
-type Subscriber = (state: State) => void;
+type Subscriber = (
+  state: State,
+  additionalInformation: {
+    payload?: string;
+  }
+) => void;
 
 const findChoice = (messages: Message[], choiceId: string): Choice | null => {
   if (messages.length === 0) {
@@ -121,7 +126,7 @@ const findChoice = (messages: Message[], choiceId: string): Choice | null => {
   );
 };
 
-const createConversation = (config: Config): Conversation => {
+const createConversation = (config: Config): ConversationHandler => {
   let state: InternalState = {
     messages: (config.greetingMessages || []).map(greetingMessage => ({
       author: "bot",
@@ -132,12 +137,18 @@ const createConversation = (config: Config): Conversation => {
     })),
     conversationId: undefined
   };
-  const setState = (change: Partial<InternalState>): void => {
+  const setState = (
+    change: Partial<InternalState> & { payload?: string }
+  ): void => {
     state = {
       ...state,
       ...change
     };
-    subscribers.forEach(subscriber => subscriber(fromInternal(state)));
+    subscribers.forEach(subscriber =>
+      subscriber(fromInternal(state), {
+        payload: change.payload
+      })
+    );
   };
 
   const failureHandler = () => {
@@ -200,7 +211,8 @@ const createConversation = (config: Config): Conversation => {
                 text: message.text,
                 choices: message.choices || []
               }))
-            ]
+            ],
+            payload: response.payload
           });
         })
         .catch(failureHandler);
@@ -249,7 +261,8 @@ const createConversation = (config: Config): Conversation => {
                 text: message.text,
                 choices: message.choices || []
               }))
-            ]
+            ],
+            payload: response.payload
           });
         })
         .catch(failureHandler);
@@ -259,7 +272,7 @@ const createConversation = (config: Config): Conversation => {
     },
     subscribe: subscriber => {
       subscribers = [...subscribers, subscriber];
-      subscriber(fromInternal(state));
+      subscriber(fromInternal(state), {});
     },
     unsubscribe: subscriber => {
       subscribers = subscribers.filter(fn => fn !== subscriber);

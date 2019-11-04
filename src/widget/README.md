@@ -69,3 +69,22 @@ When set to a non-empty string, a small bubble will appear above the chat pin wh
 
 A complete example of the configuration options can be found [here](../../examples/standalone.html).
 
+### `initiallyExpanded`
+
+Sets whether the widget is initially expanded.
+
+### `lowLevel`
+
+If you need low-level control of the widget, this configuration value gives access to the `conversationHandler` object through a callback:
+
+```jsx
+<Widget
+  {/* ... */}
+  lowLevel={conversationHandler => {
+    conversationHandler.subscribe(() => {
+    });
+  }
+/>
+```
+
+The callback pattern works similarly to the way [callback refs](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) work in React. We are avoiding that naming since the configuration option works identical in standalone mode.

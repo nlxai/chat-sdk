@@ -3,7 +3,7 @@ import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import createConversation, {
   Config,
-  Conversation,
+  ConversationHandler,
   Message,
   findSelectedChoice
 } from "../index";
@@ -40,6 +40,12 @@ export const Widget: React.SFC<Props> = props => {
   // Chat
 
   const chat = useChat(props.config);
+
+  React.useEffect(() => {
+    if (props.lowLevel && chat && chat.conversationHandler) {
+      props.lowLevel(chat.conversationHandler);
+    }
+  }, [chat && chat.conversationHandler]);
 
   // Expanded state
 
@@ -93,7 +99,7 @@ export const Widget: React.SFC<Props> = props => {
     chat &&
     chat.inputValue.replace(/ /gi, "") !== "" &&
     (() => {
-      chat.sendText(chat.inputValue);
+      chat.conversationHandler.sendText(chat.inputValue);
       chat.setInputValue("");
     });
 
@@ -134,7 +140,7 @@ export const Widget: React.SFC<Props> = props => {
                                 ? transcript.html({
                                     messages: chat.messages,
                                     titleBar: props.titleBar,
-                                    conversationId: chat.currentConversationId()
+                                    conversationId: chat.conversationHandler.currentConversationId()
                                   })
                                 : ""
                             ],
@@ -203,7 +209,9 @@ export const Widget: React.SFC<Props> = props => {
                                           }
                                         : {
                                             onClick: () => {
-                                              chat.sendChoice(choice.choiceId);
+                                              chat.conversationHandler.sendChoice(
+                                                choice.choiceId
+                                              );
                                             }
                                           };
                                     })()}

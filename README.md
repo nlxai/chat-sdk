@@ -26,7 +26,7 @@ convo.sendText("hello");
 
 ## API reference
 
-The package exports a single function called `createConversation`, which is called with the bot configuration and returns a conversation object. This object has the following methods:
+The package exports a single function called `createConversation`, which is called with the bot configuration and returns a conversation handler object. This object has the following methods:
 
 #### `sendText: (text: string) => void`
 
@@ -36,11 +36,11 @@ Send a simple text to your bot.
 
 Your bot may send a list of choices to choose from, each with a `choiceText` and a `choiceId` field. You can use `choiceText` as button labels, and include the `choiceId` in this method when sending responses.
 
-#### `subscribe: (subscriber: (messages: Message[]) => void) => void`
+#### `subscribe: (subscriber: (messages: Message[], additional: { payload?: string }) => void) => void`
 
 Subscribe to the current state of messages whenever there is a change.
 
-#### `unsubscribe: (subscriber: (messages: Message[]) => void) => void`
+#### `unsubscribe: (subscriber: (messages: Message[], additional: { payload?: string }) => void) => void`
 
 Remove a subscription.
 

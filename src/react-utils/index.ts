@@ -1,21 +1,23 @@
 import * as React from "react";
-import createConversation, { Config, Conversation, Message } from "../index";
+import createConversation, {
+  Config,
+  ConversationHandler,
+  Message
+} from "../index";
 
 export const useChat = (
   config: Config
 ): {
-  messages: Message[];
+  conversationHandler: ConversationHandler;
   inputValue: string;
-  setInputValue: (val: string) => void;
-  sendText: Conversation["sendText"];
-  sendChoice: Conversation["sendChoice"];
-  currentConversationId: Conversation["currentConversationId"];
-  reset: Conversation["reset"];
+  messages: Message[];
   messagesContainerRef: React.Ref<HTMLDivElement> | null;
+  setInputValue: (val: string) => void;
 } | null => {
-  const [conversation, setConversation] = React.useState<null | Conversation>(
-    null
-  );
+  const [
+    conversation,
+    setConversation
+  ] = React.useState<null | ConversationHandler>(null);
 
   const [messages, setMessages] = React.useState<Message[]>([]);
 
@@ -52,13 +54,10 @@ export const useChat = (
   }
 
   return {
+    conversationHandler: conversation,
     inputValue,
-    setInputValue,
-    currentConversationId: conversation.currentConversationId,
-    sendText: conversation.sendText,
-    sendChoice: conversation.sendChoice,
-    reset: conversation.reset,
-    messagesContainerRef: messagesContainerRef,
-    messages
+    messages,
+    messagesContainerRef,
+    setInputValue
   };
 };
