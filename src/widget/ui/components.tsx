@@ -17,6 +17,7 @@ export const Container = styled.div<{}>`
   border-radius: 10px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
   background-color: ${props => props.theme.white};
+  z-index: ${constants.largeZIndex};
 
   & > *,
   & > button {
@@ -175,6 +176,7 @@ export const Pin = styled.button<{}>`
   padding: 15px;
   color: ${props => props.theme.white};
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.4);
+  z-index: ${constants.largeZIndex};
 
   :focus {
     outline: none;
@@ -219,6 +221,7 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   align-items: center;
   justify-content: center;
   line-height: 1;
+  z-index: ${constants.largeZIndex};
   padding: 0px 16px 0px 0px;
   background-color: ${props =>
     tinycolor(props.theme.primaryColor)
