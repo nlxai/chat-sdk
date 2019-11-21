@@ -104,6 +104,7 @@ export const hoverBg = `
   :hover::after {
     content: ' ';
     position: absolute;
+    border-radius: 50%;
     top: 0;
     left: 0;
     right: 0;
