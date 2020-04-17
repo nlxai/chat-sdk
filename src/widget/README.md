@@ -12,7 +12,10 @@ import { standalone } from "nlx-chat-sdk/widget";
 // This will render the widget as the last element in the <body>
 standalone({
   config: {
-    botUrl: ""
+    botUrl: "",
+    headers: {
+      "nlx-api-key": ""
+    }
   }
 });
 ```
@@ -33,7 +36,10 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
   <script>
     window.chat.standalone({
       config: {
-        botUrl: ""
+        botUrl: "",
+        headers: {
+          "nlx-api-key": ""
+        }
       }
     });
   </script>

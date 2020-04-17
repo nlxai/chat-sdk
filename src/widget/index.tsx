@@ -1,23 +1,15 @@
 import snarkdown from "snarkdown";
 import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import createConversation, {
-  Config,
-  ConversationHandler,
-  Message,
-  findSelectedChoice
-} from "../index";
+import { findSelectedChoice } from "../index";
 import { useChat } from "../react-utils";
-import genericStyled, { CreateStyled } from "@emotion/styled";
 import { ThemeProvider } from "emotion-theming";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as utils from "./utils";
 import * as constants from "./ui/constants";
-import { Props, Theme } from "./types";
+import { Props } from "./types";
 import * as C from "./ui/components";
 import * as transcript from "./ui/transcript";
-
-const styled = genericStyled as CreateStyled<Theme>;
 
 export const standalone = (
   props: Props
@@ -36,7 +28,7 @@ export const standalone = (
   };
 };
 
-export const Widget: React.SFC<Props> = props => {
+export const Widget: React.FunctionComponent<Props> = props => {
   // Chat
 
   const chat = useChat(props.config);

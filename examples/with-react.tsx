@@ -1,19 +1,15 @@
 import * as React from "react";
 import { render } from "react-dom";
-import createConversation, {
-  Config,
-  ConversationHandler,
-  Message
-} from "../src/index";
+import { Config } from "../src/index";
 import { useChat } from "../src/react-utils";
 
 const botUrl = process.env.BOT_URL as string;
-const authorization = process.env.AUTHORIZATION as string;
+const nlxApiKey = process.env.NLX_API_KEY as string;
 
 const testConfig: Config = {
   botUrl,
   headers: {
-    authorization
+    "nlx-api-key": nlxApiKey
   }
 };
 

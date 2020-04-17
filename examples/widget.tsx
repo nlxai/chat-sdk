@@ -1,13 +1,15 @@
 import { standalone } from "../src/widget";
 
 const botUrl = process.env.BOT_URL as string;
-const authorization = process.env.AUTHORIZATION as string;
+const nlxApiKey = process.env.NLX_API_KEY as string;
+
+console.log(botUrl, nlxApiKey);
 
 standalone({
   config: {
     botUrl,
     headers: {
-      authorization
+      "nlx-api-key": nlxApiKey
     },
     greetingMessages: ["Hi there"]
   },
@@ -20,7 +22,7 @@ standalone({
   },
   inputPlaceholder: "Say something...",
   initiallyExpanded: true,
-  lowLevel: conversation => {
+  lowLevel: _ => {
     // console.log(conversation);
     // conversation.subscribe(messages => {});
     // etc.

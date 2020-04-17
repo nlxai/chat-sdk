@@ -1,13 +1,12 @@
 import createConversation, { Config } from "../src/index";
 
 const botUrl = process.env.BOT_URL as string;
-
-const authorization = process.env.AUTHORIZATION as string;
+const nlxApiKey = process.env.NLX_API_KEY as string;
 
 const testConfig: Config = {
   botUrl,
   headers: {
-    authorization
+    "nlx-api-key": nlxApiKey
   }
 };
 

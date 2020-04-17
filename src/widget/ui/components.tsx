@@ -193,7 +193,7 @@ export const Pin = styled.button<{}>`
 
 // PinBubble
 
-export const PinBubble: React.SFC<{
+export const PinBubble: React.FunctionComponent<{
   isActive: boolean;
   content: string;
   onClick: () => void;
@@ -295,9 +295,11 @@ export const PinBubbleButton = styled.button<{}>`
 
 export const ChoicesContainer = styled.div<{}>`
   margin-top: 10px;
+  margin-bottom: -6px;
 
   > * {
-    margin-right: 10px;
+    margin-right: 6px;
+    margin-bottom: 6px;
   }
 
   > :last-child {
@@ -335,12 +337,12 @@ export const ChoiceButton = styled.button<{
     ${focusShadow(props.theme)}
   }
       `}
-  height: 30px;
+  height: 26px;
   border-radius: 15px;
   border: 1px solid ${props => props.theme.primaryColor};
   font-size: ${constants.fontSize}px;
   font-family: ${props => props.theme.fontFamily};
-  padding: 0 10px;
+  padding: 0 12px;
 
   :focus {
     outline: none;
