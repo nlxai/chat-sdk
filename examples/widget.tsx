@@ -3,8 +3,6 @@ import { standalone } from "../src/widget";
 const botUrl = process.env.BOT_URL as string;
 const nlxApiKey = process.env.NLX_API_KEY as string;
 
-console.log(botUrl, nlxApiKey);
-
 standalone({
   config: {
     botUrl,

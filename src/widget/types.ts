@@ -1,4 +1,4 @@
-import createConversation, { Config, ConversationHandler } from "../index";
+import { Config, ConversationHandler } from "../index";
 
 export interface Props {
   config: Config;

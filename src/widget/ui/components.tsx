@@ -6,99 +6,7 @@ import tinycolor from "tinycolor2";
 
 const styled = genericStyled as CreateStyled<Theme>;
 
-// Styled components
-
-export const Container = styled.div<{}>`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 320px;
-  height: calc(100vh - 120px);
-  border-radius: 10px;
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
-  background-color: ${props => props.theme.white};
-  z-index: ${constants.largeZIndex};
-
-  & > *,
-  & > button {
-    font-family: ${props => props.theme.fontFamily};
-  }
-`;
-
-export const Main = styled.div<{}>`
-  height: calc(100% - ${constants.bottomHeight}px);
-  overflow: auto;
-`;
-
-export const MessageGroups = styled.div<{}>`
-  padding: 20px;
-  box-sizing: border-box;
-
-  & > * {
-    margin-bottom: 20px;
-  }
-
-  & > :last-child {
-    margin-bottom: 0px;
-  }
-`;
-
-export const MessageGroup = styled.div<{}>`
-  display: flex;
-  flex-direction: column;
-
-  & > * {
-    margin-bottom: 3px;
-  }
-
-  & > :last-child {
-    margin-bottom: 0px;
-  }
-`;
-
-export const Message = styled.div<{ type: "user" | "bot" }>`
-  background-color: ${props =>
-    props.type === "user"
-      ? props.theme.darkMessageColor
-      : props.theme.lightMessageColor};
-  color: ${props => (props.type === "user" ? props.theme.white : "#000")};
-  padding: 6px 10px;
-  max-width: calc(100% - 20px);
-  ${props =>
-    props.type === "user"
-      ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
-      : "margin-right: 20px; margin-left: 0; border-radius: 10px 10px 10px 0; align-self: flex-start;"}
-`;
-
-export const MessageBody = styled.p<{}>`
-  margin: 0;
-  font-size: ${constants.fontSize}px;
-  a,
-  a:visited {
-    color: inherit;
-  }
-  img {
-    max-width: 80px;
-    max-height: 60px;
-  }
-`;
-
-export const Bottom = styled.div<{}>`
-  height: ${constants.bottomHeight}px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  border-top: 1px solid #cecece;
-
-  > * {
-    margin-right: 10px;
-  }
-
-  > :last-child {
-    margin-right: 0;
-  }
-`;
+// Mixins 
 
 export const hoverBg = `
   :hover::after {
@@ -118,6 +26,140 @@ export const focusShadow = (theme: Theme) => `
     .setAlpha(0.15)
     .toRgbString()};
 `;
+
+// PendingMessageDots
+
+const Dot = styled.div<{}>`
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #cecece;
+  margin-right: 4px;
+  &:last-of-type {
+    margin-right: 0;
+  }
+`
+
+const DotsContainer = styled.div<{}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const PendingMessageDots: React.FunctionComponent<{}> = () => (
+  <DotsContainer>
+    <Dot/>
+    <Dot/>
+    <Dot/>
+  </DotsContainer>
+)
+
+// Container
+
+export const Container = styled.div<{}>`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  height: calc(100vh - 120px);
+  border-radius: 10px;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
+  background-color: ${props => props.theme.white};
+  z-index: ${constants.largeZIndex};
+
+  & > *,
+  & > button {
+    font-family: ${props => props.theme.fontFamily};
+  }
+`;
+
+// Main
+
+export const Main = styled.div<{}>`
+  height: calc(100% - ${constants.bottomHeight}px);
+  overflow: auto;
+`;
+
+// MessageGroups
+
+export const MessageGroups = styled.div<{}>`
+  padding: 20px;
+  box-sizing: border-box;
+
+  & > * {
+    margin-bottom: 20px;
+  }
+
+  & > :last-child {
+    margin-bottom: 0px;
+  }
+`;
+
+// MessageGroup
+
+export const MessageGroup = styled.div<{}>`
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    margin-bottom: 3px;
+  }
+
+  & > :last-child {
+    margin-bottom: 0px;
+  }
+`;
+
+// Message
+
+export const Message = styled.div<{ type: "user" | "bot" }>`
+  background-color: ${props =>
+    props.type === "user"
+      ? props.theme.darkMessageColor
+      : props.theme.lightMessageColor};
+  color: ${props => (props.type === "user" ? props.theme.white : "#000")};
+  padding: 6px 10px;
+  max-width: calc(100% - 20px);
+  ${props =>
+    props.type === "user"
+      ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
+      : "margin-right: 20px; margin-left: 0; border-radius: 10px 10px 10px 0; align-self: flex-start;"}
+`;
+
+// MessageBody
+
+export const MessageBody = styled.p<{}>`
+  margin: 0;
+  font-size: ${constants.fontSize}px;
+  a,
+  a:visited {
+    color: inherit;
+  }
+  img {
+    max-width: 80px;
+    max-height: 60px;
+  }
+`;
+
+// Bottom
+
+export const Bottom = styled.div<{}>`
+  height: ${constants.bottomHeight}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-top: 1px solid #cecece;
+
+  > * {
+    margin-right: 10px;
+  }
+
+  > :last-child {
+    margin-right: 0;
+  }
+`;
+
 
 export const IconButton = styled.button<{ disabled?: boolean }>`
   height: 35px;
@@ -259,6 +301,8 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   }
 `;
 
+// PinBubbleButton
+
 export const PinBubbleButton = styled.button<{}>`
   width: 35px;
   height: 35px;
@@ -291,7 +335,7 @@ export const PinBubbleButton = styled.button<{}>`
   }
 `;
 
-//
+// ChoicesContainer
 
 export const ChoicesContainer = styled.div<{}>`
   margin-top: 10px;
@@ -306,6 +350,8 @@ export const ChoicesContainer = styled.div<{}>`
     margin-right: 0px;
   }
 `;
+
+// ChoiceButtn
 
 export const ChoiceButton = styled.button<{
   disabled?: boolean;
@@ -349,6 +395,8 @@ export const ChoiceButton = styled.button<{
   }
 `;
 
+// TitleBar
+
 export const TitleBar = styled.div<{}>`
   height: 48px;
   padding: 0 20px;
@@ -358,17 +406,23 @@ export const TitleBar = styled.div<{}>`
   justify-content: space-between;
 `;
 
+// TitleContainer
+
 export const TitleContainer = styled.div<{}>`
   display: flex;
   align-items: center;
   justify-content: flex-start;
 `;
 
+// Title
+
 export const Title = styled.p<{}>`
   font-size: 16px;
   font-weight: bold;
   font-family: ${props => props.theme.fontFamily};
 `;
+
+// DiscreteButton
 
 export const DiscreteButton = styled.button<{}>`
   color: #ababab;
@@ -393,6 +447,8 @@ export const DiscreteButton = styled.button<{}>`
     margin-right: 6px;
   }
 `;
+
+// TitleIcon
 
 export const TitleIcon = styled.img<{}>`
   width: 22px;

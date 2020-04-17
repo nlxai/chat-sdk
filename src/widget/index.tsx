@@ -1,9 +1,10 @@
 import snarkdown from "snarkdown";
 import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
+import { ThemeProvider } from "emotion-theming";
+
 import { findSelectedChoice } from "../index";
 import { useChat } from "../react-utils";
-import { ThemeProvider } from "emotion-theming";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as utils from "./utils";
 import * as constants from "./ui/constants";
@@ -228,6 +229,13 @@ export const Widget: React.FunctionComponent<Props> = props => {
                       )}
                     </C.MessageGroup>
                   ))}
+                {chat.waiting && (
+                  <C.MessageGroup>
+                    <C.Message type="bot">
+                      <C.PendingMessageDots />
+                    </C.Message>
+                  </C.MessageGroup>
+                )}
               </C.MessageGroups>
             </C.Main>
             <C.Bottom>
