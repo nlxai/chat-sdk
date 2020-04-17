@@ -1,12 +1,13 @@
 import * as React from "react";
 import genericStyled, { CreateStyled } from "@emotion/styled";
+import { keyframes } from "@emotion/core";
 import { Theme } from "../types";
 import * as constants from "./constants";
 import tinycolor from "tinycolor2";
 
 const styled = genericStyled as CreateStyled<Theme>;
 
-// Mixins 
+// Mixins
 
 export const hoverBg = `
   :hover::after {
@@ -28,31 +29,60 @@ export const focusShadow = (theme: Theme) => `
 `;
 
 // PendingMessageDots
+//
+const bounceKeyframes = keyframes`
+0% {
+  transform: translate3d(0, 0, 0);
+}
+
+30% {
+  transform: translate3d(0, -3px, 0);
+}
+
+60% {
+  transform: translate3d(0, 0, 0);
+}
+
+100% {
+  transform: translate3d(0, 0, 0);
+}
+`;
 
 const Dot = styled.div<{}>`
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background-color: #cecece;
+  background-color: #bebebe;
+  animation: ${bounceKeyframes} 1s infinite ease-in-out;
   margin-right: 4px;
   &:last-of-type {
     margin-right: 0;
   }
-`
+  &:nth-of-type(1) {
+    animation-delay: 0s;
+  }
+  &:nth-of-type(2) {
+    animation-delay: -0.15s;
+  }
+  &:nth-of-type(3) {
+    animation-delay: -0.3s;
+  }
+`;
 
 const DotsContainer = styled.div<{}>`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 4px 0;
 `;
 
 export const PendingMessageDots: React.FunctionComponent<{}> = () => (
   <DotsContainer>
-    <Dot/>
-    <Dot/>
-    <Dot/>
+    <Dot />
+    <Dot />
+    <Dot />
   </DotsContainer>
-)
+);
 
 // Container
 
@@ -159,7 +189,6 @@ export const Bottom = styled.div<{}>`
     margin-right: 0;
   }
 `;
-
 
 export const IconButton = styled.button<{ disabled?: boolean }>`
   height: 35px;
