@@ -25,11 +25,18 @@ export const standalone = (
   return {
     teardown: () => {
       unmountComponentAtNode(node);
-    }
+    },
   };
 };
 
-export const Widget: React.FunctionComponent<Props> = props => {
+const toStringWithLeadingZero = (n: number): string => {
+  if (n < 10) {
+    return `0${n}`;
+  }
+  return `${n}`;
+};
+
+export const Widget: React.FunctionComponent<Props> = (props) => {
   // Chat
 
   const chat = useChat(props.config);
@@ -96,6 +103,15 @@ export const Widget: React.FunctionComponent<Props> = props => {
       chat.setInputValue("");
     });
 
+  const dateTimestamp = React.useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${toStringWithLeadingZero(
+      d.getMonth() + 1
+    )}-${toStringWithLeadingZero(d.getDate())}-${toStringWithLeadingZero(
+      d.getHours()
+    )}:${toStringWithLeadingZero(d.getMinutes())}`;
+  }, [chat && chat.messages]);
+
   return (
     <ThemeProvider
       theme={{ ...constants.defaultTheme, ...(props.theme || {}) }}
@@ -133,16 +149,16 @@ export const Widget: React.FunctionComponent<Props> = props => {
                                 ? transcript.html({
                                     messages: chat.messages,
                                     titleBar: props.titleBar,
-                                    conversationId: chat.conversationHandler.currentConversationId()
+                                    conversationId: chat.conversationHandler.currentConversationId(),
                                   })
-                                : ""
+                                : "",
                             ],
                             {
-                              type: "text/plain"
+                              type: "text/plain",
                             }
                           )
                         )}
-                        download="chat.html"
+                        download={`chat-${dateTimestamp}.html`}
                       >
                         Download
                       </a>
@@ -164,7 +180,7 @@ export const Widget: React.FunctionComponent<Props> = props => {
                 {utils
                   .groupWhile(
                     chat.messages.filter(
-                      message =>
+                      (message) =>
                         !(
                           message.author === "user" &&
                           message.payload.type === "choice"
@@ -179,7 +195,7 @@ export const Widget: React.FunctionComponent<Props> = props => {
                           <C.Message type="bot" key={groupMessageIndex}>
                             <C.MessageBody
                               dangerouslySetInnerHTML={{
-                                __html: snarkdown(message.text)
+                                __html: snarkdown(message.text),
                               }}
                             />
                             {message.choices.length > 0 && (
@@ -198,14 +214,14 @@ export const Widget: React.FunctionComponent<Props> = props => {
                                             selected:
                                               selectedChoice &&
                                               selectedChoice.choiceId ===
-                                                choice.choiceId
+                                                choice.choiceId,
                                           }
                                         : {
                                             onClick: () => {
                                               chat.conversationHandler.sendChoice(
                                                 choice.choiceId
                                               );
-                                            }
+                                            },
                                           };
                                     })()}
                                   >
@@ -220,7 +236,7 @@ export const Widget: React.FunctionComponent<Props> = props => {
                             <C.Message type="user" key={groupMessageIndex}>
                               <C.MessageBody
                                 dangerouslySetInnerHTML={{
-                                  __html: snarkdown(message.payload.text)
+                                  __html: snarkdown(message.payload.text),
                                 }}
                               />
                             </C.Message>
@@ -243,10 +259,10 @@ export const Widget: React.FunctionComponent<Props> = props => {
                 ref={inputRef}
                 value={chat.inputValue}
                 placeholder={props.inputPlaceholder || "Say something.."}
-                onChange={e => {
+                onChange={(e) => {
                   chat.setInputValue(e.target.value);
                 }}
-                onKeyPress={e => {
+                onKeyPress={(e) => {
                   if (e.key === "Enter" && submit) {
                     submit();
                   }
