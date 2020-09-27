@@ -24,6 +24,7 @@ export interface BotMessage {
   text: string;
   choices: Choice[];
   selectedChoice: SelectedChoice;
+  payload?: string;
 }
 
 export type UserMessagePayload =
@@ -76,6 +77,7 @@ export const findSelectedChoice = (
 
 export interface Config {
   botUrl: string;
+  userId?: string;
   failureMessages?: string[];
   greetingMessages?: string[];
   headers: {
@@ -84,13 +86,14 @@ export interface Config {
 }
 
 const defaultFailureMessages = [
-  "We encountered an issue while contacting the server. Please try again in a few moments."
+  "We encountered an issue while contacting the server. Please try again in a few moments.",
 ];
 
 export type State = Message[];
 
 export interface ConversationHandler {
   sendText: (text: string) => void;
+  sendSlots: (slots: Array<{ slotId: string; value: any }>) => void;
   sendChoice: (choiceId: string) => void;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
@@ -102,6 +105,7 @@ export interface ConversationHandler {
 interface InternalState {
   messages: Message[];
   conversationId?: string;
+  userId?: string;
 }
 
 const fromInternal = (internalState: InternalState): State =>
@@ -121,32 +125,33 @@ const findChoice = (messages: Message[], choiceId: string): Choice | null => {
   const [last, ...restReversed] = [...messages].reverse();
   return (
     (last.author === "bot" &&
-      find(choice => choice.choiceId === choiceId, last.choices)) ||
+      find((choice) => choice.choiceId === choiceId, last.choices)) ||
     findChoice(restReversed.reverse(), choiceId)
   );
 };
 
 const createConversation = (config: Config): ConversationHandler => {
   let state: InternalState = {
-    messages: (config.greetingMessages || []).map(greetingMessage => ({
+    messages: (config.greetingMessages || []).map((greetingMessage) => ({
       author: "bot",
       receivedAt: new Date().getTime(),
       text: greetingMessage,
       choices: [],
-      selectedChoice: undefined
+      selectedChoice: undefined,
     })),
-    conversationId: undefined
+    userId: config.userId,
+    conversationId: undefined,
   };
   const setState = (
     change: Partial<InternalState> & { payload?: string }
   ): void => {
     state = {
       ...state,
-      ...change
+      ...change,
     };
-    subscribers.forEach(subscriber =>
+    subscribers.forEach((subscriber) =>
       subscriber(fromInternal(state), {
-        payload: change.payload
+        payload: change.payload,
       })
     );
   };
@@ -161,16 +166,36 @@ const createConversation = (config: Config): ConversationHandler => {
             receivedAt: new Date().getTime(),
             text: messageBody,
             choices: [],
-            selectedChoice: undefined
+            selectedChoice: undefined,
           })
-        )
-      ]
+        ),
+      ],
+    });
+  };
+
+  const messageResposeHandler = (response: any) => {
+    setState({
+      conversationId: response.conversationId,
+      messages: [
+        ...state.messages,
+        ...response.messages.map((message: ResponseMessage, index: number) => ({
+          author: "bot",
+          receivedAt: new Date().getTime(),
+          text: message.text,
+          choices: message.choices || [],
+          payload:
+            response.messages.length === index + 1
+              ? response.payload
+              : undefined,
+        })),
+      ],
+      payload: response.payload,
     });
   };
 
   let subscribers: Subscriber[] = [];
   return {
-    sendText: text => {
+    sendText: (text) => {
       setState({
         messages: [
           ...state.messages,
@@ -179,45 +204,56 @@ const createConversation = (config: Config): ConversationHandler => {
             receivedAt: new Date().getTime(),
             payload: {
               type: "text",
-              text
-            }
-          }
-        ]
+              text,
+            },
+          },
+        ],
       });
       fetch(config.botUrl, {
         method: "POST",
         headers: {
           ...config.headers,
-          "content-type": "application/json"
+          "content-type": "application/json",
         },
         body: JSON.stringify({
+          userId: state.userId,
           conversationId: state.conversationId,
           request: {
             unstructured: {
-              text
-            }
-          }
-        })
+              text,
+            },
+          },
+        }),
       })
-        .then(res => res.json())
-        .then(response => {
-          setState({
-            conversationId: response.conversationId,
-            messages: [
-              ...state.messages,
-              ...response.messages.map((message: ResponseMessage) => ({
-                author: "bot",
-                receivedAt: new Date().getTime(),
-                text: message.text,
-                choices: message.choices || []
-              }))
-            ],
-            payload: response.payload
-          });
-        })
+        .then((res) => res.json())
+        .then(messageResposeHandler)
         .catch(failureHandler);
     },
-    sendChoice: choiceId => {
+    sendSlots: (slots) => {
+      setState({
+        messages: [...state.messages],
+      });
+      fetch(config.botUrl, {
+        method: "POST",
+        headers: {
+          ...config.headers,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: state.userId,
+          conversationId: state.conversationId,
+          request: {
+            structured: {
+              slots,
+            },
+          },
+        }),
+      })
+        .then((res) => res.json())
+        .then(messageResposeHandler)
+        .catch(failureHandler);
+    },
+    sendChoice: (choiceId) => {
       const choice = findChoice(state.messages, choiceId);
       const newMessages: Message[] = [
         ...state.messages,
@@ -227,64 +263,51 @@ const createConversation = (config: Config): ConversationHandler => {
           payload: {
             type: "choice",
             choiceId,
-            choiceText: choice ? choice.choiceText : "Selection"
-          }
-        }
+            choiceText: choice ? choice.choiceText : "Selection",
+          },
+        },
       ];
       setState({
-        messages: newMessages
+        messages: newMessages,
       });
       fetch(config.botUrl, {
         method: "POST",
         headers: {
           ...config.headers,
-          "content-type": "application/json"
+          "content-type": "application/json",
         },
         body: JSON.stringify({
+          userId: state.userId,
           conversationId: state.conversationId,
           request: {
             structured: {
-              choiceId
-            }
-          }
-        })
+              choiceId,
+            },
+          },
+        }),
       })
-        .then(res => res.json())
-        .then(response => {
-          setState({
-            conversationId: response.conversationId,
-            messages: [
-              ...state.messages,
-              ...response.messages.map((message: ResponseMessage) => ({
-                author: "bot",
-                receivedAt: new Date().getTime(),
-                text: message.text,
-                choices: message.choices || []
-              }))
-            ],
-            payload: response.payload
-          });
-        })
+        .then((res) => res.json())
+        .then(messageResposeHandler)
         .catch(failureHandler);
     },
     currentConversationId: () => {
       return state.conversationId;
     },
-    subscribe: subscriber => {
+    subscribe: (subscriber) => {
       subscribers = [...subscribers, subscriber];
       subscriber(fromInternal(state), {});
     },
-    unsubscribe: subscriber => {
-      subscribers = subscribers.filter(fn => fn !== subscriber);
+    unsubscribe: (subscriber) => {
+      subscribers = subscribers.filter((fn) => fn !== subscriber);
     },
     unsubscribeAll: () => {
       subscribers = [];
     },
     reset: () => {
       setState({
-        conversationId: undefined
+        conversationId: undefined,
       });
-    }
+    },
   };
 };
 
