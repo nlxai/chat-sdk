@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { useChat } from "../src/react-utils";
 
@@ -8,14 +8,85 @@ const nlxApiKey = process.env.NLX_API_KEY as string;
 
 const FakeMapWidget: React.FC<{
   onSelect: (latlng: [number, number]) => void;
-}> = (props) => (
-  <div
-    style={{ width: 80, height: 80, borderRadius: 6, backgroundColor: "#fff" }}
-    onClick={() => {
-      props.onSelect([80, 90]);
-    }}
-  ></div>
-);
+}> = (props) => {
+  const [coord, setCoord] = useState<null | { x: number; y: number }>(null);
+  const [sentCoord, setSentCoord] = useState<null | { x: number; y: number }>(
+    null
+  );
+
+  return (
+    <div
+      style={{
+        width: 360,
+        height: 180,
+        position: "relative",
+        borderRadius: 6,
+        backgroundColor: "#fff",
+      }}
+      onMouseMove={(ev) => {
+        const rect = ev.currentTarget.getBoundingClientRect();
+        setCoord({
+          x: ev.pageX - rect.left,
+          y: ev.pageY - window.pageYOffset - rect.top,
+        });
+      }}
+      onMouseLeave={() => {
+        setCoord(null);
+      }}
+      onClick={() => {
+        if (coord) {
+          setSentCoord(coord);
+          props.onSelect([coord.x, coord.y]);
+        }
+      }}
+    >
+      {coord && (
+        <div
+          style={{
+            width: 8,
+            height: 8,
+            left: coord.x - 4,
+            top: coord.y - 4,
+            borderRadius: "50%",
+            position: "absolute",
+            background: "#343434",
+            color: "#898989",
+          }}
+        >
+          <span
+            style={{
+              position: "relative",
+              top: 10,
+              left: 10,
+            }}
+          >{`${coord.x},${coord.y}`}</span>
+        </div>
+      )}
+      {sentCoord && (
+        <div
+          style={{
+            width: 8,
+            height: 8,
+            left: sentCoord.x - 4,
+            top: sentCoord.y - 4,
+            borderRadius: "50%",
+            position: "absolute",
+            background: "#000",
+            color: "#000",
+          }}
+        >
+          <span
+            style={{
+              position: "relative",
+              top: 10,
+              left: 10,
+            }}
+          >{`${sentCoord.x},${sentCoord.y}`}</span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const App: React.FC<{}> = () => {
   const chat = useChat({
@@ -50,7 +121,7 @@ const App: React.FC<{}> = () => {
           <p className="text-xl">My Widget</p>
         </div>
         <div
-          style={{ height: 360 }}
+          style={{ height: 460 }}
           className="p-3 max-h-full overflow-y-auto space-y-2"
           ref={chat.messagesContainerRef}
         >
