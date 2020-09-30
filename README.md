@@ -36,6 +36,10 @@ Send a simple text to your bot.
 
 Your bot may send a list of choices to choose from, each with a `choiceText` and a `choiceId` field. You can use `choiceText` as button labels, and include the `choiceId` in this method when sending responses.
 
+#### `sendSlots: (slots: Array<{ slotId: string; value: unknown }>) => void`
+
+Send slot values directly through custom widgets such as interactive maps.
+
 #### `subscribe: (subscriber: (messages: Message[], additional: { payload?: string }) => void) => void`
 
 Subscribe to the current state of messages whenever there is a change.
