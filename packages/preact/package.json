@@ -1,0 +1,27 @@
+{
+  "name": "@nlxchat/preact",
+  "version": "0.1.0",
+  "description": "SDK to talk to NLX bots",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rm -rf lib && mkdir lib && tsc",
+    "prepublish": "npm run build"
+  },
+  "author": "Peter Szerzo <peter@nlx.ai>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^11.15.11",
+    "@types/ramda": "^0.26.44",
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
+    "prettier": "^1.19.1"
+  },
+  "dependencies": {
+    "@nlxchat/core": "^0.1.0",
+    "ramda": "^0.26.1",
+    "whatwg-fetch": "^3.0.0"
+  },
+  "peerDependencies": {
+    "preact": "^10.5.4"
+  }
+}

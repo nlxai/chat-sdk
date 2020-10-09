@@ -1,4 +1,4 @@
-import { Ref, useState, useEffect, useRef } from "react";
+import { Ref, useState, useEffect, useRef } from "preact/hooks";
 
 // Code from here on out is identical in the React and Preact packages
 import last from "ramda/src/last";

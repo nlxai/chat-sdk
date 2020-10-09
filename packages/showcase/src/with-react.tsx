@@ -1,12 +1,18 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom";
-import { useChat } from "@nlxchat/react";
+/*
+import React from "react";
+import { FunctionComponent, useState, useCallback } from "react";
+import { render } from "react-dom";
+ */
+
+import { h, render, FunctionComponent } from "preact";
+import { useState, useCallback } from "preact/hooks";
+import { useChat } from "@nlxchat/preact";
 
 const botUrl = process.env.BOT_URL as string;
 
 const nlxApiKey = process.env.NLX_API_KEY as string;
 
-const FakeMapWidget: React.FC<{
+const FakeMapWidget: FunctionComponent<{
   onSelect: (latlng: [number, number]) => void;
 }> = (props) => {
   const [coord, setCoord] = useState<null | { x: number; y: number }>(null);
@@ -88,7 +94,7 @@ const FakeMapWidget: React.FC<{
   );
 };
 
-const App: React.FC<{}> = () => {
+const App: FunctionComponent<{}> = () => {
   const chat = useChat({
     botUrl,
     headers: {
@@ -97,7 +103,7 @@ const App: React.FC<{}> = () => {
   });
 
   // Auto-focus input
-  const inputRef = React.useCallback((node) => {
+  const inputRef = useCallback((node) => {
     node.focus();
   }, []);
 
@@ -185,4 +191,4 @@ const App: React.FC<{}> = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById("app"));
+render(<App />, document.getElementById("app"));
