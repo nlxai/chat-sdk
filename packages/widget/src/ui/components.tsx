@@ -1,7 +1,7 @@
 import * as React from "react";
 import genericStyled, { CreateStyled } from "@emotion/styled";
 import { keyframes } from "@emotion/core";
-import { Theme } from "../types";
+import { Theme } from "../theme";
 import * as constants from "./constants";
 import tinycolor from "tinycolor2";
 
@@ -94,12 +94,12 @@ export const Container = styled.div<{}>`
   height: calc(100vh - 120px);
   border-radius: 10px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
-  background-color: ${props => props.theme.white};
+  background-color: ${(props) => props.theme.white};
   z-index: ${constants.largeZIndex};
 
   & > *,
   & > button {
-    font-family: ${props => props.theme.fontFamily};
+    font-family: ${(props) => props.theme.fontFamily};
   }
 `;
 
@@ -143,14 +143,14 @@ export const MessageGroup = styled.div<{}>`
 // Message
 
 export const Message = styled.div<{ type: "user" | "bot" }>`
-  background-color: ${props =>
+  background-color: ${(props) =>
     props.type === "user"
       ? props.theme.darkMessageColor
       : props.theme.lightMessageColor};
-  color: ${props => (props.type === "user" ? props.theme.white : "#000")};
+  color: ${(props) => (props.type === "user" ? props.theme.white : "#000")};
   padding: 6px 10px;
   max-width: calc(100% - 20px);
-  ${props =>
+  ${(props) =>
     props.type === "user"
       ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
       : "margin-right: 20px; margin-left: 0; border-radius: 10px 10px 10px 0; align-self: flex-start;"}
@@ -196,7 +196,7 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   border-radius: 18px;
   padding: 8px;
   font-size: ${constants.fontSize}px;
-  ${props =>
+  ${(props) =>
     props.disabled
       ? `
   opacity: 0.6;
@@ -205,14 +205,14 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   `}
   border: 0;
   box-shadow: none;
-  background-color: ${props => props.theme.primaryColor};
-  color: ${props => props.theme.white};
+  background-color: ${(props) => props.theme.primaryColor};
+  color: ${(props) => props.theme.white};
   position: relative;
   cursor: pointer;
 
   :focus {
     outline: none;
-    ${props => focusShadow(props.theme)}
+    ${(props) => focusShadow(props.theme)}
   }
 
   ${hoverBg}
@@ -226,18 +226,18 @@ export const Input = styled.input<{}>`
   padding: 0 14px;
   border: 1px solid #cecece;
   font-size: ${constants.fontSize}px;
-  font-family: ${props => props.theme.fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
 
   :focus {
     outline: none;
-    border: 1px solid ${props => props.theme.primaryColor};
-    ${props => focusShadow(props.theme)}
+    border: 1px solid ${(props) => props.theme.primaryColor};
+    ${(props) => focusShadow(props.theme)}
   }
 `;
 
 export const Pin = styled.button<{}>`
   position: fixed;
-  background-color: ${props => props.theme.primaryColor};
+  background-color: ${(props) => props.theme.primaryColor};
   border: 0;
   right: 20px;
   bottom: 20px;
@@ -246,7 +246,7 @@ export const Pin = styled.button<{}>`
   border-radius: 30px;
   cursor: pointer;
   padding: 15px;
-  color: ${props => props.theme.white};
+  color: ${(props) => props.theme.white};
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.4);
   z-index: ${constants.largeZIndex};
 
@@ -268,7 +268,7 @@ export const PinBubble: React.FunctionComponent<{
   isActive: boolean;
   content: string;
   onClick: () => void;
-}> = props => (
+}> = (props) => (
   <PinBubbleContainer isActive={props.isActive}>
     <PinBubbleButton onClick={props.onClick}>
       <span>×</span>
@@ -286,7 +286,7 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   width: fit-content;
   white-space: pre;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
-  font-family: ${props => props.theme.fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
   height: 35px;
   font-size: 16px;
   display: flex;
@@ -295,25 +295,25 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   line-height: 1;
   z-index: ${constants.largeZIndex};
   padding: 0px 16px 0px 0px;
-  background-color: ${props =>
+  background-color: ${(props) =>
     tinycolor(props.theme.primaryColor)
       .darken(10)
       .toRgbString()};
   color: #fff;
   transition: opacity 0.2s, transform 0.2s;
-  ${props =>
-    props.isActive
-      ? `
+  ${(props) =>
+      props.isActive
+        ? `
     opacity: 1;
     transform: translate3d(0, 0, 0);
     pointer-events: all;
     `
-      : `
+        : `
     opacity: 0;
     transform: translate3d(0, 10px, 0);
     pointer-events: none;
   `}
-  ::after {
+    ::after {
     position: absolute;
     top: 35px;
     right: 26px;
@@ -323,7 +323,7 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
     border-top: 6px solid
-      ${props =>
+      ${(props) =>
         tinycolor(props.theme.primaryColor)
           .darken(10)
           .toRgbString()};
@@ -386,7 +386,7 @@ export const ChoiceButton = styled.button<{
   disabled?: boolean;
   selected?: boolean;
 }>`
-  ${props =>
+  ${(props) =>
     props.selected
       ? `
   background-color: ${props.theme.primaryColor};
@@ -396,7 +396,7 @@ export const ChoiceButton = styled.button<{
   background-color: ${props.theme.white};
   color: ${props.theme.primaryColor};
   `}
-  ${props =>
+  ${(props) =>
     props.disabled
       ? `
   opacity: 0.4;
@@ -414,9 +414,9 @@ export const ChoiceButton = styled.button<{
       `}
   height: 26px;
   border-radius: 15px;
-  border: 1px solid ${props => props.theme.primaryColor};
+  border: 1px solid ${(props) => props.theme.primaryColor};
   font-size: ${constants.fontSize}px;
-  font-family: ${props => props.theme.fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
   padding: 0 12px;
 
   :focus {
@@ -448,7 +448,7 @@ export const TitleContainer = styled.div<{}>`
 export const Title = styled.p<{}>`
   font-size: 16px;
   font-weight: bold;
-  font-family: ${props => props.theme.fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
 `;
 
 // DiscreteButton

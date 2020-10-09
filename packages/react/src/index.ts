@@ -3,8 +3,8 @@ import last from "ramda/src/last";
 import createConversation, {
   Config,
   ConversationHandler,
-  Message
-} from "../index";
+  Message,
+} from "@nlxchat/core";
 
 export interface ChatHook {
   conversationHandler: ConversationHandler;
@@ -18,7 +18,7 @@ export interface ChatHook {
 export const useChat = (config: Config): ChatHook | null => {
   const [
     conversation,
-    setConversation
+    setConversation,
   ] = React.useState<null | ConversationHandler>(null);
 
   const [messages, setMessages] = React.useState<Message[]>([]);
@@ -36,7 +36,7 @@ export const useChat = (config: Config): ChatHook | null => {
 
   React.useEffect(() => {
     conversation &&
-      conversation.subscribe(msgs => {
+      conversation.subscribe((msgs) => {
         setMessages(msgs);
       });
     return () => {
@@ -88,6 +88,6 @@ export const useChat = (config: Config): ChatHook | null => {
     messages,
     waiting: isWaiting && waitTimeoutPassed,
     messagesContainerRef,
-    setInputValue
+    setInputValue,
   };
 };

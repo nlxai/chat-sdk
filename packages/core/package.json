@@ -1,0 +1,23 @@
+{
+  "name": "@nlxchat/core",
+  "version": "0.1.0",
+  "description": "NLX Chat SDK core",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rm -rf lib && mkdir lib && tsc",
+    "prepublish": "npm run build"
+  },
+  "author": "Peter Szerzo <peter@nlx.ai>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^11.15.11",
+    "@types/ramda": "^0.26.44",
+    "prettier": "^1.19.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "ramda": "^0.26.1",
+    "snarkdown": "^1.2.2"
+  }
+}

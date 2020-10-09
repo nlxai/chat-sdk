@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import { useChat } from "../src/react-utils";
+import { useChat } from "@nlxchat/react";
 
 const botUrl = process.env.BOT_URL as string;
 

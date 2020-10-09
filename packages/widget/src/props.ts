@@ -1,4 +1,5 @@
-import { Config, ConversationHandler } from "../index";
+import { Config, ConversationHandler } from "@nlxchat/core";
+import { Theme } from "./theme";
 
 export interface Props {
   config: Config;
@@ -13,13 +14,4 @@ export interface Props {
   inputPlaceholder?: string;
   initiallyExpanded?: boolean;
   lowLevel?: (conversationHandler: ConversationHandler) => void;
-}
-
-// Colors may be in any CSS-compatible format like rgb(50, 50, 50) or #aaa
-export interface Theme {
-  primaryColor: string;
-  darkMessageColor: string;
-  lightMessageColor: string;
-  white: string;
-  fontFamily: string;
 }

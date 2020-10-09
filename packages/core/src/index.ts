@@ -1,10 +1,4 @@
-import Promise from "promise-polyfill";
-import "whatwg-fetch";
 import find from "ramda/src/find";
-
-if (!global.Promise) {
-  global.Promise = Promise;
-}
 
 // Domain
 

@@ -1,4 +1,4 @@
-import { Theme } from "../types";
+import { Theme } from "../theme";
 
 export const bottomHeight = 60;
 
@@ -11,5 +11,5 @@ export const defaultTheme: Theme = {
   darkMessageColor: "#003377",
   lightMessageColor: "#EFEFEF",
   white: "#FFFFFF",
-  fontFamily: "'Source Sans Pro', sans-serif"
+  fontFamily: "'Source Sans Pro', sans-serif",
 };

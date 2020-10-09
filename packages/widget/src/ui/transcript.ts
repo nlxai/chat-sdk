@@ -1,12 +1,12 @@
 import snarkdown from "snarkdown";
-import { Message } from "../../index";
+import { Message } from "@nlxchat/core";
 import { defaultTheme } from "./constants";
-import { Props } from "../types";
+import { Props } from "../props";
 
 export const html = ({
   messages,
   titleBar,
-  conversationId
+  conversationId,
 }: {
   messages: Message[];
   titleBar: Props["titleBar"];
@@ -176,7 +176,7 @@ const messageToHtml = (message: Message): string =>
       message.choices && message.choices.length > 0
         ? `<div class="choices">${message.choices
             .map(
-              choice => `
+              (choice) => `
     <button>${choice.choiceText}</button>
     `
             )

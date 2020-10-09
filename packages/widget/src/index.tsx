@@ -3,12 +3,12 @@ import * as React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { ThemeProvider } from "emotion-theming";
 
-import { findSelectedChoice } from "../index";
-import { useChat } from "../react-utils";
+import { findSelectedChoice } from "@nlxchat/core";
+import { useChat } from "@nlxchat/react";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as utils from "./utils";
 import * as constants from "./ui/constants";
-import { Props } from "./types";
+import { Props } from "./props";
 import * as C from "./ui/components";
 import * as transcript from "./ui/transcript";
 
