@@ -37,5 +37,6 @@
     "snarkdown": "^1.2.2",
     "tinycolor2": "^1.4.1",
     "whatwg-fetch": "^3.0.0"
-  }
+  },
+  "gitHead": "64c9fe6174587d8ecaa2f7c45286b878871c647c"
 }

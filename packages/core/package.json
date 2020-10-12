@@ -19,5 +19,6 @@
   "dependencies": {
     "ramda": "^0.26.1",
     "snarkdown": "^1.2.2"
-  }
+  },
+  "gitHead": "64c9fe6174587d8ecaa2f7c45286b878871c647c"
 }
