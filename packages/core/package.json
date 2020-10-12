@@ -17,8 +17,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "ramda": "^0.26.1",
-    "snarkdown": "^1.2.2"
+    "ramda": "^0.27.1"
   },
   "gitHead": "64c9fe6174587d8ecaa2f7c45286b878871c647c"
 }

@@ -18,8 +18,7 @@
   },
   "dependencies": {
     "@nlxchat/core": "^0.4.0",
-    "ramda": "^0.26.1",
-    "whatwg-fetch": "^3.0.0"
+    "ramda": "^0.27.1"
   },
   "peerDependencies": {
     "preact": "^10.5.4"
