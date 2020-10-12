@@ -25,10 +25,10 @@
     "uglifyify": "^5.0.2"
   },
   "dependencies": {
-    "@nlxchat/core": "^0.1.0",
-    "@nlxchat/react": "^0.1.0",
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
+    "@nlxchat/core": "^0.1.0",
+    "@nlxchat/react": "^0.1.0",
     "emotion-theming": "^10.0.27",
     "promise-polyfill": "^8.1.3",
     "ramda": "^0.26.1",
