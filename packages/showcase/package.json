@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/showcase",
-  "version": "0.1.1",
+  "version": "0.4.0",
   "private": true,
   "description": "SDK to talk to NLX bots",
   "main": "lib/index.js",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
-    "@nlxchat/react": "^0.1.1",
+    "@nlxchat/react": "^0.4.0",
     "emotion-theming": "^10.0.27",
     "preact": "^10.5.4",
     "promise-polyfill": "^8.1.3",
