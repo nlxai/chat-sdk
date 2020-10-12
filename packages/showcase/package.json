@@ -4,6 +4,7 @@
   "private": true,
   "description": "SDK to talk to NLX bots",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "start": "parcel src/index.html"
   },

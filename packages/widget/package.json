@@ -3,6 +3,7 @@
   "version": "0.4.0",
   "description": "SDK to talk to NLX bots",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf lib && mkdir lib && tsc",
     "prepublish": "npm run build"
