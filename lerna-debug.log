@@ -1,8 +1,0 @@
-56 error Error: Command failed: git add -- packages/core/package.json packages/core/package-lock.json packages/react/package.json packages/preact/package.json packages/widget/package.json packages/showcase/package.json packages/showcase/package-lock.json lerna.json
-56 error The following paths are ignored by one of your .gitignore files:
-56 error packages/core/package-lock.json
-56 error packages/showcase/package-lock.json
-56 error Use -f if you really want to add them.
-56 error
-56 error     at makeError (/Users/psz/Documents/projects/nlx/chat-sdk/node_modules/execa/index.js:174:9)
-56 error     at /Users/psz/Documents/projects/nlx/chat-sdk/node_modules/execa/index.js:278:16
