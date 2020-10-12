@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/preact",
-  "version": "0.4.1-alpha.0",
+  "version": "0.4.1-alpha.1",
   "description": "SDK to talk to NLX bots",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -18,7 +18,7 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "@nlxchat/core": "^0.4.1-alpha.0",
+    "@nlxchat/core": "^0.4.1-alpha.1",
     "ramda": "^0.27.1"
   },
   "peerDependencies": {
