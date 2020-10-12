@@ -27,5 +27,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "tinycolor2": "^1.4.1"
-  }
+  },
+  "gitHead": "2f1bd3e179cfb6bc88061e108667d3b49af13251"
 }
