@@ -1,7 +1,6 @@
 {
   "name": "@nlxchat/showcase",
   "version": "0.4.1-alpha.0",
-  "private": true,
   "description": "SDK to talk to NLX bots",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
