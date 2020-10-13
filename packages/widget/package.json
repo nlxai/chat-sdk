@@ -39,5 +39,8 @@
     "tinycolor2": "^1.4.1",
     "whatwg-fetch": "^3.0.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "gitHead": "2f1bd3e179cfb6bc88061e108667d3b49af13251"
 }

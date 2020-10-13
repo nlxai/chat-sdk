@@ -19,5 +19,8 @@
   "dependencies": {
     "ramda": "^0.27.1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "gitHead": "2f1bd3e179cfb6bc88061e108667d3b49af13251"
 }
