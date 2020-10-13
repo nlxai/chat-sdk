@@ -7,7 +7,7 @@ The chat widget is a styled, configurable UI widget you can drop in on your webs
 You can render a chat widget in your document with just a few lines of code:
 
 ```jsx
-import { standalone } from "nlx-chat-sdk/widget";
+import { standalone } from "@nlxchat/widget";
 
 // This will render the widget as the last element in the <body>
 standalone({
@@ -23,7 +23,7 @@ standalone({
 If you are running a React application, you can use the component version with the same configuration API as props:
 
 ```jsx
-import { Widget } from "nlx-chat-sdk/widget";
+import { Widget } from "@nlxchat/widget";
 
 render(<Widget config={{ botUrl: "" }} />, document.getElementById("app"));
 ```
