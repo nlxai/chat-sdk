@@ -58,11 +58,11 @@ Reset the conversation. This makes sure that information previously collected by
 
 ## Usage with React
 
-See the custom [React hook](https://www.npmjs.com/package/@nlxchat/react) for setting up your React widget in a few dozen lines of code.
+See the custom [React hook](https://www.npmjs.com/package/@nlxchat/react) for setting up your own React widget in a few dozen lines of code.
 
 ## Usage with Preact
 
-Likewise, see the custom [Preact hook](https://www.npmjs.com/package/@nlxchat/preact) for setting up your React widget in a few dozen lines of code.
+Likewise, see the custom [Preact hook](https://www.npmjs.com/package/@nlxchat/preact) for setting up your own Preact widget in a few dozen lines of code.
 
 ## Usage with \*
 
