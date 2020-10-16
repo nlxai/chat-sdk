@@ -1,5 +1,5 @@
 import snarkdown from "snarkdown";
-import * as React from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { ThemeProvider } from "emotion-theming";
 
@@ -41,7 +41,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   const chat = useChat(props.config);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (props.lowLevel && chat && chat.conversationHandler) {
       props.lowLevel(chat.conversationHandler);
     }
@@ -49,15 +49,13 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   // Expanded state
 
-  const [expanded, setExpanded] = React.useState(
-    Boolean(props.initiallyExpanded)
-  );
+  const [expanded, setExpanded] = useState(Boolean(props.initiallyExpanded));
 
   // Input focus
 
-  const inputRef = React.useRef(null);
+  const inputRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (inputRef && inputRef.current) {
       (inputRef as any).current.focus();
     }
@@ -65,7 +63,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   // Escape handling
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") {
         setExpanded(false);
@@ -79,9 +77,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   // Bubble
 
-  const [bubble, setBubble] = React.useState(false);
+  const [bubble, setBubble] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setTimeout(() => {
       setBubble(true);
     }, 3000);
@@ -93,7 +91,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   // Download
 
-  const downloadNodeRef = React.useRef(null);
+  const downloadNodeRef = useRef(null);
 
   const submit =
     chat &&
@@ -103,7 +101,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
       chat.setInputValue("");
     });
 
-  const dateTimestamp = React.useMemo(() => {
+  const dateTimestamp = useMemo(() => {
     const d = new Date();
     return `${d.getFullYear()}-${toStringWithLeadingZero(
       d.getMonth() + 1

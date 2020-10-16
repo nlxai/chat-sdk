@@ -2,7 +2,14 @@
 
 This package provides a custom `useChat` [hook](https://reactjs.org/docs/hooks-intro.html) which you can use to build your own chat widget in React like so:
 
+## Installation
+
+`npm install --save @nlxchat/preact preact`
+
+## Usage
+
 ```jsx
+import { h } from "preact";
 import { useChat } from "@nlxchat/preact";
 
 const ChatWidget = () => {
