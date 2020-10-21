@@ -56,11 +56,11 @@ export const useChat = (config: Config): ChatHook | null => {
     scrollToBottom();
   }, [messages]);
 
-  const lastMessage = last(messages);
+  const lastMessage = last<Message>(messages);
   const isWaiting = lastMessage ? lastMessage.author === "user" : false;
 
   useEffect(() => {
-    const lastMessage = last(messages);
+    const lastMessage = last<Message>(messages);
     const isWaiting = lastMessage ? lastMessage.author === "user" : false;
     if (isWaiting) {
       setTimeout(() => {

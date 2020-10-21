@@ -2,6 +2,10 @@
 
 The chat widget is a styled, configurable UI widget you can drop in on your website or web application.
 
+## Installation
+
+`npm install --save @nlxchat/widget react react-dom`
+
 ## Usage
 
 You can render a chat widget in your document with just a few lines of code:
