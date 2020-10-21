@@ -1,4 +1,3 @@
-const packageJson = require("../package.json");
 const browserify = require("browserify");
 const fs = require("fs");
 
