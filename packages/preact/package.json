@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/preact",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Preact hook wrapper for the NLX Chat SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,11 +13,11 @@
   "devDependencies": {
     "@types/node": "^11.15.11",
     "@types/ramda": "^0.26.44",
-    "prettier": "^1.19.1",
-    "preact": "^10.5.4"
+    "preact": "^10.5.4",
+    "prettier": "^1.19.1"
   },
   "dependencies": {
-    "@nlxchat/core": "^0.4.1",
+    "@nlxchat/core": "^0.4.2",
     "ramda": "^0.27.1"
   },
   "publishConfig": {
