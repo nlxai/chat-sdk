@@ -6,7 +6,7 @@ import { render } from "react-dom";
 
 import { h, render, FunctionComponent } from "preact";
 import { useState, useCallback } from "preact/hooks";
-import { useChat } from "@nlxchat/preact";
+import { useChat } from "../src";
 
 const botUrl = process.env.BOT_URL as string;
 

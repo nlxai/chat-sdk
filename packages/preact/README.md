@@ -1,6 +1,6 @@
 # Preact hook wrapper for the NLX Chat SDK
 
-This package provides a custom `useChat` [hook](https://reactjs.org/docs/hooks-intro.html) which you can use to build your own chat widget in React like so:
+This package provides a custom `useChat` [hook](https://reactjs.org/docs/hooks-intro.html) which you can use to build your own chat widget in Preact like so:
 
 ## Installation
 

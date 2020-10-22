@@ -22,6 +22,8 @@
     "lerna": "^3.22.1",
     "parcel": "^1.12.4",
     "prettier": "^1.19.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "tsify": "^4.0.1",
     "typescript": "^3.8.3",
     "uglifyify": "^5.0.2"
