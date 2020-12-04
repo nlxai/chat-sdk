@@ -89,6 +89,7 @@ export interface ConversationHandler {
   sendText: (text: string) => void;
   sendSlots: (slots: Array<{ slotId: string; value: any }>) => void;
   sendChoice: (choiceId: string) => void;
+  sendIntent: (intentId: string) => void;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
   unsubscribeAll: () => void;
@@ -187,6 +188,16 @@ const createConversation = (config: Config): ConversationHandler => {
     });
   };
 
+  const sendToBot = (body: any) =>
+    fetch(config.botUrl, {
+      method: "POST",
+      headers: {
+        ...config.headers,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+
   let subscribers: Subscriber[] = [];
   return {
     sendText: (text) => {
@@ -203,23 +214,15 @@ const createConversation = (config: Config): ConversationHandler => {
           },
         ],
       });
-      fetch(config.botUrl, {
-        method: "POST",
-        headers: {
-          ...config.headers,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: state.userId,
-          conversationId: state.conversationId,
-          request: {
-            unstructured: {
-              text,
-            },
+      sendToBot({
+        userId: state.userId,
+        conversationId: state.conversationId,
+        request: {
+          unstructured: {
+            text,
           },
-        }),
+        },
       })
-        .then((res) => res.json())
         .then(messageResposeHandler)
         .catch(failureHandler);
     },
@@ -227,23 +230,28 @@ const createConversation = (config: Config): ConversationHandler => {
       setState({
         messages: [...state.messages],
       });
-      fetch(config.botUrl, {
-        method: "POST",
-        headers: {
-          ...config.headers,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: state.userId,
-          conversationId: state.conversationId,
-          request: {
-            structured: {
-              slots,
-            },
+      sendToBot({
+        userId: state.userId,
+        conversationId: state.conversationId,
+        request: {
+          structured: {
+            slots,
           },
-        }),
+        },
       })
-        .then((res) => res.json())
+        .then(messageResposeHandler)
+        .catch(failureHandler);
+    },
+    sendIntent: (intentId) => {
+      sendToBot({
+        userId: state.userId,
+        conversationId: state.conversationId,
+        request: {
+          structured: {
+            intentId,
+          },
+        },
+      })
         .then(messageResposeHandler)
         .catch(failureHandler);
     },
@@ -264,23 +272,15 @@ const createConversation = (config: Config): ConversationHandler => {
       setState({
         messages: newMessages,
       });
-      fetch(config.botUrl, {
-        method: "POST",
-        headers: {
-          ...config.headers,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: state.userId,
-          conversationId: state.conversationId,
-          request: {
-            structured: {
-              choiceId,
-            },
+      sendToBot({
+        userId: state.userId,
+        conversationId: state.conversationId,
+        request: {
+          structured: {
+            choiceId,
           },
-        }),
+        },
       })
-        .then((res) => res.json())
         .then(messageResposeHandler)
         .catch(failureHandler);
     },

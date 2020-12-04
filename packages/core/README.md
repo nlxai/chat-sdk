@@ -40,6 +40,10 @@ Your bot may send a list of choices to choose from, each with a `choiceText` and
 
 Send slot values directly through custom widgets such as interactive maps.
 
+#### `sendIntent: (intentId: string) => void`
+
+Trigger a specific intent. The most common use of this method is to show welcome messages by sending the `NLX.Welcome` intent.
+
 #### `subscribe: (subscriber: (messages: Message[], additional: { payload?: string }) => void) => void`
 
 Subscribe to the current state of messages whenever there is a change.
