@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
+    "dev": "parcel serve -p 3000 src/example/index.html",
     "build:standalone": "node bin/build.js",
     "build": "rm -rf lib && mkdir lib && tsc",
     "prepublish": "npm run build"
