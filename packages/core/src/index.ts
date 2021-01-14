@@ -8,11 +8,13 @@ interface Choice {
 }
 
 interface ResponseMessage {
+  messageId?: string;
   text: string;
   choices?: Choice[];
 }
 
 export interface BotMessage {
+  messageId?: string;
   author: "bot";
   receivedAt: Time;
   text: string;
@@ -174,6 +176,7 @@ const createConversation = (config: Config): ConversationHandler => {
       messages: [
         ...state.messages,
         ...response.messages.map((message: ResponseMessage, index: number) => ({
+          messageId: message.messageId,
           author: "bot",
           receivedAt: new Date().getTime(),
           text: message.text,
