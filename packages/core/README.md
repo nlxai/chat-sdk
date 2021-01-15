@@ -44,11 +44,11 @@ Send slot values directly through custom widgets such as interactive maps.
 
 Trigger a specific intent. The most common use of this method is to show welcome messages by sending the `NLX.Welcome` intent.
 
-#### `subscribe: (subscriber: (messages: Message[], additional: { payload?: string }) => void) => void`
+#### `subscribe: (subscriber: (responses: Response[]) => void) => void`
 
 Subscribe to the current state of messages whenever there is a change.
 
-#### `unsubscribe: (subscriber: (messages: Message[], additional: { payload?: string }) => void) => void`
+#### `unsubscribe: (subscriber: (responses: Response[]) => void) => void`
 
 Remove a subscription.
 
