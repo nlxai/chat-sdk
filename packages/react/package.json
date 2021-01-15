@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/react",
-  "version": "0.4.3",
+  "version": "0.5.0-alpha.1",
   "description": "React hook wrapper for the NLX Chat SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -19,7 +19,7 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
-    "@nlxchat/core": "^0.4.3",
+    "@nlxchat/core": "^0.5.0-alpha.1",
     "ramda": "^0.27.1"
   },
   "peerDependencies": {
@@ -29,5 +29,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "f9ee991740c243122674e8fc45d763baf8a5ff9c"
+  "gitHead": "1425d132224e7feb1454eab17e281359e0543069"
 }

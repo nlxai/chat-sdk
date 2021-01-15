@@ -1,16 +1,25 @@
 import snarkdown from "snarkdown";
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  ReactElement,
+  forwardRef,
+} from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { render, unmountComponentAtNode } from "react-dom";
 import { ThemeProvider } from "emotion-theming";
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
 
-import { findSelectedChoice } from "@nlxchat/core";
-import { useChat } from "@nlxchat/react";
+import { useChat, ChatHook } from "@nlxchat/react";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
-import * as utils from "./utils";
 import * as constants from "./ui/constants";
 import { Props } from "./props";
 import * as C from "./ui/components";
-import * as transcript from "./ui/transcript";
+
+export { Props } from "./props";
 
 export const standalone = (
   props: Props
@@ -36,20 +45,116 @@ const toStringWithLeadingZero = (n: number): string => {
   return `${n}`;
 };
 
+const MessageGroups = forwardRef<HTMLDivElement, { chat: ChatHook }>(
+  (props, ref) => (
+    <C.MessageGroups ref={ref}>
+      {props.chat.responses.map((response, responseIndex) =>
+        response.type === "bot" ? (
+          <C.MessageGroup key={responseIndex}>
+            {response.payload.messages.map((botMessage, botMessageIndex) => (
+              <C.Message type="bot" key={botMessageIndex}>
+                <C.MessageBody
+                  dangerouslySetInnerHTML={{
+                    __html: snarkdown(botMessage.text),
+                  }}
+                />
+                {botMessage.choices.length > 0 && (
+                  <C.ChoicesContainer>
+                    {botMessage.choices.map((choice, choiceIndex) => (
+                      <C.ChoiceButton
+                        key={choiceIndex}
+                        {...(() => {
+                          return botMessage.selectedChoiceId
+                            ? {
+                                disabled: true,
+                                selected:
+                                  botMessage.selectedChoiceId ===
+                                  choice.choiceId,
+                              }
+                            : {
+                                onClick: () => {
+                                  props.chat.conversationHandler.sendChoice(
+                                    choice.choiceId
+                                  );
+                                },
+                              };
+                        })()}
+                      >
+                        {choice.choiceText}
+                      </C.ChoiceButton>
+                    ))}
+                  </C.ChoicesContainer>
+                )}
+              </C.Message>
+            ))}
+          </C.MessageGroup>
+        ) : response.payload.type === "text" ? (
+          <C.MessageGroup key={responseIndex}>
+            <C.Message type="user">
+              <C.MessageBody
+                dangerouslySetInnerHTML={{
+                  __html: snarkdown(response.payload.text),
+                }}
+              />
+            </C.Message>
+          </C.MessageGroup>
+        ) : null
+      )}
+      {props.chat.waiting && (
+        <C.MessageGroup>
+          <C.Message type="bot">
+            <C.PendingMessageDots />
+          </C.Message>
+        </C.MessageGroup>
+      )}
+    </C.MessageGroups>
+  )
+);
+
+// Solution per https://github.com/emotion-js/emotion/issues/2102#issuecomment-727186154
+const renderToStringWithStyles = (element: ReactElement): string => {
+  const key = "foo";
+  const cache = createCache({ key });
+  let cssText = "";
+  cache.sheet.insert = (rule) => {
+    cssText += rule;
+  };
+
+  const markup = renderToStaticMarkup(
+    <CacheProvider value={cache}>{element}</CacheProvider>
+  );
+
+  const html = `<!DOCTYPE html>
+  <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>${cssText}</style>
+    </head>
+    <body>
+        <div>${markup}</div>
+    </body>
+  </html>
+`;
+
+  return html;
+};
+
 export const Widget: React.FunctionComponent<Props> = (props) => {
   // Chat
 
   const chat = useChat(props.config);
 
   useEffect(() => {
-    if (props.lowLevel && chat && chat.conversationHandler) {
+    if (props.lowLevel && chat.conversationHandler) {
       props.lowLevel(chat.conversationHandler);
     }
-  }, [chat && chat.conversationHandler]);
+  }, [chat.conversationHandler]);
 
   // Expanded state
 
   const [expanded, setExpanded] = useState(Boolean(props.initiallyExpanded));
+
+  const messageGroupsRef = useRef<HTMLDivElement | null>(null);
 
   // Input focus
 
@@ -59,7 +164,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     if (inputRef && inputRef.current) {
       (inputRef as any).current.focus();
     }
-  }, [expanded, chat && chat.messages]);
+  }, [expanded, chat.responses]);
 
   // Escape handling
 
@@ -91,10 +196,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   // Download
 
-  const downloadNodeRef = useRef(null);
+  const downloadNodeRef = useRef<HTMLAnchorElement>(null);
 
   const submit =
-    chat &&
     chat.inputValue.replace(/ /gi, "") !== "" &&
     (() => {
       chat.conversationHandler.sendText(chat.inputValue);
@@ -108,7 +212,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     )}-${toStringWithLeadingZero(d.getDate())}-${toStringWithLeadingZero(
       d.getHours()
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
-  }, [chat && chat.messages]);
+  }, [chat.responses]);
+
+  console.log(renderToStringWithStyles(<MessageGroups chat={chat} />));
 
   return (
     <ThemeProvider
@@ -124,7 +230,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
             content={props.bubble}
           />
         ) : null}
-        {expanded && chat && (
+        {expanded && (
           <C.Container>
             <C.Main ref={chat.messagesContainerRef}>
               {props.titleBar && (
@@ -143,13 +249,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                         href={window.URL.createObjectURL(
                           new Blob(
                             [
-                              chat
-                                ? transcript.html({
-                                    messages: chat.messages,
-                                    titleBar: props.titleBar,
-                                    conversationId: chat.conversationHandler.currentConversationId(),
-                                  })
-                                : "",
+                              renderToStringWithStyles(
+                                <MessageGroups chat={chat} />
+                              ),
                             ],
                             {
                               type: "text/plain",
@@ -162,9 +264,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                       </a>
                       <C.DiscreteButton
                         onClick={() => {
-                          downloadNodeRef &&
-                            downloadNodeRef.current &&
-                            (downloadNodeRef as any).current.click();
+                          if (downloadNodeRef.current !== null) {
+                            downloadNodeRef.current.click();
+                          }
                         }}
                       >
                         <DownloadIcon />
@@ -174,83 +276,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                   )}
                 </C.TitleBar>
               )}
-              <C.MessageGroups>
-                {utils
-                  .groupWhile(
-                    chat.messages.filter(
-                      (message) =>
-                        !(
-                          message.author === "user" &&
-                          message.payload.type === "choice"
-                        )
-                    ),
-                    (prev, current) => prev.author !== current.author
-                  )
-                  .map((group, groupIndex) => (
-                    <C.MessageGroup key={groupIndex}>
-                      {group.map((message, groupMessageIndex) =>
-                        message.author === "bot" ? (
-                          <C.Message type="bot" key={groupMessageIndex}>
-                            <C.MessageBody
-                              dangerouslySetInnerHTML={{
-                                __html: snarkdown(message.text),
-                              }}
-                            />
-                            {message.choices.length > 0 && (
-                              <C.ChoicesContainer>
-                                {message.choices.map((choice, choiceIndex) => (
-                                  <C.ChoiceButton
-                                    key={choiceIndex}
-                                    {...(() => {
-                                      const selectedChoice = findSelectedChoice(
-                                        message,
-                                        chat.messages
-                                      );
-                                      return selectedChoice
-                                        ? {
-                                            disabled: true,
-                                            selected:
-                                              selectedChoice &&
-                                              selectedChoice.choiceId ===
-                                                choice.choiceId,
-                                          }
-                                        : {
-                                            onClick: () => {
-                                              chat.conversationHandler.sendChoice(
-                                                choice.choiceId
-                                              );
-                                            },
-                                          };
-                                    })()}
-                                  >
-                                    {choice.choiceText}
-                                  </C.ChoiceButton>
-                                ))}
-                              </C.ChoicesContainer>
-                            )}
-                          </C.Message>
-                        ) : (
-                          message.payload.type === "text" && (
-                            <C.Message type="user" key={groupMessageIndex}>
-                              <C.MessageBody
-                                dangerouslySetInnerHTML={{
-                                  __html: snarkdown(message.payload.text),
-                                }}
-                              />
-                            </C.Message>
-                          )
-                        )
-                      )}
-                    </C.MessageGroup>
-                  ))}
-                {chat.waiting && (
-                  <C.MessageGroup>
-                    <C.Message type="bot">
-                      <C.PendingMessageDots />
-                    </C.Message>
-                  </C.MessageGroup>
-                )}
-              </C.MessageGroups>
+              <MessageGroups chat={chat} ref={messageGroupsRef} />
             </C.Main>
             <C.Bottom>
               <C.Input

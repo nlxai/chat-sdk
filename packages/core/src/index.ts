@@ -1,27 +1,47 @@
-import find from "ramda/src/find";
+// Bot response
 
-// Domain
+export interface BotResponse {
+  type: "bot";
+  receivedAt: Time;
+  payload: BotResponsePayload;
+}
 
-interface Choice {
+export interface BotResponsePayload {
+  conversationId?: string;
+  userId?: string;
+  messages: Array<BotMessage>;
+  metadata?: BotResponseMetadata;
+  payload?: string;
+}
+
+export interface BotResponseMetadata {
+  intentId?: string;
+  escalation?: boolean;
+  frustration?: boolean;
+  incomprehension?: boolean;
+}
+
+export interface BotMessage {
+  messageId?: string;
+  text: string;
+  choices: Choice[];
+  selectedChoiceId?: string;
+}
+
+export interface Choice {
   choiceId: string;
   choiceText: string;
 }
 
-interface ResponseMessage {
-  text: string;
-  choices?: Choice[];
-}
+// User message
 
-export interface BotMessage {
-  author: "bot";
+export interface UserResponse {
+  type: "user";
   receivedAt: Time;
-  text: string;
-  choices: Choice[];
-  selectedChoice: SelectedChoice;
-  payload?: string;
+  payload: UserResponsePayload;
 }
 
-export type UserMessagePayload =
+export type UserResponsePayload =
   | {
       type: "text";
       text: string;
@@ -29,43 +49,11 @@ export type UserMessagePayload =
   | {
       type: "choice";
       choiceId: string;
-      choiceText: string;
     };
 
-export interface UserMessage {
-  author: "user";
-  receivedAt: Time;
-  payload: UserMessagePayload;
-}
-
-export type SelectedChoice = undefined | { choiceId?: string };
-
-export type Message = BotMessage | UserMessage;
+export type Response = BotResponse | UserResponse;
 
 export type Time = number;
-
-export const findSelectedChoice = (
-  botMessage: BotMessage,
-  allMessages: Message[]
-): SelectedChoice => {
-  if (allMessages.length === 0) {
-    return undefined;
-  }
-  const [head, ...tail] = allMessages;
-  if (head.receivedAt <= botMessage.receivedAt) {
-    return findSelectedChoice(botMessage, tail);
-  }
-  if (head.author === "bot" && head.choices.length > 0) {
-    return { choiceId: undefined };
-  }
-  if (head.author === "bot") {
-    return findSelectedChoice(botMessage, tail);
-  }
-  if (head.payload.type === "choice") {
-    return { choiceId: head.payload.choiceId };
-  }
-  return findSelectedChoice(botMessage, tail);
-};
 
 // Config and state
 
@@ -83,7 +71,7 @@ const defaultFailureMessages = [
   "We encountered an issue while contacting the server. Please try again in a few moments.",
 ];
 
-export type State = Message[];
+export type State = Response[];
 
 export interface ConversationHandler {
   sendText: (text: string) => void;
@@ -98,42 +86,39 @@ export interface ConversationHandler {
 }
 
 interface InternalState {
-  messages: Message[];
+  responses: Response[];
   conversationId?: string;
   userId?: string;
 }
 
 const fromInternal = (internalState: InternalState): State =>
-  internalState.messages;
+  internalState.responses;
 
-type Subscriber = (
-  state: State,
-  additionalInformation: {
-    payload?: string;
-  }
-) => void;
-
-const findChoice = (messages: Message[], choiceId: string): Choice | null => {
-  if (messages.length === 0) {
-    return null;
-  }
-  const [last, ...restReversed] = [...messages].reverse();
-  return (
-    (last.author === "bot" &&
-      find((choice) => choice.choiceId === choiceId, last.choices)) ||
-    findChoice(restReversed.reverse(), choiceId)
-  );
-};
+type Subscriber = (response: Array<Response>) => void;
 
 const createConversation = (config: Config): ConversationHandler => {
   let state: InternalState = {
-    messages: (config.greetingMessages || []).map((greetingMessage) => ({
-      author: "bot",
-      receivedAt: new Date().getTime(),
-      text: greetingMessage,
-      choices: [],
-      selectedChoice: undefined,
-    })),
+    responses:
+      config.greetingMessages && config.greetingMessages.length > 0
+        ? [
+            {
+              type: "bot",
+              receivedAt: new Date().getTime(),
+              payload: {
+                conversationId: undefined,
+                userId: config.userId,
+                messages: config.greetingMessages.map(
+                  (greetingMessage: string) => ({
+                    messageId: undefined,
+                    text: greetingMessage,
+                    choices: [] as Array<Choice>,
+                    selectedChoiceId: undefined,
+                  })
+                ),
+              },
+            },
+          ]
+        : [],
     userId: config.userId,
     conversationId: undefined,
   };
@@ -144,26 +129,25 @@ const createConversation = (config: Config): ConversationHandler => {
       ...state,
       ...change,
     };
-    subscribers.forEach((subscriber) =>
-      subscriber(fromInternal(state), {
-        payload: change.payload,
-      })
-    );
+    subscribers.forEach((subscriber) => subscriber(fromInternal(state)));
   };
 
   const failureHandler = () => {
     setState({
-      messages: [
-        ...state.messages,
-        ...(config.failureMessages || defaultFailureMessages).map(
-          (messageBody: string): BotMessage => ({
-            author: "bot",
-            receivedAt: new Date().getTime(),
-            text: messageBody,
-            choices: [],
-            selectedChoice: undefined,
-          })
-        ),
+      responses: [
+        ...state.responses,
+        {
+          type: "bot",
+          receivedAt: new Date().getTime(),
+          payload: {
+            messages: (config.failureMessages || defaultFailureMessages).map(
+              (messageBody: string): BotMessage => ({
+                text: messageBody,
+                choices: [] as Array<Choice>,
+              })
+            ),
+          },
+        },
       ],
     });
   };
@@ -171,18 +155,20 @@ const createConversation = (config: Config): ConversationHandler => {
   const messageResposeHandler = (response: any) => {
     setState({
       conversationId: response.conversationId,
-      messages: [
-        ...state.messages,
-        ...response.messages.map((message: ResponseMessage, index: number) => ({
-          author: "bot",
+      responses: [
+        ...state.responses,
+        {
+          type: "bot",
           receivedAt: new Date().getTime(),
-          text: message.text,
-          choices: message.choices || [],
-          payload:
-            response.messages.length === index + 1
-              ? response.payload
-              : undefined,
-        })),
+          payload: {
+            messages: response.messages.map((message: any) => ({
+              messageId: message.messageId,
+              text: message.text,
+              choices: message.choices || [],
+            })),
+            payload: response.payload,
+          },
+        },
       ],
       payload: response.payload,
     });
@@ -202,10 +188,10 @@ const createConversation = (config: Config): ConversationHandler => {
   return {
     sendText: (text) => {
       setState({
-        messages: [
-          ...state.messages,
+        responses: [
+          ...state.responses,
           {
-            author: "user",
+            type: "user",
             receivedAt: new Date().getTime(),
             payload: {
               type: "text",
@@ -227,9 +213,6 @@ const createConversation = (config: Config): ConversationHandler => {
         .catch(failureHandler);
     },
     sendSlots: (slots) => {
-      setState({
-        messages: [...state.messages],
-      });
       sendToBot({
         userId: state.userId,
         conversationId: state.conversationId,
@@ -256,21 +239,37 @@ const createConversation = (config: Config): ConversationHandler => {
         .catch(failureHandler);
     },
     sendChoice: (choiceId) => {
-      const choice = findChoice(state.messages, choiceId);
-      const newMessages: Message[] = [
-        ...state.messages,
+      const newResponses: Response[] = [
+        ...state.responses.map((response) =>
+          response.type === "bot"
+            ? {
+                ...response,
+                payload: {
+                  ...response.payload,
+                  messages: response.payload.messages.map((botMessage) => ({
+                    ...botMessage,
+                    selectedChoiceId:
+                      botMessage.choices
+                        .map((choice) => choice.choiceId)
+                        .indexOf(choiceId) > -1
+                        ? choiceId
+                        : botMessage.selectedChoiceId,
+                  })),
+                },
+              }
+            : response
+        ),
         {
-          author: "user",
+          type: "user",
           receivedAt: new Date().getTime(),
           payload: {
             type: "choice",
             choiceId,
-            choiceText: choice ? choice.choiceText : "Selection",
           },
         },
       ];
       setState({
-        messages: newMessages,
+        responses: newResponses,
       });
       sendToBot({
         userId: state.userId,
@@ -289,7 +288,7 @@ const createConversation = (config: Config): ConversationHandler => {
     },
     subscribe: (subscriber) => {
       subscribers = [...subscribers, subscriber];
-      subscriber(fromInternal(state), {});
+      subscriber(fromInternal(state));
     },
     unsubscribe: (subscriber) => {
       subscribers = subscribers.filter((fn) => fn !== subscriber);
