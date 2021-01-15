@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "publish": "rm packages/*/package-lock.json && lerna publish"
+    "publish": "rm -f packages/*/package-lock.json && lerna publish"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
