@@ -9,9 +9,8 @@ import React, {
 } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { render, unmountComponentAtNode } from "react-dom";
-import { ThemeProvider } from "emotion-theming";
 import createCache from "@emotion/cache";
-import { CacheProvider } from "@emotion/react";
+import { ThemeProvider, CacheProvider } from "@emotion/react";
 
 import { useChat, ChatHook } from "@nlxchat/react";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
@@ -214,10 +213,10 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
   }, [chat.responses]);
 
+  const mergedTheme = { ...constants.defaultTheme, ...(props.theme || {}) };
+
   return (
-    <ThemeProvider
-      theme={{ ...constants.defaultTheme, ...(props.theme || {}) }}
-    >
+    <ThemeProvider theme={mergedTheme}>
       <>
         {props.bubble ? (
           <C.PinBubble
@@ -248,7 +247,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                           new Blob(
                             [
                               renderToStringWithStyles(
-                                <MessageGroups chat={chat} />
+                                <ThemeProvider theme={mergedTheme}>
+                                  <MessageGroups chat={chat} />
+                                </ThemeProvider>
                               ),
                             ],
                             {
@@ -281,11 +282,11 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                 ref={inputRef}
                 value={chat.inputValue}
                 placeholder={props.inputPlaceholder || "Say something.."}
-                onChange={(e) => {
-                  chat.setInputValue(e.target.value);
+                onChange={(event: any) => {
+                  chat.setInputValue(event.target.value);
                 }}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && submit) {
+                onKeyPress={(event: any) => {
+                  if (event.key === "Enter" && submit) {
                     submit();
                   }
                 }}

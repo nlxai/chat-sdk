@@ -1,11 +1,11 @@
 import React from "react";
-import genericStyled, { CreateStyled } from "@emotion/styled";
-import { keyframes } from "@emotion/core";
+import styled from "@emotion/styled";
+import { keyframes } from "@emotion/react";
 import { Theme } from "../theme";
 import * as constants from "./constants";
 import tinycolor from "tinycolor2";
 
-const styled = genericStyled as CreateStyled<Theme>;
+const castAsTheme = (theme: any) => (theme as unknown) as Theme;
 
 // Mixins
 
@@ -29,7 +29,7 @@ export const focusShadow = (theme: Theme) => `
 `;
 
 // PendingMessageDots
-//
+
 const bounceKeyframes = keyframes`
 0% {
   transform: translate3d(0, 0, 0);
@@ -94,12 +94,12 @@ export const Container = styled.div<{}>`
   height: calc(100vh - 120px);
   border-radius: 10px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
-  background-color: ${(props) => props.theme.white};
+  background-color: ${(props) => castAsTheme(props.theme).white};
   z-index: ${constants.largeZIndex};
 
   & > *,
   & > button {
-    font-family: ${(props) => props.theme.fontFamily};
+    font-family: ${(props) => castAsTheme(props.theme).fontFamily};
   }
 `;
 
@@ -145,9 +145,10 @@ export const MessageGroup = styled.div<{}>`
 export const Message = styled.div<{ type: "user" | "bot" }>`
   background-color: ${(props) =>
     props.type === "user"
-      ? props.theme.darkMessageColor
-      : props.theme.lightMessageColor};
-  color: ${(props) => (props.type === "user" ? props.theme.white : "#000")};
+      ? castAsTheme(props.theme).darkMessageColor
+      : castAsTheme(props.theme).lightMessageColor};
+  color: ${(props) =>
+    props.type === "user" ? castAsTheme(props.theme).white : "#000"};
   padding: 6px 10px;
   max-width: calc(100% - 20px);
   ${(props) =>
@@ -205,14 +206,14 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   `}
   border: 0;
   box-shadow: none;
-  background-color: ${(props) => props.theme.primaryColor};
-  color: ${(props) => props.theme.white};
+  background-color: ${(props) => castAsTheme(props.theme).primaryColor};
+  color: ${(props) => castAsTheme(props.theme).white};
   position: relative;
   cursor: pointer;
 
   :focus {
     outline: none;
-    ${(props) => focusShadow(props.theme)}
+    ${(props) => focusShadow(castAsTheme(props.theme))}
   }
 
   ${hoverBg}
@@ -226,18 +227,18 @@ export const Input = styled.input<{}>`
   padding: 0 14px;
   border: 1px solid #cecece;
   font-size: ${constants.fontSize}px;
-  font-family: ${(props) => props.theme.fontFamily};
+  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
 
   :focus {
     outline: none;
-    border: 1px solid ${(props) => props.theme.primaryColor};
-    ${(props) => focusShadow(props.theme)}
+    border: 1px solid ${(props) => castAsTheme(props.theme).primaryColor};
+    ${(props) => focusShadow(castAsTheme(props.theme))}
   }
 `;
 
 export const Pin = styled.button<{}>`
   position: fixed;
-  background-color: ${(props) => props.theme.primaryColor};
+  background-color: ${(props) => castAsTheme(props.theme).primaryColor};
   border: 0;
   right: 20px;
   bottom: 20px;
@@ -246,7 +247,7 @@ export const Pin = styled.button<{}>`
   border-radius: 30px;
   cursor: pointer;
   padding: 15px;
-  color: ${(props) => props.theme.white};
+  color: ${(props) => castAsTheme(props.theme).white};
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.4);
   z-index: ${constants.largeZIndex};
 
@@ -277,7 +278,9 @@ export const PinBubble: React.FunctionComponent<{
   </PinBubbleContainer>
 );
 
-export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
+export const PinBubbleContainer = styled.div<{
+  isActive: boolean;
+}>`
   position: fixed;
   bottom: 92px;
   right: 20px;
@@ -286,7 +289,7 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   width: fit-content;
   white-space: pre;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
-  font-family: ${(props) => props.theme.fontFamily};
+  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
   height: 35px;
   font-size: 16px;
   display: flex;
@@ -296,7 +299,7 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
   z-index: ${constants.largeZIndex};
   padding: 0px 16px 0px 0px;
   background-color: ${(props) =>
-    tinycolor(props.theme.primaryColor)
+    tinycolor(castAsTheme(props.theme).primaryColor)
       .darken(10)
       .toRgbString()};
   color: #fff;
@@ -324,7 +327,7 @@ export const PinBubbleContainer = styled.div<{ isActive: boolean }>`
     border-right: 6px solid transparent;
     border-top: 6px solid
       ${(props) =>
-        tinycolor(props.theme.primaryColor)
+        tinycolor(castAsTheme(props.theme).primaryColor)
           .darken(10)
           .toRgbString()};
   }
@@ -389,12 +392,12 @@ export const ChoiceButton = styled.button<{
   ${(props) =>
     props.selected
       ? `
-  background-color: ${props.theme.primaryColor};
-  color: ${props.theme.white};
+  background-color: ${castAsTheme(props.theme).primaryColor};
+  color: ${castAsTheme(props.theme).white};
   `
       : `
-  background-color: ${props.theme.white};
-  color: ${props.theme.primaryColor};
+  background-color: ${castAsTheme(props.theme).white};
+  color: ${castAsTheme(props.theme).primaryColor};
   `}
   ${(props) =>
     props.disabled
@@ -409,14 +412,14 @@ export const ChoiceButton = styled.button<{
 
   :focus {
     outline: none;
-    ${focusShadow(props.theme)}
+    ${focusShadow(castAsTheme(props.theme))}
   }
       `}
   height: 26px;
   border-radius: 15px;
-  border: 1px solid ${(props) => props.theme.primaryColor};
+  border: 1px solid ${(props) => castAsTheme(props.theme).primaryColor};
   font-size: ${constants.fontSize}px;
-  font-family: ${(props) => props.theme.fontFamily};
+  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
   padding: 0 12px;
 
   :focus {
@@ -448,7 +451,7 @@ export const TitleContainer = styled.div<{}>`
 export const Title = styled.p<{}>`
   font-size: 16px;
   font-weight: bold;
-  font-family: ${(props) => props.theme.fontFamily};
+  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
 `;
 
 // DiscreteButton
