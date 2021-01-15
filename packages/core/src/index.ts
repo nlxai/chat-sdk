@@ -8,7 +8,6 @@ export interface BotResponse {
 
 export interface BotResponsePayload {
   conversationId?: string;
-  userId?: string;
   messages: Array<BotMessage>;
   metadata?: BotResponseMetadata;
   payload?: string;
@@ -106,7 +105,6 @@ const createConversation = (config: Config): ConversationHandler => {
               receivedAt: new Date().getTime(),
               payload: {
                 conversationId: undefined,
-                userId: config.userId,
                 messages: config.greetingMessages.map(
                   (greetingMessage: string) => ({
                     messageId: undefined,
@@ -122,9 +120,7 @@ const createConversation = (config: Config): ConversationHandler => {
     userId: config.userId,
     conversationId: undefined,
   };
-  const setState = (
-    change: Partial<InternalState> & { payload?: string }
-  ): void => {
+  const setState = (change: Partial<InternalState>): void => {
     state = {
       ...state,
       ...change,
@@ -161,16 +157,17 @@ const createConversation = (config: Config): ConversationHandler => {
           type: "bot",
           receivedAt: new Date().getTime(),
           payload: {
+            conversationId: response.conversationId,
             messages: response.messages.map((message: any) => ({
               messageId: message.messageId,
               text: message.text,
               choices: message.choices || [],
             })),
+            metadata: response.metadata,
             payload: response.payload,
           },
         },
       ],
-      payload: response.payload,
     });
   };
 

@@ -12,6 +12,7 @@ const props: Props = {
     headers: {
       "nlx-api-key": apiKey,
     },
+    userId: "1234",
   },
   titleBar: {
     downloadable: true,

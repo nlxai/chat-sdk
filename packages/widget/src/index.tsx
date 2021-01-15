@@ -214,8 +214,6 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
   }, [chat.responses]);
 
-  console.log(renderToStringWithStyles(<MessageGroups chat={chat} />));
-
   return (
     <ThemeProvider
       theme={{ ...constants.defaultTheme, ...(props.theme || {}) }}
