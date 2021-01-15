@@ -1,28 +1,29 @@
-import { Ref, useState, useEffect, useRef } from "preact/hooks";
+import { Ref, useState, useEffect, useRef, useMemo } from "preact/hooks";
 
 // Code from here on out is identical in the React and Preact packages
 import last from "ramda/src/last";
 import createConversation, {
   Config,
   ConversationHandler,
-  Message,
+  Response,
 } from "@nlxchat/core";
 
 export interface ChatHook {
   conversationHandler: ConversationHandler;
   inputValue: string;
-  messages: Message[];
+  responses: Array<Response>;
   messagesContainerRef: Ref<HTMLDivElement>;
   waiting: boolean;
   setInputValue: (val: string) => void;
 }
 
-export const useChat = (config: Config): ChatHook | null => {
-  const [conversation, setConversation] = useState<null | ConversationHandler>(
-    null
+export const useChat = (config: Config): ChatHook => {
+  const conversation: ConversationHandler = useMemo(
+    () => createConversation(config),
+    []
   );
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [responses, setResponses] = useState<Array<Response>>([]);
 
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -31,17 +32,9 @@ export const useChat = (config: Config): ChatHook | null => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setConversation(createConversation(config));
-    return () => {};
-  }, []);
-
-  useEffect(() => {
-    conversation &&
-      conversation.subscribe((msgs) => {
-        setMessages(msgs);
-      });
+    conversation.subscribe(setResponses);
     return () => {
-      conversation && conversation.unsubscribeAll();
+      conversation.unsubscribeAll();
     };
   }, [conversation]);
 
@@ -54,14 +47,14 @@ export const useChat = (config: Config): ChatHook | null => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [responses]);
 
-  const lastMessage = last<Message>(messages);
-  const isWaiting = lastMessage ? lastMessage.author === "user" : false;
+  const lastMessage = last<Response>(responses);
+  const isWaiting = lastMessage ? lastMessage.type === "user" : false;
 
   useEffect(() => {
-    const lastMessage = last<Message>(messages);
-    const isWaiting = lastMessage ? lastMessage.author === "user" : false;
+    const lastMessage = last<Response>(responses);
+    const isWaiting = lastMessage ? lastMessage.type === "user" : false;
     if (isWaiting) {
       setTimeout(() => {
         setWaitTimeoutPassed(true);
@@ -69,7 +62,7 @@ export const useChat = (config: Config): ChatHook | null => {
     } else if (waitTimeoutPassed) {
       setWaitTimeoutPassed(false);
     }
-  }, [messages]);
+  }, [responses]);
 
   useEffect(() => {
     if (waitTimeoutPassed) {
@@ -77,14 +70,10 @@ export const useChat = (config: Config): ChatHook | null => {
     }
   }, [waitTimeoutPassed]);
 
-  if (!conversation) {
-    return null;
-  }
-
   return {
     conversationHandler: conversation,
     inputValue,
-    messages,
+    responses,
     waiting: isWaiting && waitTimeoutPassed,
     messagesContainerRef,
     setInputValue,

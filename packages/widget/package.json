@@ -30,7 +30,9 @@
     "uglifyify": "^5.0.2"
   },
   "dependencies": {
+    "@emotion/cache": "^11.1.3",
     "@emotion/core": "^10.0.28",
+    "@emotion/react": "^11.1.4",
     "@emotion/styled": "^10.0.27",
     "@nlxchat/core": "^0.4.3",
     "@nlxchat/react": "^0.4.3",
