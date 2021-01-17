@@ -44,6 +44,10 @@ Send slot values directly through custom widgets such as interactive maps.
 
 Trigger a specific intent. The most common use of this method is to show welcome messages by sending the `NLX.Welcome` intent.
 
+#### `sendStructured: (request: StructuredRequest) => void`
+
+Send a combination of choice, slots and intent ID in one request.
+
 #### `subscribe: (subscriber: (responses: Response[]) => void) => void`
 
 Subscribe to the current state of messages whenever there is a change.

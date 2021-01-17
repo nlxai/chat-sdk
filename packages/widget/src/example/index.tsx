@@ -13,7 +13,11 @@ const props: Props = {
       "nlx-api-key": apiKey,
     },
     userId: "1234",
+    context: {
+      a: "b",
+    },
   },
+  initiallyExpanded: true,
   titleBar: {
     downloadable: true,
     title: "My Chat",

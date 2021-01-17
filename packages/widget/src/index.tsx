@@ -143,6 +143,8 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   const chat = useChat(props.config);
 
+  console.log(chat);
+
   useEffect(() => {
     if (props.lowLevel && chat.conversationHandler) {
       props.lowLevel(chat.conversationHandler);

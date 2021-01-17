@@ -61,6 +61,7 @@ export interface Config {
   userId?: string;
   failureMessages?: string[];
   greetingMessages?: string[];
+  context?: Record<string, any>;
   headers: {
     [key: string]: string;
   };
@@ -72,11 +73,18 @@ const defaultFailureMessages = [
 
 export type State = Response[];
 
+interface StructuredRequest {
+  choiceId?: string;
+  intentId?: string;
+  slots?: Array<{ slotId: string; value: any }>;
+}
+
 export interface ConversationHandler {
   sendText: (text: string) => void;
   sendSlots: (slots: Array<{ slotId: string; value: any }>) => void;
   sendChoice: (choiceId: string) => void;
   sendIntent: (intentId: string) => void;
+  sendStructured: (request: StructuredRequest) => void;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
   unsubscribeAll: () => void;
@@ -88,6 +96,7 @@ interface InternalState {
   responses: Response[];
   conversationId?: string;
   userId?: string;
+  contextSent: boolean;
 }
 
 const fromInternal = (internalState: InternalState): State =>
@@ -119,7 +128,9 @@ const createConversation = (config: Config): ConversationHandler => {
         : [],
     userId: config.userId,
     conversationId: undefined,
+    contextSent: false,
   };
+
   const setState = (change: Partial<InternalState>): void => {
     state = {
       ...state,
@@ -171,17 +182,28 @@ const createConversation = (config: Config): ConversationHandler => {
     });
   };
 
-  const sendToBot = (body: any) =>
-    fetch(config.botUrl, {
+  const sendToBot = (body: any) => {
+    const bodyWithContext = {
+      ...(config.context && !state.contextSent
+        ? { context: config.context }
+        : {}),
+      ...body,
+    };
+    if (!state.contextSent) {
+      state = { ...state, contextSent: true };
+    }
+    return fetch(config.botUrl, {
       method: "POST",
       headers: {
         ...config.headers,
         "content-type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(bodyWithContext),
     }).then((res) => res.json());
+  };
 
   let subscribers: Subscriber[] = [];
+
   return {
     sendText: (text) => {
       setState({
@@ -208,6 +230,9 @@ const createConversation = (config: Config): ConversationHandler => {
       })
         .then(messageResposeHandler)
         .catch(failureHandler);
+    },
+    sendStructured: () => {
+      // TODO: implement
     },
     sendSlots: (slots) => {
       sendToBot({
