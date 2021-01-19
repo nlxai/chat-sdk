@@ -36,7 +36,7 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
 
 ```html
 <body>
-  <script src="https://unpkg.com/nlx-chat-sdk@0.0.2/lib/umd/widget.js"></script>
+  <script src="https://unpkg.com/@nlxchat/widget@0.5.0/lib/umd/widget.js"></script>
   <script>
     window.chat.standalone({
       config: {

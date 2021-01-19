@@ -19,7 +19,7 @@ const ChatWidget = () => {
 
   return (
     <div>
-      {chat.messages.map(/* render messages in the current conversation */)}
+      {chat.responses.map(/* render messages in the current conversation */)}
     </div>
   );
 };

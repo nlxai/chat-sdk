@@ -8,16 +8,19 @@ This is the core package of our official JavaScript SDK to communicate with NLX 
 import createConversation from "@nlxchat/core";
 
 // Create some configuration
-const testConfig = {
-  botUrl: "" // obtain from NLX deployments page
+const config = {
+  botUrl: "", // obtain from NLX deployments page
+  headers: {
+    "nlx-api-key": "" // obtain from NLX deployments page
+  }
 };
 
 // Start the conversation
-const convo = createConversation(testConfig);
+const convo = createConversation(config);
 
-// Subscribe to changes in the list of messages
-convo.subscribe(messages => {
-  console.log(messages);
+// Subscribe to changes in the list of responses
+convo.subscribe(responses => {
+  console.log(responses);
 });
 
 // Send a message from the user's end
