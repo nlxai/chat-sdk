@@ -6,11 +6,14 @@
     "packages/*"
   ],
   "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
     "build": "lerna run build",
     "publish": "rm -f packages/*/package-lock.json && lerna publish"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
   "dependencies": {}
 }
