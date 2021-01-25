@@ -11,6 +11,7 @@ export interface BotResponsePayload {
   messages: Array<BotMessage>;
   metadata?: BotResponseMetadata;
   payload?: string;
+  context?: Record<string, any>;
 }
 
 export interface BotResponseMetadata {
@@ -176,6 +177,7 @@ const createConversation = (config: Config): ConversationHandler => {
             })),
             metadata: response.metadata,
             payload: response.payload,
+            context: response.context,
           },
         },
       ],
