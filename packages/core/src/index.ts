@@ -1,3 +1,5 @@
+import { last, dropLast } from "ramda";
+
 // Bot response
 
 export interface BotResponse {
@@ -59,6 +61,7 @@ export type Time = number;
 
 export interface Config {
   botUrl: string;
+  languageCode?: string;
   userId?: string;
   failureMessages?: string[];
   greetingMessages?: string[];
@@ -104,6 +107,9 @@ const fromInternal = (internalState: InternalState): State =>
   internalState.responses;
 
 type Subscriber = (response: Array<Response>) => void;
+
+const removeTrailingSlash = (url: string): string =>
+  last(url) === "/" ? dropLast(1, url) : url;
 
 const createConversation = (config: Config): ConversationHandler => {
   let state: InternalState = {
@@ -194,14 +200,19 @@ const createConversation = (config: Config): ConversationHandler => {
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
     }
-    return fetch(config.botUrl, {
-      method: "POST",
-      headers: {
-        ...config.headers,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(bodyWithContext),
-    }).then((res) => res.json());
+    return fetch(
+      [removeTrailingSlash(config.botUrl), config.languageCode]
+        .filter((chunk) => Boolean(chunk))
+        .join("-"),
+      {
+        method: "POST",
+        headers: {
+          ...config.headers,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(bodyWithContext),
+      }
+    ).then((res) => res.json());
   };
 
   let subscribers: Subscriber[] = [];
