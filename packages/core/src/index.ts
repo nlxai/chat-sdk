@@ -233,8 +233,16 @@ const createConversation = (config: Config): ConversationHandler => {
         .then(messageResposeHandler)
         .catch(failureHandler);
     },
-    sendStructured: () => {
-      // TODO: implement
+    sendStructured: (structured: StructuredRequest) => {
+      sendToBot({
+        userId: state.userId,
+        conversationId: state.conversationId,
+        request: {
+          structured,
+        },
+      })
+        .then(messageResposeHandler)
+        .catch(failureHandler);
     },
     sendSlots: (slots) => {
       sendToBot({

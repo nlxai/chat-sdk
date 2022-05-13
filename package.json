@@ -1,6 +1,7 @@
 {
   "name": "nlx-chat-sdk",
   "version": "0.1.0",
+  "private": true,
   "description": "SDK to talk to NLX bots",
   "workspaces": [
     "packages/*"
@@ -13,7 +14,7 @@
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^4.0.0"
   },
   "dependencies": {}
 }
