@@ -66,6 +66,7 @@ export interface Config {
   headers: {
     [key: string]: string;
   };
+  languageCode?: string;
 }
 
 const defaultFailureMessages = [
@@ -190,6 +191,7 @@ const createConversation = (config: Config): ConversationHandler => {
         ? { context: config.context }
         : {}),
       ...body,
+      languageCode: config.languageCode
     };
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
