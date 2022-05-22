@@ -1,10 +1,10 @@
 # Chat SDK for NLX bots
 
-This is our official JavaScript SDK to communicate with NLX conversational bots. It contains the following packages:
-* [@nlxchat/core](https://www.npmjs.com/package/@nlxchat/core): vanilla JavaScript SDK.
-* [@nlxchat/react](https://www.npmjs.com/package/@nlxchat/react): React hook for building chat widgets.
-* [@nlxchat/preact](https://www.npmjs.com/package/@nlxchat/preact): Preact hook for building chat widgets.
-* [@nlxchat/widget](https://www.npmjs.com/package/@nlxchat/widget): the official themeable NLX widget.
+The official JavaScript SDK to communicate with conversational bots created using NLX Dialog Studio. It contains the following packages:
+* [@nlxchat/widget](https://www.npmjs.com/package/@nlxchat/widget): the official out-of-the-box, lightly themeable NLX widget.
+* [@nlxchat/core](https://www.npmjs.com/package/@nlxchat/core): vanilla JavaScript SDK for creating fully custom chat widgets.
+* [@nlxchat/react](https://www.npmjs.com/package/@nlxchat/react): React custom hook for building chat widgets.
+* [@nlxchat/preact](https://www.npmjs.com/package/@nlxchat/preact): Preact custom hook for building chat widgets.
 
 ## Usage with \*
 

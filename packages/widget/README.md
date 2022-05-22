@@ -110,3 +110,7 @@ If you need low-level control of the widget, this configuration value gives acce
 ```
 
 The callback pattern works similarly to the way [callback refs](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) work in React. We are avoiding that naming since the configuration option works identical in standalone mode.
+
+## License
+
+MIT.
