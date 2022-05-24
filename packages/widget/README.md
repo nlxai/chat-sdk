@@ -19,7 +19,14 @@ standalone({
     botUrl: "",
     headers: {
       "nlx-api-key": ""
-    }
+    },
+  },
+  initiallyExpanded: true,
+  theme: {
+    primaryColor: "teal",
+    darkMessageColor: "#000",
+    lightMessageColor: "#fff",
+    fontFamily: "Helvetica"
   }
 });
 ```
@@ -44,6 +51,13 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
         headers: {
           "nlx-api-key": ""
         }
+      },
+      initiallyExpanded: true,
+      theme: {
+        primaryColor: "teal",
+        darkMessageColor: "#000",
+        lightMessageColor: "#fff",
+        fontFamily: "Helvetica"
       }
     });
   </script>
@@ -52,7 +66,7 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
 
 ## Configuration
 
-Initiating the chat takes the following parameters (see [type definition](types.ts) for details):
+Initiating the chat takes the following parameters (see [type definition](https://github.com/nlxai/chat-sdk/blob/master/packages/widget/src/props.ts) for details):
 
 ### `config`
 
@@ -60,7 +74,7 @@ The configuration of the chat itself, containing `botUrl` and request headers.
 
 ### `theme`
 
-Overrides for the visual theme constants. See [Theme type definition](types.ts) for details.
+Overrides for the visual theme constants. See [Theme type definition](https://github.com/nlxai/chat-sdk/blob/master/packages/widget/src/theme.ts) for details.
 
 ### `chatIcon`
 
@@ -76,8 +90,6 @@ Renders an optional title bar at the top. If the object is provided, it has the 
 ### `bubble`
 
 When set to a non-empty string, a small bubble will appear above the chat pin when the chat is not expanded, helping the user understand what the chat is for. This bubble appears 3s after the chat is loaded, and disappears after 20s.
-
-A complete example of the configuration options can be found [here](../../examples/standalone.html).
 
 ### `initiallyExpanded`
 
@@ -98,3 +110,7 @@ If you need low-level control of the widget, this configuration value gives acce
 ```
 
 The callback pattern works similarly to the way [callback refs](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) work in React. We are avoiding that naming since the configuration option works identical in standalone mode.
+
+## License
+
+MIT.
