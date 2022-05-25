@@ -1,3 +1,5 @@
+import fetch from "isomorphic-fetch";
+
 // Bot response
 
 export interface BotResponse {
