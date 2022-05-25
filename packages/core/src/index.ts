@@ -67,6 +67,10 @@ export interface Config {
     [key: string]: string;
   };
   languageCode?: string;
+  // Experimental settings
+  experimental?: {
+    channelType?: string;
+  };
 }
 
 const defaultFailureMessages = [
@@ -191,7 +195,8 @@ const createConversation = (config: Config): ConversationHandler => {
         ? { context: config.context }
         : {}),
       ...body,
-      languageCode: config.languageCode
+      languageCode: config.languageCode,
+      channelType: config.experimental?.channelType,
     };
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
