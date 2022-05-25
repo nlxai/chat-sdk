@@ -97,19 +97,24 @@ Sets whether the widget is initially expanded.
 
 ### `lowLevel`
 
-If you need low-level control of the widget, this configuration value gives access to the `conversationHandler` object through a callback:
+If you need low-level control of the widget, this configuration value gives access to the [conversationHandler](https://github.com/nlxai/chat-sdk/blob/94d5fade43c6ed05ddf95de7140bf5bf1e6f916e/packages/core/src/index.ts#L84-L95) object through a callback, called once on widget initialization:
 
 ```jsx
 <Widget
-  {/* ... */}
-  lowLevel={conversationHandler => {
-    conversationHandler.subscribe(() => {
-    });
+  config={{
+    botUrl: ""
+  }}
+  lowLevel={(conversationHandler) => {
+    // Send e.g. custom slot values, or save the handler in a ref or on the window global
+    conversationHandler.sendSlots([
+      {
+        slotId: "name",
+        value: "Alex"
+      }
+    ]);
   }
 />
 ```
-
-The callback pattern works similarly to the way [callback refs](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) work in React. We are avoiding that naming since the configuration option works identical in standalone mode.
 
 ## License
 
