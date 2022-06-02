@@ -15,6 +15,7 @@ const config = {
   },
   userId: "abcd-1234", // optional property to identify the user
   context: {}, // context that is shared with the bot
+  triggerWelcomeIntent: true, // set whether the welcome intent should trigger when the conversation is initialized
   languageCode: "es-US" // optional language code for standard bots that do not run on US English
 };
 
