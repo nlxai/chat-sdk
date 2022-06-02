@@ -65,6 +65,7 @@ export interface Config {
   failureMessages?: string[];
   greetingMessages?: string[];
   context?: Record<string, any>;
+  triggerWelcomeIntent?: boolean;
   headers: {
     [key: string]: string;
   };
@@ -215,6 +216,24 @@ const createConversation = (config: Config): ConversationHandler => {
 
   let subscribers: Subscriber[] = [];
 
+  const sendIntent = (intentId: string) => {
+    sendToBot({
+      userId: state.userId,
+      conversationId: state.conversationId,
+      request: {
+        structured: {
+          intentId,
+        },
+      },
+    })
+      .then(messageResposeHandler)
+      .catch(failureHandler);
+  };
+
+  if (config.triggerWelcomeIntent) {
+    sendIntent("NLX.Welcome");
+  }
+
   return {
     sendText: (text) => {
       setState({
@@ -266,19 +285,7 @@ const createConversation = (config: Config): ConversationHandler => {
         .then(messageResposeHandler)
         .catch(failureHandler);
     },
-    sendIntent: (intentId) => {
-      sendToBot({
-        userId: state.userId,
-        conversationId: state.conversationId,
-        request: {
-          structured: {
-            intentId,
-          },
-        },
-      })
-        .then(messageResposeHandler)
-        .catch(failureHandler);
-    },
+    sendIntent,
     sendChoice: (choiceId) => {
       const newResponses: Response[] = [
         ...state.responses.map((response) =>

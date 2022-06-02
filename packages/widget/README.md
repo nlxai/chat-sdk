@@ -20,6 +20,7 @@ standalone({
     headers: {
       "nlx-api-key": ""
     },
+    triggerWelcomeIntent: true
   },
   initiallyExpanded: true,
   theme: {
