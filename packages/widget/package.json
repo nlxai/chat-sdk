@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/widget",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Standalone chat widget based on the NLX Chat SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -32,8 +32,8 @@
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
-    "@nlxchat/core": "^0.5.2",
-    "@nlxchat/react": "^0.5.2",
+    "@nlxchat/core": "^0.5.3",
+    "@nlxchat/react": "^0.5.3",
     "promise-polyfill": "^8.1.3",
     "ramda": "^0.27.1",
     "snarkdown": "^1.2.2",
