@@ -113,7 +113,7 @@ const fromInternal = (internalState: InternalState): State =>
 
 type Subscriber = (response: Array<Response>) => void;
 
-const createConversation = (config: Config): ConversationHandler => {
+export const createConversation = (config: Config): ConversationHandler => {
   let state: InternalState = {
     responses:
       config.greetingMessages && config.greetingMessages.length > 0
