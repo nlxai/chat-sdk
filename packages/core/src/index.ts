@@ -63,7 +63,7 @@ export interface Config {
   failureMessages?: string[];
   greetingMessages?: string[];
   context?: Record<string, any>;
-  headers: {
+  headers?: {
     [key: string]: string;
   };
 }
@@ -106,6 +106,7 @@ const fromInternal = (internalState: InternalState): State =>
 type Subscriber = (response: Array<Response>) => void;
 
 const createConversation = (config: Config): ConversationHandler => {
+  let socket: WebSocket;
   let state: InternalState = {
     responses:
       config.greetingMessages && config.greetingMessages.length > 0
@@ -161,30 +162,32 @@ const createConversation = (config: Config): ConversationHandler => {
   };
 
   const messageResposeHandler = (response: any) => {
-    setState({
-      conversationId: response.conversationId,
-      responses: [
-        ...state.responses,
-        {
-          type: "bot",
-          receivedAt: new Date().getTime(),
-          payload: {
-            conversationId: response.conversationId,
-            messages: response.messages.map((message: any) => ({
-              messageId: message.messageId,
-              text: message.text,
-              choices: message.choices || [],
-            })),
-            metadata: response.metadata,
-            payload: response.payload,
-            context: response.context,
+    if (response && !response.isPending) {
+      setState({
+        conversationId: response.conversationId,
+        responses: [
+          ...state.responses,
+          {
+            type: "bot",
+            receivedAt: new Date().getTime(),
+            payload: {
+              conversationId: response.conversationId,
+              messages: response.messages.map((message: any) => ({
+                messageId: message.messageId,
+                text: message.text,
+                choices: message.choices || [],
+              })),
+              metadata: response.metadata,
+              payload: response.payload,
+              context: response.context,
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
+    }
   };
 
-  const sendToBot = (body: any) => {
+  const sendToBot = (body: any): Promise<globalThis.Response> => {
     const bodyWithContext = {
       ...(config.context && !state.contextSent
         ? { context: config.context }
@@ -194,17 +197,48 @@ const createConversation = (config: Config): ConversationHandler => {
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
     }
-    return fetch(config.botUrl, {
-      method: "POST",
-      headers: {
-        ...config.headers,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(bodyWithContext),
-    }).then((res) => res.json());
+    if (isUsingWebSockets()) {
+      socket.send(JSON.stringify(bodyWithContext));
+      return Promise.resolve({ isPending: true } as any);
+    } else {
+      return fetch(config.botUrl, {
+        method: "POST",
+        headers: {
+          ...config.headers,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(bodyWithContext),
+      }).then((res) => res.json());
+    }
+  };
+
+  const isUsingWebSockets = () => {
+    return config.botUrl && config.botUrl.indexOf("wss://") === 0;
   };
 
   let subscribers: Subscriber[] = [];
+
+  if (isUsingWebSockets()) {
+    // open websocket
+    socket = new WebSocket(config.botUrl);
+
+    socket.onerror = function(error: any) {
+      // TODO: Handle unexpected socket errors
+      // @peter, should we just raise this as an event on the widget for the consumer to handle?
+    };
+
+    socket.onclose = function() {
+      // TODO: Handle unexpected socket errors
+      // @peter, should we just raise this as an event on the widget for the consumer to handle?
+      // if we start seeing these we can implement an auto-reconnect in here...
+    };
+
+    socket.onmessage = function(e) {
+      if (typeof e.data === "string") {
+        messageResposeHandler(JSON.parse(e.data));
+      }
+    };
+  }
 
   return {
     sendText: (text) => {
