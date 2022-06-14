@@ -19,7 +19,15 @@ standalone({
     botUrl: "",
     headers: {
       "nlx-api-key": ""
-    }
+    },
+    triggerWelcomeIntent: true
+  },
+  initiallyExpanded: true,
+  theme: {
+    primaryColor: "teal",
+    darkMessageColor: "#000",
+    lightMessageColor: "#fff",
+    fontFamily: "Helvetica"
   }
 });
 ```
@@ -44,6 +52,13 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
         headers: {
           "nlx-api-key": ""
         }
+      },
+      initiallyExpanded: true,
+      theme: {
+        primaryColor: "teal",
+        darkMessageColor: "#000",
+        lightMessageColor: "#fff",
+        fontFamily: "Helvetica"
       }
     });
   </script>
@@ -52,7 +67,7 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
 
 ## Configuration
 
-Initiating the chat takes the following parameters (see [type definition](types.ts) for details):
+Initiating the chat takes the following parameters (see [type definition](https://github.com/nlxai/chat-sdk/blob/master/packages/widget/src/props.ts) for details):
 
 ### `config`
 
@@ -60,7 +75,7 @@ The configuration of the chat itself, containing `botUrl` and request headers.
 
 ### `theme`
 
-Overrides for the visual theme constants. See [Theme type definition](types.ts) for details.
+Overrides for the visual theme constants. See [Theme type definition](https://github.com/nlxai/chat-sdk/blob/master/packages/widget/src/theme.ts) for details.
 
 ### `chatIcon`
 
@@ -77,24 +92,31 @@ Renders an optional title bar at the top. If the object is provided, it has the 
 
 When set to a non-empty string, a small bubble will appear above the chat pin when the chat is not expanded, helping the user understand what the chat is for. This bubble appears 3s after the chat is loaded, and disappears after 20s.
 
-A complete example of the configuration options can be found [here](../../examples/standalone.html).
-
 ### `initiallyExpanded`
 
 Sets whether the widget is initially expanded.
 
 ### `lowLevel`
 
-If you need low-level control of the widget, this configuration value gives access to the `conversationHandler` object through a callback:
+If you need low-level control of the widget, this configuration value gives access to the [conversationHandler](https://github.com/nlxai/chat-sdk/blob/94d5fade43c6ed05ddf95de7140bf5bf1e6f916e/packages/core/src/index.ts#L84-L95) object through a callback, called once on widget initialization:
 
 ```jsx
 <Widget
-  {/* ... */}
-  lowLevel={conversationHandler => {
-    conversationHandler.subscribe(() => {
-    });
+  config={{
+    botUrl: ""
+  }}
+  lowLevel={(conversationHandler) => {
+    // Send e.g. custom slot values, or save the handler in a ref or on the window global
+    conversationHandler.sendSlots([
+      {
+        slotId: "name",
+        value: "Alex"
+      }
+    ]);
   }
 />
 ```
 
-The callback pattern works similarly to the way [callback refs](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) work in React. We are avoiding that naming since the configuration option works identical in standalone mode.
+## License
+
+MIT.

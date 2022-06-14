@@ -1,3 +1,5 @@
+import fetch from "isomorphic-fetch";
+
 // Bot response
 
 export interface BotResponse {
@@ -63,8 +65,14 @@ export interface Config {
   failureMessages?: string[];
   greetingMessages?: string[];
   context?: Record<string, any>;
+  triggerWelcomeIntent?: boolean;
   headers?: {
     [key: string]: string;
+  };
+  languageCode?: string;
+  // Experimental settings
+  experimental?: {
+    channelType?: string;
   };
 }
 
@@ -105,7 +113,7 @@ const fromInternal = (internalState: InternalState): State =>
 
 type Subscriber = (response: Array<Response>) => void;
 
-const createConversation = (config: Config): ConversationHandler => {
+export const createConversation = (config: Config): ConversationHandler => {
   let socket: WebSocket;
   let state: InternalState = {
     responses:
@@ -193,6 +201,8 @@ const createConversation = (config: Config): ConversationHandler => {
         ? { context: config.context }
         : {}),
       ...body,
+      languageCode: config.languageCode,
+      channelType: config.experimental?.channelType,
     };
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
@@ -208,7 +218,7 @@ const createConversation = (config: Config): ConversationHandler => {
           "content-type": "application/json",
         },
         body: JSON.stringify(bodyWithContext),
-      }).then((res) => res.json());
+      }).then((res: any) => res.json());
     }
   };
 
@@ -238,6 +248,24 @@ const createConversation = (config: Config): ConversationHandler => {
         messageResposeHandler(JSON.parse(e.data));
       }
     };
+  }
+
+  const sendIntent = (intentId: string) => {
+    sendToBot({
+      userId: state.userId,
+      conversationId: state.conversationId,
+      request: {
+        structured: {
+          intentId,
+        },
+      },
+    })
+      .then(messageResposeHandler)
+      .catch(failureHandler);
+  };
+
+  if (config.triggerWelcomeIntent) {
+    sendIntent("NLX.Welcome");
   }
 
   return {
@@ -291,19 +319,7 @@ const createConversation = (config: Config): ConversationHandler => {
         .then(messageResposeHandler)
         .catch(failureHandler);
     },
-    sendIntent: (intentId) => {
-      sendToBot({
-        userId: state.userId,
-        conversationId: state.conversationId,
-        request: {
-          structured: {
-            intentId,
-          },
-        },
-      })
-        .then(messageResposeHandler)
-        .catch(failureHandler);
-    },
+    sendIntent,
     sendChoice: (choiceId) => {
       const newResponses: Response[] = [
         ...state.responses.map((response) =>

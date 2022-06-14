@@ -143,8 +143,6 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   const chat = useChat(props.config);
 
-  console.log(chat);
-
   useEffect(() => {
     if (props.lowLevel && chat.conversationHandler) {
       props.lowLevel(chat.conversationHandler);
@@ -283,7 +281,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
               <C.Input
                 ref={inputRef}
                 value={chat.inputValue}
-                placeholder={props.inputPlaceholder || "Say something.."}
+                placeholder={props.inputPlaceholder || "Type something..."}
                 onChange={(event: any) => {
                   chat.setInputValue(event.target.value);
                 }}

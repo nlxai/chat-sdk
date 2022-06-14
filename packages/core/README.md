@@ -12,7 +12,11 @@ const config = {
   botUrl: "", // obtain from NLX deployments page
   headers: {
     "nlx-api-key": "" // obtain from NLX deployments page
-  }
+  },
+  userId: "abcd-1234", // optional property to identify the user
+  context: {}, // context that is shared with the bot
+  triggerWelcomeIntent: true, // set whether the welcome intent should trigger when the conversation is initialized
+  languageCode: "es-US" // optional language code for standard bots that do not run on US English
 };
 
 // Start the conversation
@@ -29,7 +33,9 @@ convo.sendText("hello");
 
 ## API reference
 
-The package exports a single function called `createConversation`, which is called with the bot configuration and returns a conversation handler object. This object has the following methods:
+The package exports a single function called `createConversation`, which is called with the bot configuration and returns a conversation handler object. 
+
+This return object has the following methods:
 
 #### `sendText: (text: string) => void`
 
@@ -66,18 +72,6 @@ Remove all subscriptions.
 #### `reset: () => void`
 
 Reset the conversation. This makes sure that information previously collected by your bot will not affect the logic of the conversation any longer.
-
-## Usage with React
-
-See the custom [React hook](https://www.npmjs.com/package/@nlxchat/react) for setting up your own React widget in a few dozen lines of code.
-
-## Usage with Preact
-
-Likewise, see the custom [Preact hook](https://www.npmjs.com/package/@nlxchat/preact) for setting up your own Preact widget in a few dozen lines of code.
-
-## Usage with \*
-
-Do you work with Vue? React without hooks? Custom elements? Elm? Let us know what framework you are looking to build web-based chat applications with so we can look into making utilities for those.
 
 ## TypeScript
 
