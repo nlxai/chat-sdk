@@ -111,10 +111,19 @@ interface InternalState {
 const fromInternal = (internalState: InternalState): State =>
   internalState.responses;
 
+const safeJsonParse = (val: string) => {
+  try {
+    const json = JSON.parse(val);
+    return json;
+  } catch (_err) {
+    return null;
+  }
+};
+
 type Subscriber = (response: Array<Response>) => void;
 
 export const createConversation = (config: Config): ConversationHandler => {
-  let socket: WebSocket;
+  let socket: WebSocket | undefined;
   let state: InternalState = {
     responses:
       config.greetingMessages && config.greetingMessages.length > 0
@@ -208,7 +217,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       state = { ...state, contextSent: true };
     }
     if (isUsingWebSockets()) {
-      socket.send(JSON.stringify(bodyWithContext));
+      socket?.send(JSON.stringify(bodyWithContext));
       return Promise.resolve({ isPending: true } as any);
     } else {
       return fetch(config.botUrl, {
@@ -234,18 +243,19 @@ export const createConversation = (config: Config): ConversationHandler => {
 
     socket.onerror = function(error: any) {
       // TODO: Handle unexpected socket errors
-      // @peter, should we just raise this as an event on the widget for the consumer to handle?
+      // NLX to handle reconnects
+      // propagate a custom error intent "eventually"
     };
 
     socket.onclose = function() {
       // TODO: Handle unexpected socket errors
-      // @peter, should we just raise this as an event on the widget for the consumer to handle?
-      // if we start seeing these we can implement an auto-reconnect in here...
+      // NLX to handle reconnects
+      // propagate a custom error intent "eventually"
     };
 
     socket.onmessage = function(e) {
-      if (typeof e.data === "string") {
-        messageResposeHandler(JSON.parse(e.data));
+      if (typeof e?.data === "string") {
+        messageResposeHandler(safeJsonParse(e.data));
       }
     };
   }
