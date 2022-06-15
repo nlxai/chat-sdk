@@ -214,7 +214,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       return fetch(config.botUrl, {
         method: "POST",
         headers: {
-          ...config.headers,
+          ...(config.headers || {}),
           "content-type": "application/json",
         },
         body: JSON.stringify(bodyWithContext),
