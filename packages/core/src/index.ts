@@ -66,7 +66,7 @@ export interface Config {
   greetingMessages?: string[];
   context?: Record<string, any>;
   triggerWelcomeIntent?: boolean;
-  headers: {
+  headers?: {
     [key: string]: string;
   };
   languageCode?: string;
@@ -111,9 +111,19 @@ interface InternalState {
 const fromInternal = (internalState: InternalState): State =>
   internalState.responses;
 
+const safeJsonParse = (val: string) => {
+  try {
+    const json = JSON.parse(val);
+    return json;
+  } catch (_err) {
+    return null;
+  }
+};
+
 type Subscriber = (response: Array<Response>) => void;
 
 export const createConversation = (config: Config): ConversationHandler => {
+  let socket: WebSocket | undefined;
   let state: InternalState = {
     responses:
       config.greetingMessages && config.greetingMessages.length > 0
@@ -169,30 +179,32 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   const messageResposeHandler = (response: any) => {
-    setState({
-      conversationId: response.conversationId,
-      responses: [
-        ...state.responses,
-        {
-          type: "bot",
-          receivedAt: new Date().getTime(),
-          payload: {
-            conversationId: response.conversationId,
-            messages: response.messages.map((message: any) => ({
-              messageId: message.messageId,
-              text: message.text,
-              choices: message.choices || [],
-            })),
-            metadata: response.metadata,
-            payload: response.payload,
-            context: response.context,
+    if (response && !response.isPending) {
+      setState({
+        conversationId: response.conversationId,
+        responses: [
+          ...state.responses,
+          {
+            type: "bot",
+            receivedAt: new Date().getTime(),
+            payload: {
+              conversationId: response.conversationId,
+              messages: response.messages.map((message: any) => ({
+                messageId: message.messageId,
+                text: message.text,
+                choices: message.choices || [],
+              })),
+              metadata: response.metadata,
+              payload: response.payload,
+              context: response.context,
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
+    }
   };
 
-  const sendToBot = (body: any) => {
+  const sendToBot = (body: any): Promise<globalThis.Response> => {
     const bodyWithContext = {
       ...(config.context && !state.contextSent
         ? { context: config.context }
@@ -204,17 +216,49 @@ export const createConversation = (config: Config): ConversationHandler => {
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
     }
-    return fetch(config.botUrl, {
-      method: "POST",
-      headers: {
-        ...config.headers,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(bodyWithContext),
-    }).then((res) => res.json());
+    if (isUsingWebSockets()) {
+      socket?.send(JSON.stringify(bodyWithContext));
+      return Promise.resolve({ isPending: true } as any);
+    } else {
+      return fetch(config.botUrl, {
+        method: "POST",
+        headers: {
+          ...(config.headers || {}),
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(bodyWithContext),
+      }).then((res: any) => res.json());
+    }
+  };
+
+  const isUsingWebSockets = () => {
+    return config.botUrl && config.botUrl.indexOf("wss://") === 0;
   };
 
   let subscribers: Subscriber[] = [];
+
+  if (isUsingWebSockets()) {
+    // open websocket
+    socket = new WebSocket(config.botUrl);
+
+    socket.onerror = function(error: any) {
+      // TODO: Handle unexpected socket errors
+      // NLX to handle reconnects
+      // propagate a custom error intent "eventually"
+    };
+
+    socket.onclose = function() {
+      // TODO: Handle unexpected socket errors
+      // NLX to handle reconnects
+      // propagate a custom error intent "eventually"
+    };
+
+    socket.onmessage = function(e) {
+      if (typeof e?.data === "string") {
+        messageResposeHandler(safeJsonParse(e.data));
+      }
+    };
+  }
 
   const sendIntent = (intentId: string) => {
     sendToBot({

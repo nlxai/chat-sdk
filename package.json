@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "bootstrap": "lerna bootstrap --hoist",
+    "postinstall": "npm run bootstrap",
     "build": "lerna run build",
     "publish": "rm -f packages/*/package-lock.json && lerna publish"
   },
