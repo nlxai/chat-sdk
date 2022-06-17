@@ -1,6 +1,7 @@
 import fetch from "isomorphic-fetch";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import { equals } from "ramda";
+import { v4 as uuid } from "uuid";
 
 // Bot response
 
@@ -118,7 +119,7 @@ export interface ConversationHandler {
 
 interface InternalState {
   responses: Response[];
-  conversationId?: string;
+  conversationId: string;
   userId?: string;
   contextSent: boolean;
 }
@@ -176,7 +177,7 @@ export const createConversation = (config: Config): ConversationHandler => {
           ]
         : [],
     userId: config.userId,
-    conversationId: undefined,
+    conversationId: uuid(),
     contextSent: false,
   };
 
@@ -212,9 +213,8 @@ export const createConversation = (config: Config): ConversationHandler => {
     if (!state.contextSent) {
       state = { ...state, contextSent: true };
     }
-    if (response) {
+    if (response && response.messages) {
       setState({
-        conversationId: response.conversationId,
         responses: [
           ...state.responses,
           {
@@ -234,6 +234,8 @@ export const createConversation = (config: Config): ConversationHandler => {
           },
         ],
       });
+    } else {
+      failureHandler();
     }
   };
 
@@ -419,7 +421,7 @@ export const createConversation = (config: Config): ConversationHandler => {
     },
     reset: (options) => {
       setState({
-        conversationId: undefined,
+        conversationId: uuid(),
         responses: options?.clearResponses ? [] : state.responses,
       });
     },
