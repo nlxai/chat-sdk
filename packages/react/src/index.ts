@@ -45,6 +45,7 @@ export const useChat = (config: Config): ChatHook => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setResponses([]);
     conversationHandler.subscribe(setResponses);
     return () => {
       conversationHandler.destroy();
