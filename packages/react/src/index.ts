@@ -1,10 +1,11 @@
 import { Ref, useState, useEffect, useRef, useMemo } from "react";
 
 // Code from here on out is identical in the React and Preact packages
-import last from "ramda/src/last";
+import { last, equals } from "ramda";
 import createConversation, {
   Config,
   ConversationHandler,
+  shouldReinitialize,
   Response,
 } from "@nlxchat/core";
 
@@ -18,10 +19,22 @@ export interface ChatHook {
 }
 
 export const useChat = (config: Config): ChatHook => {
-  const conversation: ConversationHandler = useMemo(
-    () => createConversation(config),
-    []
-  );
+  const prevConversationHandler = useRef<ConversationHandler | null>(null);
+  const prevConfig = useRef<Config | null>(null);
+
+  useEffect(() => {
+    prevConfig.current = config;
+  }, [config]);
+
+  const conversationHandler: ConversationHandler = useMemo(() => {
+    // Prevent re-initialization if backend-related props have not changed
+    if (prevConfig.current && prevConversationHandler.current && !shouldReinitialize(prevConfig.current, config)) {
+      return prevConversationHandler.current;
+    }
+    const newHandler = createConversation(config);
+    prevConversationHandler.current = newHandler;
+    return newHandler;
+  }, [config]);
 
   const [responses, setResponses] = useState<Array<Response>>([]);
 
@@ -32,11 +45,11 @@ export const useChat = (config: Config): ChatHook => {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    conversation.subscribe(setResponses);
+    conversationHandler.subscribe(setResponses);
     return () => {
-      conversation.unsubscribeAll();
+      conversationHandler.destroy();
     };
-  }, [conversation]);
+  }, [conversationHandler]);
 
   const scrollToBottom = () => {
     const node = messagesContainerRef.current;
@@ -71,7 +84,7 @@ export const useChat = (config: Config): ChatHook => {
   }, [waitTimeoutPassed]);
 
   return {
-    conversationHandler: conversation,
+    conversationHandler,
     inputValue,
     responses,
     waiting: isWaiting && waitTimeoutPassed,

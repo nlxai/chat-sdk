@@ -1,4 +1,6 @@
 import fetch from "isomorphic-fetch";
+import ReconnectingWebSocket from "reconnecting-websocket";
+import { equals } from "ramda";
 
 // Bot response
 
@@ -88,6 +90,18 @@ interface StructuredRequest {
   slots?: Array<{ slotId: string; value: any }>;
 }
 
+interface BotRequest {
+  conversationId?: string;
+  userId?: string;
+  context?: any;
+  request: {
+    unstructured?: {
+      text: string;
+    };
+    structured?: StructuredRequest;
+  };
+}
+
 export interface ConversationHandler {
   sendText: (text: string) => void;
   sendSlots: (slots: Array<{ slotId: string; value: any }>) => void;
@@ -98,7 +112,8 @@ export interface ConversationHandler {
   unsubscribe: (subscriber: Subscriber) => void;
   unsubscribeAll: () => void;
   currentConversationId: () => string | undefined;
-  reset: () => void;
+  reset: (options?: { clearResponses?: boolean }) => void;
+  destroy: () => void;
 }
 
 interface InternalState {
@@ -122,8 +137,23 @@ const safeJsonParse = (val: string) => {
 
 type Subscriber = (response: Array<Response>) => void;
 
+export const shouldReinitialize = (
+  config1: Config,
+  config2: Config
+): boolean => {
+  return (
+    !equals(config1.botUrl, config2.botUrl) ||
+    !equals(config1.userId, config2.userId) ||
+    !equals(
+      config1.experimental?.channelType,
+      config2.experimental?.channelType
+    ) ||
+    !equals(config1.headers, config2.headers)
+  );
+};
+
 export const createConversation = (config: Config): ConversationHandler => {
-  let socket: WebSocket | undefined;
+  let socket: ReconnectingWebSocket | undefined;
   let state: InternalState = {
     responses:
       config.greetingMessages && config.greetingMessages.length > 0
@@ -178,8 +208,11 @@ export const createConversation = (config: Config): ConversationHandler => {
     });
   };
 
-  const messageResposeHandler = (response: any) => {
-    if (response && !response.isPending) {
+  const messageResponseHandler = (response: any) => {
+    if (!state.contextSent) {
+      state = { ...state, contextSent: true };
+    }
+    if (response) {
       setState({
         conversationId: response.conversationId,
         responses: [
@@ -204,7 +237,13 @@ export const createConversation = (config: Config): ConversationHandler => {
     }
   };
 
-  const sendToBot = (body: any): Promise<globalThis.Response> => {
+  let socketMessageQueue: BotRequest[] = [];
+
+  let socketMessageQueueCheckInterval: ReturnType<
+    typeof setInterval
+  > | null = null;
+
+  const sendToBot = (body: BotRequest) => {
     const bodyWithContext = {
       ...(config.context && !state.contextSent
         ? { context: config.context }
@@ -213,12 +252,12 @@ export const createConversation = (config: Config): ConversationHandler => {
       languageCode: config.languageCode,
       channelType: config.experimental?.channelType,
     };
-    if (!state.contextSent) {
-      state = { ...state, contextSent: true };
-    }
     if (isUsingWebSockets()) {
-      socket?.send(JSON.stringify(bodyWithContext));
-      return Promise.resolve({ isPending: true } as any);
+      if (socket && socket.readyState === 1) {
+        socket.send(JSON.stringify(bodyWithContext));
+      } else {
+        socketMessageQueue = [...socketMessageQueue, bodyWithContext];
+      }
     } else {
       return fetch(config.botUrl, {
         method: "POST",
@@ -227,7 +266,10 @@ export const createConversation = (config: Config): ConversationHandler => {
           "content-type": "application/json",
         },
         body: JSON.stringify(bodyWithContext),
-      }).then((res: any) => res.json());
+      })
+        .then((res: any) => res.json())
+        .then(messageResponseHandler)
+        .catch(failureHandler);
     }
   };
 
@@ -239,23 +281,20 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   if (isUsingWebSockets()) {
     // open websocket
-    socket = new WebSocket(config.botUrl);
+    socket = new ReconnectingWebSocket(config.botUrl, []);
 
-    socket.onerror = function(error: any) {
-      // TODO: Handle unexpected socket errors
-      // NLX to handle reconnects
-      // propagate a custom error intent "eventually"
+    const checkQueue = () => {
+      if (socket?.readyState === 1 && socketMessageQueue[0]) {
+        sendToBot(socketMessageQueue[0]);
+        socketMessageQueue = socketMessageQueue.slice(1);
+      }
     };
 
-    socket.onclose = function() {
-      // TODO: Handle unexpected socket errors
-      // NLX to handle reconnects
-      // propagate a custom error intent "eventually"
-    };
+    socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
 
     socket.onmessage = function(e) {
       if (typeof e?.data === "string") {
-        messageResposeHandler(safeJsonParse(e.data));
+        messageResponseHandler(safeJsonParse(e.data));
       }
     };
   }
@@ -269,9 +308,7 @@ export const createConversation = (config: Config): ConversationHandler => {
           intentId,
         },
       },
-    })
-      .then(messageResposeHandler)
-      .catch(failureHandler);
+    });
   };
 
   if (config.triggerWelcomeIntent) {
@@ -301,9 +338,7 @@ export const createConversation = (config: Config): ConversationHandler => {
             text,
           },
         },
-      })
-        .then(messageResposeHandler)
-        .catch(failureHandler);
+      });
     },
     sendStructured: (structured: StructuredRequest) => {
       sendToBot({
@@ -312,9 +347,7 @@ export const createConversation = (config: Config): ConversationHandler => {
         request: {
           structured,
         },
-      })
-        .then(messageResposeHandler)
-        .catch(failureHandler);
+      });
     },
     sendSlots: (slots) => {
       sendToBot({
@@ -325,9 +358,7 @@ export const createConversation = (config: Config): ConversationHandler => {
             slots,
           },
         },
-      })
-        .then(messageResposeHandler)
-        .catch(failureHandler);
+      });
     },
     sendIntent,
     sendChoice: (choiceId) => {
@@ -371,9 +402,7 @@ export const createConversation = (config: Config): ConversationHandler => {
             choiceId,
           },
         },
-      })
-        .then(messageResposeHandler)
-        .catch(failureHandler);
+      });
     },
     currentConversationId: () => {
       return state.conversationId;
@@ -388,10 +417,20 @@ export const createConversation = (config: Config): ConversationHandler => {
     unsubscribeAll: () => {
       subscribers = [];
     },
-    reset: () => {
+    reset: (options) => {
       setState({
         conversationId: undefined,
+        responses: options?.clearResponses ? [] : state.responses,
       });
+    },
+    destroy: () => {
+      subscribers = [];
+      if (socket) {
+        socket.close();
+      }
+      if (socketMessageQueueCheckInterval !== null) {
+        clearInterval(socketMessageQueueCheckInterval);
+      }
     },
   };
 };

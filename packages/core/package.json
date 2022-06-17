@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
-    "ramda": "^0.27.1"
+    "ramda": "^0.27.1",
+    "reconnecting-websocket": "^4.4.0"
   },
   "publishConfig": {
     "access": "public"
