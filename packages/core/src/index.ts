@@ -281,24 +281,38 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   let subscribers: Subscriber[] = [];
 
-  if (isUsingWebSockets()) {
-    // open websocket
-    socket = new ReconnectingWebSocket(config.botUrl, []);
+  const checkQueue = () => {
+    if (socket?.readyState === 1 && socketMessageQueue[0]) {
+      sendToBot(socketMessageQueue[0]);
+      socketMessageQueue = socketMessageQueue.slice(1);
+    }
+  };
 
-    const checkQueue = () => {
-      if (socket?.readyState === 1 && socketMessageQueue[0]) {
-        sendToBot(socketMessageQueue[0]);
-        socketMessageQueue = socketMessageQueue.slice(1);
-      }
-    };
-
+  const setupWebsocket = () => {
+    const url = new URL(config.botUrl);
+    url.searchParams.append("conversationId", state.conversationId);
+    socket = new ReconnectingWebSocket(url.href);
     socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
-
     socket.onmessage = function(e) {
       if (typeof e?.data === "string") {
         messageResponseHandler(safeJsonParse(e.data));
       }
     };
+  };
+
+  const teardownWebsocket = () => {
+    if (socketMessageQueueCheckInterval) {
+      clearInterval(socketMessageQueueCheckInterval);
+    }
+    if (socket) {
+      socket.onmessage = null;
+      socket.close();
+      socket = undefined;
+    }
+  };
+
+  if (isUsingWebSockets()) {
+    setupWebsocket();
   }
 
   const sendIntent = (intentId: string) => {
@@ -424,14 +438,15 @@ export const createConversation = (config: Config): ConversationHandler => {
         conversationId: uuid(),
         responses: options?.clearResponses ? [] : state.responses,
       });
+      if (isUsingWebSockets()) {
+        teardownWebsocket();
+        setupWebsocket();
+      }
     },
     destroy: () => {
       subscribers = [];
-      if (socket) {
-        socket.close();
-      }
-      if (socketMessageQueueCheckInterval !== null) {
-        clearInterval(socketMessageQueueCheckInterval);
+      if (isUsingWebSockets()) {
+        teardownWebsocket();
       }
     },
   };
