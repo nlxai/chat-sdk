@@ -1,6 +1,6 @@
 import fetch from "isomorphic-fetch";
 import ReconnectingWebSocket from "reconnecting-websocket";
-import { equals } from "ramda";
+import { equals, findLastIndex, update } from "ramda";
 import { v4 as uuid } from "uuid";
 
 // Bot response
@@ -378,38 +378,64 @@ export const createConversation = (config: Config): ConversationHandler => {
     },
     sendIntent,
     sendChoice: (choiceId) => {
-      const newResponses: Response[] = [
-        ...state.responses.map((response) =>
-          response.type === "bot"
-            ? {
-                ...response,
-                payload: {
-                  ...response.payload,
-                  messages: response.payload.messages.map((botMessage) => ({
-                    ...botMessage,
-                    selectedChoiceId:
-                      botMessage.choices
-                        .map((choice) => choice.choiceId)
-                        .indexOf(choiceId) > -1
-                        ? choiceId
-                        : botMessage.selectedChoiceId,
-                  })),
-                },
-              }
-            : response
-        ),
-        {
-          type: "user",
-          receivedAt: new Date().getTime(),
-          payload: {
-            type: "choice",
-            choiceId,
-          },
+      const lastBotResponseIndex = findLastIndex(
+        (response) =>
+          response.type === "bot" &&
+          Boolean(
+            response.payload.messages.find(
+              (botMessage) =>
+                botMessage.choices
+                  .map((choice) => choice.choiceId)
+                  .indexOf(choiceId) > -1
+            )
+          ),
+        state.responses
+      );
+
+      let newResponses: Response[] = [...state.responses];
+
+      const choiceResponse: Response = {
+        type: "user",
+        receivedAt: new Date().getTime(),
+        payload: {
+          type: "choice",
+          choiceId,
         },
+      };
+
+      if (lastBotResponseIndex > -1) {
+        const lastBotResponse = state.responses[
+          lastBotResponseIndex
+        ] as BotResponse;
+
+        const updatedBotResponse = {
+          ...lastBotResponse,
+          payload: {
+            ...lastBotResponse.payload,
+            messages: lastBotResponse.payload.messages.map((botMessage) => ({
+              ...botMessage,
+              selectedChoiceId:
+                botMessage.choices
+                  .map((choice) => choice.choiceId)
+                  .indexOf(choiceId) > -1
+                  ? choiceId
+                  : botMessage.selectedChoiceId,
+            })),
+          },
+        };
+
+        newResponses = update(lastBotResponseIndex, updatedBotResponse, newResponses)
+      }
+
+      newResponses = [
+        ...newResponses,
+        choiceResponse,
       ];
+
       setState({
         responses: newResponses,
       });
+
       sendToBot({
         userId: state.userId,
         conversationId: state.conversationId,
