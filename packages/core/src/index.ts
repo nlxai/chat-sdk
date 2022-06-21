@@ -82,6 +82,8 @@ export interface Config {
   };
 }
 
+const welcomeIntent = "NLX.Welcome";
+
 const defaultFailureMessages = [
   "We encountered an issue while contacting the server. Please try again in a few moments.",
 ];
@@ -347,7 +349,7 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   if (config.triggerWelcomeIntent) {
-    sendIntent("NLX.Welcome");
+    sendIntent(welcomeIntent);
   }
 
   return {
@@ -484,6 +486,9 @@ export const createConversation = (config: Config): ConversationHandler => {
       if (isUsingWebSockets()) {
         teardownWebsocket();
         setupWebsocket();
+      }
+      if (config.triggerWelcomeIntent) {
+        sendIntent(welcomeIntent);
       }
     },
     destroy: () => {
