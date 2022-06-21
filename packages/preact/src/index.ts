@@ -40,8 +40,6 @@ export const useChat = (config: Config): ChatHook => {
 
   const [inputValue, setInputValue] = useState<string>("");
 
-  const [waitTimeoutPassed, setWaitTimeoutPassed] = useState(false);
-
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,29 +64,11 @@ export const useChat = (config: Config): ChatHook => {
   const lastMessage = last<Response>(responses);
   const isWaiting = lastMessage ? lastMessage.type === "user" : false;
 
-  useEffect(() => {
-    const lastMessage = last<Response>(responses);
-    const isWaiting = lastMessage ? lastMessage.type === "user" : false;
-    if (isWaiting) {
-      setTimeout(() => {
-        setWaitTimeoutPassed(true);
-      }, 500);
-    } else if (waitTimeoutPassed) {
-      setWaitTimeoutPassed(false);
-    }
-  }, [responses]);
-
-  useEffect(() => {
-    if (waitTimeoutPassed) {
-      scrollToBottom();
-    }
-  }, [waitTimeoutPassed]);
-
   return {
     conversationHandler,
     inputValue,
     responses,
-    waiting: isWaiting && waitTimeoutPassed,
+    waiting: isWaiting,
     messagesContainerRef,
     setInputValue,
   };

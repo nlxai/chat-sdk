@@ -54,6 +54,9 @@ export type UserResponsePayload =
   | {
       type: "choice";
       choiceId: string;
+    }
+  | {
+      type: "structured";
     };
 
 export type Response = BotResponse | UserResponse;
@@ -315,7 +318,23 @@ export const createConversation = (config: Config): ConversationHandler => {
     setupWebsocket();
   }
 
+  const appendStructuredUserResponse = () => {
+    setState({
+      responses: [
+        ...state.responses,
+        {
+          type: "user",
+          receivedAt: new Date().getTime(),
+          payload: {
+            type: "structured",
+          },
+        },
+      ],
+    });
+  };
+
   const sendIntent = (intentId: string) => {
+    appendStructuredUserResponse();
     sendToBot({
       userId: state.userId,
       conversationId: state.conversationId,
@@ -357,6 +376,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       });
     },
     sendStructured: (structured: StructuredRequest) => {
+      appendStructuredUserResponse();
       sendToBot({
         userId: state.userId,
         conversationId: state.conversationId,
@@ -366,6 +386,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       });
     },
     sendSlots: (slots) => {
+      appendStructuredUserResponse();
       sendToBot({
         userId: state.userId,
         conversationId: state.conversationId,
@@ -378,17 +399,15 @@ export const createConversation = (config: Config): ConversationHandler => {
     },
     sendIntent,
     sendChoice: (choiceId) => {
+      const containsChoice = (botMessage: BotMessage) =>
+        (botMessage.choices || [])
+          .map((choice) => choice.choiceId)
+          .indexOf(choiceId) > -1;
+
       const lastBotResponseIndex = findLastIndex(
         (response) =>
           response.type === "bot" &&
-          Boolean(
-            response.payload.messages.find(
-              (botMessage) =>
-                botMessage.choices
-                  .map((choice) => choice.choiceId)
-                  .indexOf(choiceId) > -1
-            )
-          ),
+          Boolean(response.payload.messages.find(containsChoice)),
         state.responses
       );
 
@@ -414,23 +433,21 @@ export const createConversation = (config: Config): ConversationHandler => {
             ...lastBotResponse.payload,
             messages: lastBotResponse.payload.messages.map((botMessage) => ({
               ...botMessage,
-              selectedChoiceId:
-                botMessage.choices
-                  .map((choice) => choice.choiceId)
-                  .indexOf(choiceId) > -1
-                  ? choiceId
-                  : botMessage.selectedChoiceId,
+              selectedChoiceId: containsChoice(botMessage)
+                ? choiceId
+                : botMessage.selectedChoiceId,
             })),
           },
         };
 
-        newResponses = update(lastBotResponseIndex, updatedBotResponse, newResponses)
+        newResponses = update(
+          lastBotResponseIndex,
+          updatedBotResponse,
+          newResponses
+        );
       }
 
-      newResponses = [
-        ...newResponses,
-        choiceResponse,
-      ];
+      newResponses = [...newResponses, choiceResponse];
 
       setState({
         responses: newResponses,
