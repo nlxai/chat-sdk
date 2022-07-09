@@ -226,15 +226,12 @@ export const createConversation = (config: Config): ConversationHandler => {
             type: "bot",
             receivedAt: new Date().getTime(),
             payload: {
-              conversationId: response.conversationId,
+              ...response,
               messages: response.messages.map((message: any) => ({
                 messageId: message.messageId,
                 text: message.text,
                 choices: message.choices || [],
               })),
-              metadata: response.metadata,
-              payload: response.payload,
-              context: response.context,
             },
           },
         ],
