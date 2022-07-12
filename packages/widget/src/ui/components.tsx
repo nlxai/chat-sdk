@@ -451,6 +451,7 @@ export const TitleContainer = styled.div<{}>`
 export const Title = styled.p<{}>`
   font-size: 16px;
   font-weight: bold;
+  margin: 0;
   font-family: ${(props) => castAsTheme(props.theme).fontFamily};
 `;
 
