@@ -153,6 +153,14 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   const [expanded, setExpanded] = useState(Boolean(props.initiallyExpanded));
 
+  useEffect(() => {
+    if (expanded) {
+      props.onExpand?.(chat.conversationHandler);
+    } else {
+      props.onCollapse?.(chat.conversationHandler);
+    }
+  }, [expanded, chat.conversationHandler]);
+
   const messageGroupsRef = useRef<HTMLDivElement | null>(null);
 
   // Input focus

@@ -112,6 +112,7 @@ export interface ConversationHandler {
   sendText: (text: string) => void;
   sendSlots: (slots: Array<{ slotId: string; value: any }>) => void;
   sendChoice: (choiceId: string) => void;
+  sendWelcomeIntent: () => void;
   sendIntent: (intentId: string) => void;
   sendStructured: (request: StructuredRequest) => void;
   subscribe: (subscriber: Subscriber) => void;
@@ -397,6 +398,9 @@ export const createConversation = (config: Config): ConversationHandler => {
       });
     },
     sendIntent,
+    sendWelcomeIntent: () => {
+      sendIntent(welcomeIntent);
+    },
     sendChoice: (choiceId) => {
       const containsChoice = (botMessage: BotMessage) =>
         (botMessage.choices || [])

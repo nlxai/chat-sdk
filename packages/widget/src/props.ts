@@ -10,6 +10,8 @@ export interface Props {
     logo?: string;
     title: string;
   };
+  onExpand?: (conversationHandler: ConversationHandler) => void;
+  onCollapse?: (conversationHandler: ConversationHandler) => void;
   bubble?: string;
   inputPlaceholder?: string;
   initiallyExpanded?: boolean;

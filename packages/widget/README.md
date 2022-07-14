@@ -14,6 +14,7 @@ You can render a chat widget in your document with just a few lines of code:
 import { standalone } from "@nlxchat/widget";
 
 // This will render the widget as the last element in the <body>
+
 standalone({
   config: {
     botUrl: "",
