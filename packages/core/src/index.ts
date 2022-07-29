@@ -251,6 +251,8 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   const sendToBot = (body: BotRequest) => {
     const bodyWithContext = {
+      userId: state.userId,
+      conversationId: state.conversationId,
       ...(config.context && !state.contextSent
         ? { context: config.context }
         : {}),
@@ -337,8 +339,6 @@ export const createConversation = (config: Config): ConversationHandler => {
   const sendIntent = (intentId: string) => {
     appendStructuredUserResponse();
     sendToBot({
-      userId: state.userId,
-      conversationId: state.conversationId,
       request: {
         structured: {
           intentId,
@@ -367,8 +367,6 @@ export const createConversation = (config: Config): ConversationHandler => {
         ],
       });
       sendToBot({
-        userId: state.userId,
-        conversationId: state.conversationId,
         request: {
           unstructured: {
             text,
@@ -379,8 +377,6 @@ export const createConversation = (config: Config): ConversationHandler => {
     sendStructured: (structured: StructuredRequest) => {
       appendStructuredUserResponse();
       sendToBot({
-        userId: state.userId,
-        conversationId: state.conversationId,
         request: {
           structured,
         },
@@ -389,8 +385,6 @@ export const createConversation = (config: Config): ConversationHandler => {
     sendSlots: (slots) => {
       appendStructuredUserResponse();
       sendToBot({
-        userId: state.userId,
-        conversationId: state.conversationId,
         request: {
           structured: {
             slots,
@@ -458,8 +452,6 @@ export const createConversation = (config: Config): ConversationHandler => {
       });
 
       sendToBot({
-        userId: state.userId,
-        conversationId: state.conversationId,
         request: {
           structured: {
             choiceId,
