@@ -475,6 +475,7 @@ export const createConversation = (config: Config): ConversationHandler => {
     reset: (options) => {
       setState({
         conversationId: uuid(),
+        contextSent: false,
         responses: options?.clearResponses ? [] : state.responses,
       });
       if (isUsingWebSockets()) {
