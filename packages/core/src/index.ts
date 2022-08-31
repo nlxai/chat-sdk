@@ -151,6 +151,7 @@ export const shouldReinitialize = (
   return (
     !equals(config1.botUrl, config2.botUrl) ||
     !equals(config1.userId, config2.userId) ||
+    !equals(config1.languageCode, config2.languageCode) ||
     !equals(config1.context, config2.context) ||
     !equals(
       config1.experimental?.channelType,
