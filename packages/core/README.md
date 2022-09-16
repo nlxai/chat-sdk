@@ -13,6 +13,7 @@ const config = {
   headers: {
     "nlx-api-key": "" // obtain from NLX deployments page
   },
+  conversationId: "", // optional Resume an existing conversation. Obtain from a response from the bot
   userId: "abcd-1234", // optional property to identify the user
   context: {}, // context that is shared with the bot
   triggerWelcomeIntent: true, // set whether the welcome intent should trigger when the conversation is initialized

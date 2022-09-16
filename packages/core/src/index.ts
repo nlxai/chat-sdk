@@ -68,6 +68,7 @@ export type Time = number;
 export interface Config {
   botUrl: string;
   userId?: string;
+  conversationId?: string | undefined,
   failureMessages?: string[];
   greetingMessages?: string[];
   context?: Record<string, any>;
@@ -171,7 +172,7 @@ export const createConversation = (config: Config): ConversationHandler => {
               type: "bot",
               receivedAt: new Date().getTime(),
               payload: {
-                conversationId: undefined,
+                conversationId: config.conversationId,
                 messages: config.greetingMessages.map(
                   (greetingMessage: string) => ({
                     messageId: undefined,
@@ -185,7 +186,7 @@ export const createConversation = (config: Config): ConversationHandler => {
           ]
         : [],
     userId: config.userId,
-    conversationId: uuid(),
+    conversationId: config.conversationId || uuid(),
     contextSent: false,
   };
 
