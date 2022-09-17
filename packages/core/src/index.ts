@@ -67,6 +67,7 @@ export type Time = number;
 
 export interface Config {
   botUrl: string;
+  conversationId?: string;
   userId?: string;
   failureMessages?: string[];
   greetingMessages?: string[];
@@ -151,6 +152,7 @@ export const shouldReinitialize = (
   return (
     !equals(config1.botUrl, config2.botUrl) ||
     !equals(config1.userId, config2.userId) ||
+    !equals(config1.conversationId, config2.conversationId) ||
     !equals(config1.languageCode, config2.languageCode) ||
     !equals(config1.context, config2.context) ||
     !equals(
@@ -163,6 +165,9 @@ export const shouldReinitialize = (
 
 export const createConversation = (config: Config): ConversationHandler => {
   let socket: ReconnectingWebSocket | undefined;
+
+  const initialConversationId = config.conversationId || uuid();
+
   let state: InternalState = {
     responses:
       config.greetingMessages && config.greetingMessages.length > 0
@@ -171,7 +176,7 @@ export const createConversation = (config: Config): ConversationHandler => {
               type: "bot",
               receivedAt: new Date().getTime(),
               payload: {
-                conversationId: undefined,
+                conversationId: initialConversationId,
                 messages: config.greetingMessages.map(
                   (greetingMessage: string) => ({
                     messageId: undefined,
@@ -185,7 +190,7 @@ export const createConversation = (config: Config): ConversationHandler => {
           ]
         : [],
     userId: config.userId,
-    conversationId: uuid(),
+    conversationId: initialConversationId,
     contextSent: false,
   };
 
