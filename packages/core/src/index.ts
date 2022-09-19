@@ -143,7 +143,7 @@ const safeJsonParse = (val: string) => {
   }
 };
 
-type Subscriber = (response: Array<Response>) => void;
+type Subscriber = (response: Array<Response>, newResponse?: Response) => void;
 
 export const shouldReinitialize = (
   config1: Config,
@@ -194,32 +194,39 @@ export const createConversation = (config: Config): ConversationHandler => {
     contextSent: false,
   };
 
-  const setState = (change: Partial<InternalState>): void => {
+  const setState = (
+    change: Partial<InternalState>,
+    // Optionally send the response that causes the current state change, to be sent to subscribers
+    newResponse?: Response
+  ): void => {
     state = {
       ...state,
       ...change,
     };
-    subscribers.forEach((subscriber) => subscriber(fromInternal(state)));
+    subscribers.forEach((subscriber) =>
+      subscriber(fromInternal(state), newResponse)
+    );
   };
 
   const failureHandler = () => {
-    setState({
-      responses: [
-        ...state.responses,
-        {
-          type: "bot",
-          receivedAt: new Date().getTime(),
-          payload: {
-            messages: (config.failureMessages || defaultFailureMessages).map(
-              (messageBody: string): BotMessage => ({
-                text: messageBody,
-                choices: [] as Array<Choice>,
-              })
-            ),
-          },
-        },
-      ],
-    });
+    const newResponse: Response = {
+      type: "bot",
+      receivedAt: new Date().getTime(),
+      payload: {
+        messages: (config.failureMessages || defaultFailureMessages).map(
+          (messageBody: string): BotMessage => ({
+            text: messageBody,
+            choices: [] as Array<Choice>,
+          })
+        ),
+      },
+    };
+    setState(
+      {
+        responses: [...state.responses, newResponse],
+      },
+      newResponse
+    );
   };
 
   const messageResponseHandler = (response: any) => {
@@ -227,23 +234,24 @@ export const createConversation = (config: Config): ConversationHandler => {
       state = { ...state, contextSent: true };
     }
     if (response && response.messages) {
-      setState({
-        responses: [
-          ...state.responses,
-          {
-            type: "bot",
-            receivedAt: new Date().getTime(),
-            payload: {
-              ...response,
-              messages: response.messages.map((message: any) => ({
-                messageId: message.messageId,
-                text: message.text,
-                choices: message.choices || [],
-              })),
-            },
-          },
-        ],
-      });
+      const newResponse: Response = {
+        type: "bot",
+        receivedAt: new Date().getTime(),
+        payload: {
+          ...response,
+          messages: response.messages.map((message: any) => ({
+            messageId: message.messageId,
+            text: message.text,
+            choices: message.choices || [],
+          })),
+        },
+      };
+      setState(
+        {
+          responses: [...state.responses, newResponse],
+        },
+        newResponse
+      );
     } else {
       failureHandler();
     }
@@ -328,18 +336,19 @@ export const createConversation = (config: Config): ConversationHandler => {
   }
 
   const appendStructuredUserResponse = () => {
-    setState({
-      responses: [
-        ...state.responses,
-        {
-          type: "user",
-          receivedAt: new Date().getTime(),
-          payload: {
-            type: "structured",
-          },
-        },
-      ],
-    });
+    const newResponse: Response = {
+      type: "user",
+      receivedAt: new Date().getTime(),
+      payload: {
+        type: "structured",
+      },
+    };
+    setState(
+      {
+        responses: [...state.responses, newResponse],
+      },
+      newResponse
+    );
   };
 
   const sendIntent = (intentId: string) => {
@@ -359,19 +368,20 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   return {
     sendText: (text) => {
-      setState({
-        responses: [
-          ...state.responses,
-          {
-            type: "user",
-            receivedAt: new Date().getTime(),
-            payload: {
-              type: "text",
-              text,
-            },
-          },
-        ],
-      });
+      const newResponse: Response = {
+        type: "user",
+        receivedAt: new Date().getTime(),
+        payload: {
+          type: "text",
+          text,
+        },
+      };
+      setState(
+        {
+          responses: [...state.responses, newResponse],
+        },
+        newResponse
+      );
       sendToBot({
         request: {
           unstructured: {
@@ -453,9 +463,12 @@ export const createConversation = (config: Config): ConversationHandler => {
 
       newResponses = [...newResponses, choiceResponse];
 
-      setState({
-        responses: newResponses,
-      });
+      setState(
+        {
+          responses: newResponses,
+        },
+        choiceResponse
+      );
 
       sendToBot({
         request: {

@@ -23,8 +23,8 @@ const config = {
 // Start the conversation
 const convo = createConversation(config);
 
-// Subscribe to changes in the list of responses
-convo.subscribe(responses => {
+// Subscribe to changes in the list of responses; the newest response is sent as a second argument
+convo.subscribe((responses, newResponse) => {
   console.log(responses);
 });
 
