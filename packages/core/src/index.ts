@@ -86,7 +86,7 @@ export interface Config {
 const welcomeIntent = "NLX.Welcome";
 
 const defaultFailureMessages = [
-  "We encountered an issue while contacting the server. Please try again in a few moments.",
+  "We encountered an issue. Please try again soon.",
 ];
 
 export type State = Response[];
