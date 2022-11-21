@@ -162,6 +162,10 @@ export const shouldReinitialize = (
       config1.experimental?.channelType,
       config2.experimental?.channelType
     ) ||
+    !equals(
+      config1.experimental?.fullBotUrl,
+      config2.experimental?.fullBotUrl
+    ) ||
     !equals(config1.headers, config2.headers)
   );
 };
@@ -284,14 +288,19 @@ export const createConversation = (config: Config): ConversationHandler => {
         socketMessageQueue = [...socketMessageQueue, bodyWithContext];
       }
     } else {
-      return fetch(`${config.botUrl}-${config.languageCode}`, {
-        method: "POST",
-        headers: {
-          ...(config.headers || {}),
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(bodyWithContext),
-      })
+      return fetch(
+        `${config.botUrl}${
+          config.experimental?.fullBotUrl ? "" : `-${config.languageCode}`
+        }`,
+        {
+          method: "POST",
+          headers: {
+            ...(config.headers || {}),
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(bodyWithContext),
+        }
+      )
         .then((res: any) => res.json())
         .then(messageResponseHandler)
         .catch(failureHandler);
@@ -312,7 +321,11 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   const setupWebsocket = () => {
-    const url = new URL(`${config.botUrl}-${config.languageCode}`);
+    const url = new URL(
+      `${config.botUrl}${
+        config.experimental?.fullBotUrl ? "" : `-${config.languageCode}`
+      }`
+    );
     url.searchParams.append("conversationId", state.conversationId);
     socket = new ReconnectingWebSocket(url.href);
     socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
