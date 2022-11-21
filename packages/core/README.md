@@ -74,6 +74,12 @@ Remove all subscriptions.
 
 Reset the conversation. This makes sure that information previously collected by your bot will not affect the logic of the conversation any longer.
 
+## Upgrading to 1.0.0
+
+Starting 1.0.0, the language code is automatically appended to the bot URL. If you're upgrading your SDK, please make sure:
+- you initialize the app with a `languageCode` parameter (this is now mandatory).
+- if you appended the language code to the URL manually before, make sure to remove it (`https://bots.studio.nlx.ai/abcd/efgh-en-US` instead of `https://bots.studio.nlx.ai/abcd/efgh-en-US`).
+
 ## TypeScript
 
 This SDK is written in TypeScript so you can use our type definitions in your project.

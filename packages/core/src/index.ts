@@ -76,10 +76,13 @@ export interface Config {
   headers?: {
     [key: string]: string;
   };
-  languageCode?: string;
+  languageCode: string;
   // Experimental settings
   experimental?: {
+    // Simulate alternative channel types
     channelType?: string;
+    // Prevent the `languageCode` parameter to be appended to the bot URL - used in special deployment environments such as the sandbox chat inside Dialog Studio
+    fullBotUrl?: boolean;
   };
 }
 
@@ -281,7 +284,7 @@ export const createConversation = (config: Config): ConversationHandler => {
         socketMessageQueue = [...socketMessageQueue, bodyWithContext];
       }
     } else {
-      return fetch(config.botUrl, {
+      return fetch(`${config.botUrl}-${config.languageCode}`, {
         method: "POST",
         headers: {
           ...(config.headers || {}),
@@ -309,7 +312,7 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   const setupWebsocket = () => {
-    const url = new URL(config.botUrl);
+    const url = new URL(`${config.botUrl}-${config.languageCode}`);
     url.searchParams.append("conversationId", state.conversationId);
     socket = new ReconnectingWebSocket(url.href);
     socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
