@@ -514,4 +514,27 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 };
 
+export function promisify<T>(
+  fn: (payload: T) => void,
+  convo: ConversationHandler
+): (payload: T) => Promise<Response | null> {
+  return (payload: T) => {
+    return new Promise((resolve, _reject) => {
+      const subscription = (
+        _responses: Response[],
+        newResponse: Response | undefined
+      ) => {
+        if (newResponse) {
+          resolve(newResponse);
+        } else {
+          resolve(null);
+        }
+        convo.unsubscribe(subscription);
+      };
+      convo.subscribe(subscription);
+      fn(payload);
+    });
+  };
+}
+
 export default createConversation;
