@@ -135,8 +135,8 @@ window.chat.standalone({
   onExpand(handler) {
     if (!chatWelcomeIntentSent) {
       handler.sendWelcomeIntent();
+      chatWelcomeIntentSent = true;
     }
-    chatWelcomeIntentSent = true;
   }
 });
 ```
