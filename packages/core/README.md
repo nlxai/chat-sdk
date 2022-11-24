@@ -34,7 +34,7 @@ convo.sendText("hello");
 
 ## API reference
 
-The package exports a single function called `createConversation`, which is called with the bot configuration and returns a conversation handler object. 
+The package exports a main function called `createConversation`, which is called with the bot configuration and returns a conversation handler object.
 
 This return object has the following methods:
 
@@ -58,9 +58,9 @@ Trigger a specific intent. The most common use of this method is to show welcome
 
 Send a combination of choice, slots and intent ID in one request.
 
-#### `subscribe: (subscriber: (responses: Response[]) => void) => void`
+#### `subscribe: (subscriber: (responses: Response[], newResponse: Response | undefined) => void) => void`
 
-Subscribe to the current state of messages whenever there is a change.
+Subscribe to the current state of messages whenever there is a change. The second argument returns the new response that is triggering the subscription, if there is one.
 
 #### `unsubscribe: (subscriber: (responses: Response[]) => void) => void`
 
@@ -77,6 +77,26 @@ Reset the conversation. This makes sure that information previously collected by
 ## TypeScript
 
 This SDK is written in TypeScript so you can use our type definitions in your project.
+
+## Recipes
+
+### Promise wrapper
+
+This package is intentionally designed with a subscription-based API as opposed to a promise-based one where each message send a single corresponding response, available asynchronously.
+
+If you need a promise-based wrapper, you can use the `promisify` helper available in the package:
+
+```ts
+import { createConversation, promisify } from "@nlxchat/core";
+
+const convo = createConversation(config);
+
+const sendTextWrapped = promisify(convo.sendText, convo);
+
+sendTextWrapped("Hello").then(response => {
+  console.log(response);
+});
+```
 
 ## Contributing
 
