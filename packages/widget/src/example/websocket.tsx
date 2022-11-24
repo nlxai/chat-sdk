@@ -10,6 +10,7 @@ botUrl.searchParams.append("deploymentKey", "");
 const props: Props = {
   config: {
     botUrl: botUrl.href,
+    languageCode: "en-US",
     userId: "1234",
     triggerWelcomeIntent: true,
   },
