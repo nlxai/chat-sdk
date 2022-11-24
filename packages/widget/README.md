@@ -19,17 +19,17 @@ standalone({
   config: {
     botUrl: "",
     headers: {
-      "nlx-api-key": ""
+      "nlx-api-key": "",
     },
-    triggerWelcomeIntent: true
+    triggerWelcomeIntent: true,
   },
   initiallyExpanded: true,
   theme: {
     primaryColor: "teal",
     darkMessageColor: "#000",
     lightMessageColor: "#fff",
-    fontFamily: "Helvetica"
-  }
+    fontFamily: "Helvetica",
+  },
 });
 ```
 
@@ -51,16 +51,16 @@ There is also a packaged version of the SDK that exposes the `chat.standalone` a
       config: {
         botUrl: "",
         headers: {
-          "nlx-api-key": ""
-        }
+          "nlx-api-key": "",
+        },
       },
       initiallyExpanded: true,
       theme: {
         primaryColor: "teal",
         darkMessageColor: "#000",
         lightMessageColor: "#fff",
-        fontFamily: "Helvetica"
-      }
+        fontFamily: "Helvetica",
+      },
     });
   </script>
 </body>
@@ -72,7 +72,7 @@ Initiating the chat takes the following parameters (see [type definition](https:
 
 ### `config`
 
-The configuration of the chat itself, containing `botUrl` and request headers.
+The configuration of the chat itself, containing `botUrl` and request headers. See the [core SDK example](https://github.com/nlxai/chat-sdk/tree/master/packages/core#getting-started).
 
 ### `theme`
 
@@ -85,9 +85,10 @@ The URL of an image you can set to override the default chat icon in the chat pi
 ### `titleBar`
 
 Renders an optional title bar at the top. If the object is provided, it has the following fields:
-* `title` (mandatory): title text.
-* `icon` (optional): a URL for an icon image.
-* `downloadable` (optional): if set to true, the title bar will include a button that allows chat history to be downloaded.
+
+- `title` (mandatory): title text.
+- `icon` (optional): a URL for an icon image.
+- `downloadable` (optional): if set to true, the title bar will include a button that allows chat history to be downloaded.
 
 ### `bubble`
 
@@ -116,6 +117,31 @@ If you need low-level control of the widget, this configuration value gives acce
     ]);
   }
 />
+```
+
+## Recipes
+
+### Fine-grain control on triggering the welcome intent
+
+When using the `config.triggerWelcomeIntent` configuration option, the welcome intent is triggered on widget initialization regardless of whether the widget is expanded or not (through the `initiallyExpanded` option). If you want to trigger the welcome intent only when the widget is expanded by the user (especially helpful for managing costs), you can use the following pattern:
+
+```js
+let welcomeIntentSent = false;
+
+const handleExpand = (conversationHandler) => {
+  if (!welcomeIntentSent) {
+    conversationHandler.sendWelcomeIntent();
+    welcomeIntentSent = true;
+  }
+};
+
+window.chat.standalone({
+  config: {
+    // usual bot configuration
+  },
+  initiallyExpanded: false,
+  onExpand: handleExpand,
+});
 ```
 
 ## License
