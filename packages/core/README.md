@@ -90,7 +90,7 @@ This SDK is written in TypeScript so you can use our type definitions in your pr
 
 ### Promise wrapper
 
-This package is intentionally designed with a subscription-based API as opposed to a promise-based one where each message send a single corresponding response, available asynchronously.
+This package is intentionally designed with a subscription-based API as opposed to a promise-based one where each message corresponds to a single bot response, available asynchronously.
 
 If you need a promise-based wrapper, you can use the `promisify` helper available in the package:
 
@@ -105,6 +105,8 @@ sendTextWrapped("Hello").then(response => {
   console.log(response);
 });
 ```
+
+> IMPORTANT: the wrapped promise will resolve the first bot response, and therefore subsequent responses are ignored. Use this pattern only if you know that there is a single response (currently this is a fairly safe assumption for bots working over HTTP).
 
 ## Contributing
 
