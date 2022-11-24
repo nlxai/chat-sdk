@@ -532,18 +532,21 @@ export const createConversation = (config: Config): ConversationHandler => {
 
 export function promisify<T>(
   fn: (payload: T) => void,
-  convo: ConversationHandler
+  convo: ConversationHandler,
+  timeout = 10000
 ): (payload: T) => Promise<Response | null> {
   return (payload: T) => {
-    return new Promise((resolve, _reject) => {
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject("The request timed out.");
+      }, timeout);
       const subscription = (
         _responses: Response[],
         newResponse: Response | undefined
       ) => {
-        if (newResponse) {
+        if (newResponse && newResponse.type === "bot") {
+          clearTimeout(timeoutId);
           resolve(newResponse);
-        } else {
-          resolve(null);
         }
         convo.unsubscribe(subscription);
       };
