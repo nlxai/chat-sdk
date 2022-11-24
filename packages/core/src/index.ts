@@ -546,9 +546,9 @@ export function promisify<T>(
       ) => {
         if (newResponse && newResponse.type === "bot") {
           clearTimeout(timeoutId);
+          convo.unsubscribe(subscription);
           resolve(newResponse);
         }
-        convo.unsubscribe(subscription);
       };
       convo.subscribe(subscription);
       fn(payload);
