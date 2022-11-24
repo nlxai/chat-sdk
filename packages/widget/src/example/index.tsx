@@ -9,6 +9,7 @@ const apiKey = process.env.NLX_BOT_API_KEY as string;
 const props: Props = {
   config: {
     botUrl,
+    languageCode: "en-US",
     headers: {
       "nlx-api-key": apiKey,
     },
