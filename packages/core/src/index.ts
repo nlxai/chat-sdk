@@ -82,7 +82,7 @@ export interface Config {
     // Simulate alternative channel types
     channelType?: string;
     // Prevent the `languageCode` parameter to be appended to the bot URL - used in special deployment environments such as the sandbox chat inside Dialog Studio
-    fullBotUrl?: boolean;
+    completeBotUrl?: boolean;
   };
 }
 
@@ -163,8 +163,8 @@ export const shouldReinitialize = (
       config2.experimental?.channelType
     ) ||
     !equals(
-      config1.experimental?.fullBotUrl,
-      config2.experimental?.fullBotUrl
+      config1.experimental?.completeBotUrl,
+      config2.experimental?.completeBotUrl
     ) ||
     !equals(config1.headers, config2.headers)
   );
@@ -172,6 +172,13 @@ export const shouldReinitialize = (
 
 export const createConversation = (config: Config): ConversationHandler => {
   let socket: ReconnectingWebSocket | undefined;
+
+  // Check if the bot URL has a language code appended to it
+  if (/[-|_][a-z]{2,}[-|_][A-Z]{2,}$/.test(config.botUrl)) {
+    console.warn(
+      "Since v1.0.0, the language code is no longer added at the end of the bot URL. Please remove the modifier (e.g. '-en-US') from the URL, and specify it in the `languageCode` parameter instead."
+    );
+  }
 
   const initialConversationId = config.conversationId || uuid();
 
@@ -266,9 +273,8 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   let socketMessageQueue: BotRequest[] = [];
 
-  let socketMessageQueueCheckInterval: ReturnType<
-    typeof setInterval
-  > | null = null;
+  let socketMessageQueueCheckInterval: ReturnType<typeof setInterval> | null =
+    null;
 
   const sendToBot = (body: BotRequest) => {
     const bodyWithContext = {
@@ -290,7 +296,7 @@ export const createConversation = (config: Config): ConversationHandler => {
     } else {
       return fetch(
         `${config.botUrl}${
-          config.experimental?.fullBotUrl ? "" : `-${config.languageCode}`
+          config.experimental?.completeBotUrl ? "" : `-${config.languageCode}`
         }`,
         {
           method: "POST",
@@ -323,13 +329,13 @@ export const createConversation = (config: Config): ConversationHandler => {
   const setupWebsocket = () => {
     const url = new URL(
       `${config.botUrl}${
-        config.experimental?.fullBotUrl ? "" : `-${config.languageCode}`
+        config.experimental?.completeBotUrl ? "" : `-${config.languageCode}`
       }`
     );
     url.searchParams.append("conversationId", state.conversationId);
     socket = new ReconnectingWebSocket(url.href);
     socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
-    socket.onmessage = function(e) {
+    socket.onmessage = function (e) {
       if (typeof e?.data === "string") {
         messageResponseHandler(safeJsonParse(e.data));
       }

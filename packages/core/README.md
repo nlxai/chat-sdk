@@ -80,7 +80,7 @@ Starting 1.0.0, the language code is automatically appended to the bot URL. If y
 - you initialize the app with a `languageCode` parameter (this is now mandatory).
 - if you appended the language code to the URL manually before, make sure to remove it (`https://bots.studio.nlx.ai/abcd/efgh` instead of `https://bots.studio.nlx.ai/abcd/efgh-en-US`).
 
-The automatic language code append can be disabled by setting the `config.experimental.fullBotUrl` field to `true`.
+The automatic language code append can be disabled by setting the `config.experimental.completeBotUrl` field to `true`.
 
 ## TypeScript
 
