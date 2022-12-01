@@ -106,7 +106,7 @@ sendTextWrapped("Hello").then(response => {
 });
 ```
 
-> IMPORTANT: the wrapped promise will resolve the first bot response, and therefore subsequent responses are ignored. Use this pattern only if you know that there is a single response (currently this is a fairly safe assumption for bots working over HTTP).
+> IMPORTANT: the wrapped promise will resolve with the first available bot response - subsequent, asynchronously arriving responses are ignored. Use this pattern only if you know that there is a single response. This is currently a reasonably safe assumption for bots working over HTTP.
 
 ## Contributing
 
