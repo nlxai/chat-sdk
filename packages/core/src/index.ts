@@ -273,8 +273,9 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   let socketMessageQueue: BotRequest[] = [];
 
-  let socketMessageQueueCheckInterval: ReturnType<typeof setInterval> | null =
-    null;
+  let socketMessageQueueCheckInterval: ReturnType<
+    typeof setInterval
+  > | null = null;
 
   const sendToBot = (body: BotRequest) => {
     const bodyWithContext = {
@@ -335,7 +336,7 @@ export const createConversation = (config: Config): ConversationHandler => {
     url.searchParams.append("conversationId", state.conversationId);
     socket = new ReconnectingWebSocket(url.href);
     socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
-    socket.onmessage = function (e) {
+    socket.onmessage = function(e) {
       if (typeof e?.data === "string") {
         messageResponseHandler(safeJsonParse(e.data));
       }
@@ -387,6 +388,18 @@ export const createConversation = (config: Config): ConversationHandler => {
   if (config.triggerWelcomeIntent) {
     sendIntent(welcomeIntent);
   }
+
+  const unsubscribe = (subscriber: Subscriber) => {
+    subscribers = subscribers.filter((fn) => fn !== subscriber);
+  };
+
+  const subscribe = (subscriber: Subscriber) => {
+    subscribers = [...subscribers, subscriber];
+    subscriber(fromInternal(state));
+    return () => {
+      unsubscribe(subscriber);
+    };
+  };
 
   return {
     sendText: (text) => {
@@ -503,13 +516,8 @@ export const createConversation = (config: Config): ConversationHandler => {
     currentConversationId: () => {
       return state.conversationId;
     },
-    subscribe: (subscriber) => {
-      subscribers = [...subscribers, subscriber];
-      subscriber(fromInternal(state));
-    },
-    unsubscribe: (subscriber) => {
-      subscribers = subscribers.filter((fn) => fn !== subscriber);
-    },
+    subscribe,
+    unsubscribe,
     unsubscribeAll: () => {
       subscribers = [];
     },
