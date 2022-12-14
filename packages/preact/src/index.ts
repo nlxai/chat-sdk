@@ -1,7 +1,7 @@
 import { Ref, useState, useEffect, useRef, useMemo } from "preact/hooks";
 
 // Code from here on out is identical in the React and Preact packages
-import { last, equals } from "ramda";
+import { last } from "ramda";
 import createConversation, {
   Config,
   ConversationHandler,

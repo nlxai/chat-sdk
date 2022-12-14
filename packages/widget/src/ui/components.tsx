@@ -383,7 +383,7 @@ export const ChoicesContainer = styled.div<{}>`
   }
 `;
 
-// ChoiceButtn
+// ChoiceButton
 
 export const ChoiceButton = styled.button<{
   disabled?: boolean;
@@ -415,12 +415,11 @@ export const ChoiceButton = styled.button<{
     ${focusShadow(castAsTheme(props.theme))}
   }
       `}
-  height: 26px;
-  border-radius: 15px;
+  border-radius: 9999px;
   border: 1px solid ${(props) => castAsTheme(props.theme).primaryColor};
   font-size: ${constants.fontSize}px;
   font-family: ${(props) => castAsTheme(props.theme).fontFamily};
-  padding: 0 12px;
+  padding: 4px 12px;
 
   :focus {
     outline: none;
