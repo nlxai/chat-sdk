@@ -330,7 +330,7 @@ export const createConversation = (config: Config): ConversationHandler => {
   const setupWebsocket = () => {
     const url = new URL(
       `${config.botUrl}${
-        config.experimental?.completeBotUrl ? "" : `-${config.languageCode}`
+        config.experimental?.completeBotUrl ? "" : `&languageCode=${config.languageCode}`
       }`
     );
     url.searchParams.append("conversationId", state.conversationId);
