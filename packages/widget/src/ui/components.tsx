@@ -5,8 +5,6 @@ import { Theme } from "../theme";
 import * as constants from "./constants";
 import tinycolor from "tinycolor2";
 
-const castAsTheme = (theme: any) => (theme as unknown) as Theme;
-
 // Mixins
 
 export const hoverBg = `
@@ -90,16 +88,22 @@ export const Container = styled.div<{}>`
   position: fixed;
   top: 20px;
   right: 20px;
-  width: 320px;
-  height: calc(100vh - 120px);
+  width: calc(100% - 40px);
+  height: calc(100vh - 112px);
   border-radius: 10px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
-  background-color: ${(props) => castAsTheme(props.theme).white};
+  background-color: ${(props) => props.theme.white};
   z-index: ${constants.largeZIndex};
+
+  @media screen and (min-width: 360px) {
+    & {
+      width: 320px;
+    }
+  }
 
   & > *,
   & > button {
-    font-family: ${(props) => castAsTheme(props.theme).fontFamily};
+    font-family: ${(props) => props.theme.fontFamily};
   }
 `;
 
@@ -145,10 +149,9 @@ export const MessageGroup = styled.div<{}>`
 export const Message = styled.div<{ type: "user" | "bot" }>`
   background-color: ${(props) =>
     props.type === "user"
-      ? castAsTheme(props.theme).darkMessageColor
-      : castAsTheme(props.theme).lightMessageColor};
-  color: ${(props) =>
-    props.type === "user" ? castAsTheme(props.theme).white : "#000"};
+      ? props.theme.darkMessageColor
+      : props.theme.lightMessageColor};
+  color: ${(props) => (props.type === "user" ? props.theme.white : "#000")};
   padding: 6px 10px;
   max-width: calc(100% - 20px);
   ${(props) =>
@@ -177,13 +180,16 @@ export const MessageBody = styled.p<{}>`
 export const Bottom = styled.div<{}>`
   height: ${constants.bottomHeight}px;
   display: flex;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
-  border-top: 1px solid #cecece;
+  padding: 0 10px;
+  background-color: #f5f5f5;
 
   > * {
-    margin-right: 10px;
+    margin-right: 8px;
   }
 
   > :last-child {
@@ -195,6 +201,7 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   height: 35px;
   width: 35px;
   border-radius: 18px;
+  flex: none;
   padding: 8px;
   font-size: ${constants.fontSize}px;
   ${(props) =>
@@ -206,14 +213,14 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   `}
   border: 0;
   box-shadow: none;
-  background-color: ${(props) => castAsTheme(props.theme).primaryColor};
-  color: ${(props) => castAsTheme(props.theme).white};
+  background-color: ${(props) => props.theme.primaryColor};
+  color: ${(props) => props.theme.white};
   position: relative;
   cursor: pointer;
 
   :focus {
     outline: none;
-    ${(props) => focusShadow(castAsTheme(props.theme))}
+    ${(props) => focusShadow(props.theme)}
   }
 
   ${hoverBg}
@@ -225,29 +232,29 @@ export const Input = styled.input<{}>`
   height: 35px;
   border-radius: 18px;
   padding: 0 14px;
-  border: 1px solid #cecece;
   font-size: ${constants.fontSize}px;
-  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
+  border: 1px solid rgba(0, 0, 0, 0.1);
 
   :focus {
     outline: none;
-    border: 1px solid ${(props) => castAsTheme(props.theme).primaryColor};
-    ${(props) => focusShadow(castAsTheme(props.theme))}
+    border: 1px solid ${(props) => props.theme.primaryColor};
+    ${(props) => focusShadow(props.theme)}
   }
 `;
 
 export const Pin = styled.button<{}>`
   position: fixed;
-  background-color: ${(props) => castAsTheme(props.theme).primaryColor};
+  background-color: ${(props) => props.theme.primaryColor};
   border: 0;
   right: 20px;
   bottom: 20px;
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 54px;
   border-radius: 30px;
   cursor: pointer;
-  padding: 15px;
-  color: ${(props) => castAsTheme(props.theme).white};
+  padding: 12px;
+  color: ${(props) => props.theme.white};
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.4);
   z-index: ${constants.largeZIndex};
 
@@ -289,7 +296,7 @@ export const PinBubbleContainer = styled.div<{
   width: fit-content;
   white-space: pre;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
-  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
   height: 35px;
   font-size: 16px;
   display: flex;
@@ -299,7 +306,7 @@ export const PinBubbleContainer = styled.div<{
   z-index: ${constants.largeZIndex};
   padding: 0px 16px 0px 0px;
   background-color: ${(props) =>
-    tinycolor(castAsTheme(props.theme).primaryColor)
+    tinycolor(props.theme.primaryColor)
       .darken(10)
       .toRgbString()};
   color: #fff;
@@ -327,7 +334,7 @@ export const PinBubbleContainer = styled.div<{
     border-right: 6px solid transparent;
     border-top: 6px solid
       ${(props) =>
-        tinycolor(castAsTheme(props.theme).primaryColor)
+        tinycolor(props.theme.primaryColor)
           .darken(10)
           .toRgbString()};
   }
@@ -392,12 +399,12 @@ export const ChoiceButton = styled.button<{
   ${(props) =>
     props.selected
       ? `
-  background-color: ${castAsTheme(props.theme).primaryColor};
-  color: ${castAsTheme(props.theme).white};
+  background-color: ${props.theme.primaryColor};
+  color: ${props.theme.white};
   `
       : `
-  background-color: ${castAsTheme(props.theme).white};
-  color: ${castAsTheme(props.theme).primaryColor};
+  background-color: ${props.theme.white};
+  color: ${props.theme.primaryColor};
   `}
   ${(props) =>
     props.disabled
@@ -412,13 +419,13 @@ export const ChoiceButton = styled.button<{
 
   :focus {
     outline: none;
-    ${focusShadow(castAsTheme(props.theme))}
+    ${focusShadow(props.theme)}
   }
       `}
   border-radius: 9999px;
-  border: 1px solid ${(props) => castAsTheme(props.theme).primaryColor};
+  border: 1px solid ${(props) => props.theme.primaryColor};
   font-size: ${constants.fontSize}px;
-  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
   padding: 4px 12px;
 
   :focus {
@@ -431,7 +438,10 @@ export const ChoiceButton = styled.button<{
 export const TitleBar = styled.div<{}>`
   height: 48px;
   padding: 0 20px;
-  border-bottom: 1px solid #cecece;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -451,18 +461,17 @@ export const Title = styled.p<{}>`
   font-size: 16px;
   font-weight: bold;
   margin: 0;
-  font-family: ${(props) => castAsTheme(props.theme).fontFamily};
+  font-family: ${(props) => props.theme.fontFamily};
 `;
 
 // DiscreteButton
 
 export const DiscreteButton = styled.button<{}>`
-  color: #ababab;
-  border: 1px solid currentColor;
+  color: #565656;
+  border: 0;
   display: inline-flex;
   align-items: center;
-  font-size: 9px;
-  text-transform: uppercase;
+  font-size: 10px;
   border-radius: 4px;
   padding: 4px 8px;
   background: none;
@@ -474,8 +483,8 @@ export const DiscreteButton = styled.button<{}>`
     box-shadow: 0 0 0 3px #dedede;
   }
   > svg {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     margin-right: 6px;
   }
 `;
