@@ -89,8 +89,8 @@ export const Container = styled.div<{}>`
   top: 20px;
   right: 20px;
   width: calc(100% - 40px);
-  height: calc(100vh - 112px);
-  border-radius: 10px;
+  height: calc(100vh - 104px);
+  border-radius: ${(props) => props.theme.borderRadius}px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
   background-color: ${(props) => props.theme.white};
   z-index: ${constants.largeZIndex};
@@ -117,11 +117,11 @@ export const Main = styled.div<{}>`
 // MessageGroups
 
 export const MessageGroups = styled.div<{}>`
-  padding: 20px;
+  padding: ${(props) => props.theme.spacing}px;
   box-sizing: border-box;
 
   & > * {
-    margin-bottom: 20px;
+    margin-bottom: ${(props) => props.theme.spacing}px;
   }
 
   & > :last-child {
@@ -136,7 +136,7 @@ export const MessageGroup = styled.div<{}>`
   flex-direction: column;
 
   & > * {
-    margin-bottom: 3px;
+    margin-bottom: ${(props) => props.theme.spacing / 2}px;
   }
 
   & > :last-child {
@@ -151,7 +151,7 @@ export const Message = styled.div<{ type: "user" | "bot" }>`
     props.type === "user"
       ? props.theme.darkMessageColor
       : props.theme.lightMessageColor};
-  color: ${(props) => (props.type === "user" ? props.theme.white : "#000")};
+  color: ${(props) => (props.type === "user" ? props.theme.white : "#232323")};
   padding: 6px 10px;
   max-width: calc(100% - 20px);
   ${(props) =>
@@ -181,12 +181,12 @@ export const Bottom = styled.div<{}>`
   height: ${constants.bottomHeight}px;
   display: flex;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: ${(props) => props.theme.borderRadius}px;
+  border-bottom-right-radius: ${(props) => props.theme.borderRadius}px;
   align-items: center;
   justify-content: center;
-  padding: 0 10px;
-  background-color: #f5f5f5;
+  padding: 0 ${(props) => props.theme.spacing}px;
+  background-color: ${(props) => props.theme.offWhite};
 
   > * {
     margin-right: 8px;
@@ -249,8 +249,8 @@ export const Pin = styled.button<{}>`
   border: 0;
   right: 20px;
   bottom: 20px;
-  width: 54px;
-  height: 54px;
+  width: 52px;
+  height: 52px;
   border-radius: 30px;
   cursor: pointer;
   padding: 12px;
@@ -437,14 +437,16 @@ export const ChoiceButton = styled.button<{
 
 export const TitleBar = styled.div<{}>`
   height: 48px;
-  padding: 0 20px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  background-color: #f5f5f5;
+  padding: 0 ${(props) => props.theme.spacing}px;
+  border-top-left-radius: ${(props) => props.theme.borderRadius}px;
+  border-top-right-radius: ${(props) => props.theme.borderRadius}px;
+  background-color: ${(props) => props.theme.offWhite};
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
 `;
 
 // TitleContainer
@@ -471,12 +473,13 @@ export const DiscreteButton = styled.button<{}>`
   border: 0;
   display: inline-flex;
   align-items: center;
-  font-size: 10px;
+  font-size: 11px;
   border-radius: 4px;
   padding: 4px 8px;
   background: none;
+  cursor: pointer;
   :hover {
-    color: #000000;
+    color: ${(props) => props.theme.primaryColor};
   }
   :focus {
     outline: none;

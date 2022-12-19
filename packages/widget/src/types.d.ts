@@ -4,6 +4,7 @@ import "@emotion/react";
 declare module "snarkdown";
 
 declare module "@emotion/react" {
+  // Duplicate of theme declaration at src/theme.ts
   export interface Theme {
     /** Primary color for interactive UI elements like buttons */
     primaryColor: string; 
@@ -13,7 +14,13 @@ declare module "@emotion/react" {
     lightMessageColor: string;
     /** Customized shade of white */
     white: string;
+    /** Customized shade of off-white, used in the widget top and bottom bar */
+    offWhite: string;
      /** Widget font family */
     fontFamily: string;
+    /** Main spacing unit */
+    spacing: number;
+    /** Chat border radius */
+    borderRadius: number;
   }
 }

@@ -8,6 +8,12 @@ export interface Theme {
   lightMessageColor: string;
   /** Customized shade of white */
   white: string;
+  /** Customized shade of off-white, used in the widget top and bottom bar */
+  offWhite: string;
    /** Widget font family */
   fontFamily: string;
+  /** Main spacing unit */
+  spacing: number;
+  /** Chat border radius */
+  borderRadius: number;
 }
