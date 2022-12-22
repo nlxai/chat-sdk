@@ -34,7 +34,6 @@
     "@emotion/styled": "^11.0.0",
     "@nlxchat/core": "^1.0.3",
     "@nlxchat/react": "^1.0.3",
-    "preact": "^10.11.3",
     "promise-polyfill": "^8.1.3",
     "ramda": "^0.27.1",
     "snarkdown": "^2.0.0",
