@@ -171,6 +171,10 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     if (inputRef && inputRef.current) {
       (inputRef as any).current.focus();
     }
+
+    if (messageGroupsRef?.current?.lastChild) {
+      messageGroupsRef.current.lastChild.scrollIntoView({ block: "nearest", inline: "nearest" })
+    }
   }, [expanded, chat.responses]);
 
   // Escape handling
