@@ -16,7 +16,5 @@ jobs:
             node-version: '16'
       - name: Installing node_modules
         run: npm install
-      # - name: Running tests
-      #   run: npm run test
       - name: Build the app
-        run: cd packages/app && npm run build
+        run: npm run build
