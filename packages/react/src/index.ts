@@ -16,6 +16,7 @@ export interface ChatHook {
   messagesContainerRef: Ref<HTMLDivElement>;
   waiting: boolean;
   setInputValue: (val: string) => void;
+  scrollToBottom: () => void;
 }
 
 export const useChat = (config: Config): ChatHook => {
@@ -71,5 +72,6 @@ export const useChat = (config: Config): ChatHook => {
     waiting: isWaiting,
     messagesContainerRef,
     setInputValue,
+    scrollToBottom,
   };
 };
