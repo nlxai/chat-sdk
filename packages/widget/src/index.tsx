@@ -173,6 +173,12 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     }
   }, [expanded, chat.responses]);
 
+  useEffect(() => {
+    if (expanded) {
+      chat.scrollToBottom();
+    }
+  }, [expanded]);
+
   // Escape handling
 
   useEffect(() => {
