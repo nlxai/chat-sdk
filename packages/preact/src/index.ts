@@ -12,10 +12,11 @@ import createConversation, {
 export interface ChatHook {
   conversationHandler: ConversationHandler;
   inputValue: string;
-  responses: Array<Response>;
-  messagesContainerRef: Ref<HTMLDivElement>;
-  waiting: boolean;
   setInputValue: (val: string) => void;
+  responses: Array<Response>;
+  waiting: boolean;
+  // DOM-specific helpers
+  messagesContainerRef: Ref<HTMLDivElement>;
   scrollToBottom: () => void;
 }
 
@@ -75,3 +76,5 @@ export const useChat = (config: Config): ChatHook => {
     scrollToBottom,
   };
 };
+
+export default useChat;
