@@ -32,11 +32,11 @@ const groupWhileHelper = <T>(
 
 export class ReactHandler<PropsType> {
 
-  private container: HTMLElement;
+  private container: any;
   private props: any;
 
 
-  constructor(private component: React.FunctionComponent) {
+  constructor(private component: any) {
   }
 
   public get isMounted(): boolean {

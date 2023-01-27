@@ -40,10 +40,10 @@ export const standalone = (
       unmountComponentAtNode(node);
     },
     expand: () => {
-      reactHandler.updateProps({ initiallyExpanded: true });
+      reactHandler.updateProps({ ...props, initiallyExpanded: true });
     },
     collapse: () => {
-      reactHandler.updateProps({ initiallyExpanded: false });
+      reactHandler.updateProps({ ...props, initiallyExpanded: false });
     },
   };
 };
