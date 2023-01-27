@@ -17,6 +17,7 @@ import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
 import { Props } from "./props";
 import * as C from "./ui/components";
+import { ReactHandler } from "./utils";
 
 export { Props } from "./props";
 
@@ -24,15 +25,25 @@ export const standalone = (
   props: Props
 ): {
   teardown: () => void;
+  expand: () => void;
+  collapse: () => void;
 } => {
+  const reactHandler = new ReactHandler<Props>(Widget);
   const node = document.createElement("div");
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${constants.largeZIndex};`);
   document.body.appendChild(node);
-  render(<Widget {...props} />, node);
+  reactHandler.mount(node, props);
+
   return {
     teardown: () => {
       unmountComponentAtNode(node);
+    },
+    expand: () => {
+      reactHandler.updateProps({ initiallyExpanded: true });
+    },
+    collapse: () => {
+      reactHandler.updateProps({ initiallyExpanded: false });
     },
   };
 };
@@ -150,7 +161,9 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
   }, [chat.conversationHandler]);
 
   // Expanded state
-
+  useEffect(() => {
+    setExpanded(Boolean(props.initiallyExpanded));
+  }, [Boolean(props.initiallyExpanded)])
   const [expanded, setExpanded] = useState(Boolean(props.initiallyExpanded));
 
   useEffect(() => {
