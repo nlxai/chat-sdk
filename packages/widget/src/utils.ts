@@ -36,7 +36,7 @@ export class ReactHandler<PropsType> {
   private props: any;
 
 
-  constructor(private component: typeof React.Component) {
+  constructor(private component: React.FunctionComponent) {
   }
 
   public get isMounted(): boolean {
