@@ -24,15 +24,34 @@ export const standalone = (
   props: Props
 ): {
   teardown: () => void;
+  expand: () => void;
+  collapse: () => void;
 } => {
   const node = document.createElement("div");
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${constants.largeZIndex};`);
   document.body.appendChild(node);
-  render(<Widget {...props} />, node);
+  let expanded = Boolean(props.initiallyExpanded);
+  const setExpanded = (val: boolean) => {
+    expanded = val;
+    renderWidget();
+  };
+  const renderWidget = () => {
+    render(
+      <Widget {...props} expanded={expanded} setExpanded={setExpanded} />,
+      node
+    );
+  };
+  renderWidget();
   return {
     teardown: () => {
       unmountComponentAtNode(node);
+    },
+    expand: () => {
+      setExpanded(true);
+    },
+    collapse: () => {
+      setExpanded(false);
     },
   };
 };
@@ -44,70 +63,67 @@ const toStringWithLeadingZero = (n: number): string => {
   return `${n}`;
 };
 
-const MessageGroups = forwardRef<HTMLDivElement, { chat: ChatHook }>(
-  (props, ref) => (
-    <C.MessageGroups ref={ref}>
-      {props.chat.responses.map((response, responseIndex) =>
-        response.type === "bot" ? (
-          <C.MessageGroup key={responseIndex}>
-            {response.payload.messages.map((botMessage, botMessageIndex) => (
-              <C.Message type="bot" key={botMessageIndex}>
-                <C.MessageBody
-                  dangerouslySetInnerHTML={{
-                    __html: snarkdown(botMessage.text),
-                  }}
-                />
-                {botMessage.choices.length > 0 && (
-                  <C.ChoicesContainer>
-                    {botMessage.choices.map((choice, choiceIndex) => (
-                      <C.ChoiceButton
-                        key={choiceIndex}
-                        {...(() => {
-                          return botMessage.selectedChoiceId
-                            ? {
-                                disabled: true,
-                                selected:
-                                  botMessage.selectedChoiceId ===
-                                  choice.choiceId,
-                              }
-                            : {
-                                onClick: () => {
-                                  props.chat.conversationHandler.sendChoice(
-                                    choice.choiceId
-                                  );
-                                },
-                              };
-                        })()}
-                      >
-                        {choice.choiceText}
-                      </C.ChoiceButton>
-                    ))}
-                  </C.ChoicesContainer>
-                )}
-              </C.Message>
-            ))}
-          </C.MessageGroup>
-        ) : response.payload.type === "text" ? (
-          <C.MessageGroup key={responseIndex}>
-            <C.Message type="user">
+const MessageGroups: React.FunctionComponent<{ chat: ChatHook }> = (props) => (
+  <C.MessageGroups>
+    {props.chat.responses.map((response, responseIndex) =>
+      response.type === "bot" ? (
+        <C.MessageGroup key={responseIndex}>
+          {response.payload.messages.map((botMessage, botMessageIndex) => (
+            <C.Message type="bot" key={botMessageIndex}>
               <C.MessageBody
                 dangerouslySetInnerHTML={{
-                  __html: snarkdown(response.payload.text),
+                  __html: snarkdown(botMessage.text),
                 }}
               />
+              {botMessage.choices.length > 0 && (
+                <C.ChoicesContainer>
+                  {botMessage.choices.map((choice, choiceIndex) => (
+                    <C.ChoiceButton
+                      key={choiceIndex}
+                      {...(() => {
+                        return botMessage.selectedChoiceId
+                          ? {
+                              disabled: true,
+                              selected:
+                                botMessage.selectedChoiceId === choice.choiceId,
+                            }
+                          : {
+                              onClick: () => {
+                                props.chat.conversationHandler.sendChoice(
+                                  choice.choiceId
+                                );
+                              },
+                            };
+                      })()}
+                    >
+                      {choice.choiceText}
+                    </C.ChoiceButton>
+                  ))}
+                </C.ChoicesContainer>
+              )}
             </C.Message>
-          </C.MessageGroup>
-        ) : null
-      )}
-      {props.chat.waiting && (
-        <C.MessageGroup>
-          <C.Message type="bot">
-            <C.PendingMessageDots />
+          ))}
+        </C.MessageGroup>
+      ) : response.payload.type === "text" ? (
+        <C.MessageGroup key={responseIndex}>
+          <C.Message type="user">
+            <C.MessageBody
+              dangerouslySetInnerHTML={{
+                __html: snarkdown(response.payload.text),
+              }}
+            />
           </C.Message>
         </C.MessageGroup>
-      )}
-    </C.MessageGroups>
-  )
+      ) : null
+    )}
+    {props.chat.waiting && (
+      <C.MessageGroup>
+        <C.Message type="bot">
+          <C.PendingMessageDots />
+        </C.Message>
+      </C.MessageGroup>
+    )}
+  </C.MessageGroups>
 );
 
 // Solution per https://github.com/emotion-js/emotion/issues/2102#issuecomment-727186154
@@ -138,10 +154,20 @@ const renderToStringWithStyles = (element: ReactElement): string => {
   return html;
 };
 
-export const Widget: React.FunctionComponent<Props> = (props) => {
+export const Widget: React.FunctionComponent<Props & {
+  expanded?: boolean;
+  setExpanded?: (val: boolean) => void;
+}> = (props) => {
   // Chat
 
   const chat = useChat(props.config);
+
+  const [expandedInternal, setExpandedInternal] = useState<boolean>(
+    Boolean(props.initiallyExpanded)
+  );
+
+  const expanded = props.expanded ?? expandedInternal;
+  const setExpanded = props.setExpanded ?? setExpandedInternal;
 
   useEffect(() => {
     if (props.lowLevel && chat.conversationHandler) {
@@ -151,8 +177,6 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
 
   // Expanded state
 
-  const [expanded, setExpanded] = useState(Boolean(props.initiallyExpanded));
-
   useEffect(() => {
     if (expanded) {
       props.onExpand?.(chat.conversationHandler);
@@ -160,8 +184,6 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
       props.onCollapse?.(chat.conversationHandler);
     }
   }, [expanded, chat.conversationHandler]);
-
-  const messageGroupsRef = useRef<HTMLDivElement | null>(null);
 
   // Input focus
 
@@ -289,7 +311,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                   )}
                 </C.TitleBar>
               )}
-              <MessageGroups chat={chat} ref={messageGroupsRef} />
+              <MessageGroups chat={chat} />
             </C.Main>
             <C.Bottom>
               <C.Input
