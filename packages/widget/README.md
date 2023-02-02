@@ -161,6 +161,7 @@ const widget = window.chat.standalone({
   initiallyExpanded: false,
 });
 
+// Expand the widget as a result of a button on the page being clicked
 document.querySelector("#my-button").addEventListener("click", () => {
   widget.expand();
 });
