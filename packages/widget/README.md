@@ -119,6 +119,13 @@ If you need low-level control of the widget, this configuration value gives acce
 />
 ```
 
+## The widget instance
+
+The `standalone` function (`window.chat.standalone` if you are using the packaged version) returns an object that you can use to control the widget programmatically. It has the following methods:
+* `expand`: expand the widget programmatically. You can do this as a response to e.g. a button on your page being clicked.
+* `collapse`: collapse the widget programmatically.
+* `teardown`: remove the chat widget from the page. This cleans up all internal event listeners.
+
 ## Recipes
 
 ### Fine-grain control on triggering the welcome intent
@@ -141,6 +148,21 @@ window.chat.standalone({
   },
   initiallyExpanded: false,
   onExpand: handleExpand,
+});
+```
+
+### Open the widget from the outside
+
+```
+const widget = window.chat.standalone({
+  config: {
+    // usual bot configuration
+  },
+  initiallyExpanded: false,
+});
+
+document.querySelector("#my-button").addEventListener("click", () => {
+  widget.expand();
 });
 ```
 
