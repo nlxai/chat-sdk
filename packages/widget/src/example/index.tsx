@@ -18,7 +18,7 @@ const props: Props = {
       a: "b",
     },
   },
-  initiallyExpanded: true,
+  bubble: "Need help?",
   titleBar: {
     downloadable: true,
     title: "My Chat",

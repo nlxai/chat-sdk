@@ -279,7 +279,9 @@ export const PinBubble: React.FunctionComponent<{
 }> = (props) => (
   <PinBubbleContainer isActive={props.isActive}>
     <PinBubbleButton onClick={props.onClick}>
-      <span>×</span>
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+      </svg>
     </PinBubbleButton>
     {props.content}
   </PinBubbleContainer>
@@ -289,16 +291,16 @@ export const PinBubbleContainer = styled.div<{
   isActive: boolean;
 }>`
   position: fixed;
-  bottom: 92px;
-  right: 20px;
+  bottom: 84px;
+  right: 19px;
   border-radius: 6px;
   box-sizing: border-box;
   width: fit-content;
   white-space: pre;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
   font-family: ${(props) => props.theme.fontFamily};
-  height: 35px;
-  font-size: 16px;
+  height: 32px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,8 +327,8 @@ export const PinBubbleContainer = styled.div<{
   `}
     ::after {
     position: absolute;
-    top: 35px;
-    right: 26px;
+    top: 32px;
+    right: 22px;
     content: " ";
     width: 0;
     height: 0;
@@ -343,12 +345,12 @@ export const PinBubbleContainer = styled.div<{
 // PinBubbleButton
 
 export const PinBubbleButton = styled.button<{}>`
-  width: 35px;
-  height: 35px;
+  width: 32px;
+  height: 32px;
   border: 0;
   color: #fff;
   cursor: pointer;
-  padding: 0;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -357,13 +359,9 @@ export const PinBubbleButton = styled.button<{}>`
   border-bottom-left-radius: 6px;
   background: none;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
-  span {
-    font-size: 22px;
-    line-height: 0.9;
-    padding: 0;
-    margin: auto;
-    position: relative;
-    top: -1px;
+  svg {
+    width: 100%;
+    height: 100%;
   }
   :hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -447,6 +445,7 @@ export const TitleBar = styled.div<{}>`
   justify-content: space-between;
   position: sticky;
   top: 0;
+  z-index: 10;
 `;
 
 // TitleContainer
