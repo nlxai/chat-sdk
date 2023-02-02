@@ -153,7 +153,7 @@ window.chat.standalone({
 
 ### Open the widget from the outside
 
-```
+```js
 const widget = window.chat.standalone({
   config: {
     // usual bot configuration
