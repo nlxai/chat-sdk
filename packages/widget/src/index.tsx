@@ -1,6 +1,10 @@
 import snarkdown from "snarkdown";
 import React, {
+  type FC,
+  createRef,
   useEffect,
+  useCallback,
+  useImperativeHandle,
   useRef,
   useState,
   useMemo,
@@ -24,16 +28,25 @@ export const standalone = (
   props: Props
 ): {
   teardown: () => void;
+  expand: () => void;
+  collapse: () => void;
 } => {
   const node = document.createElement("div");
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${constants.largeZIndex};`);
   document.body.appendChild(node);
-  render(<Widget {...props} />, node);
+  const ref = createRef<{ expand: () => void; collapse: () => void }>();
+  render(<Widget {...props} ref={ref} />, node);
   return {
     teardown: () => {
       unmountComponentAtNode(node);
     },
+    expand: () => {
+      ref.current?.expand();
+    },
+    collapse: () => {
+      ref.current?.collapse();
+    }
   };
 };
 
@@ -44,70 +57,67 @@ const toStringWithLeadingZero = (n: number): string => {
   return `${n}`;
 };
 
-const MessageGroups = forwardRef<HTMLDivElement, { chat: ChatHook }>(
-  (props, ref) => (
-    <C.MessageGroups ref={ref}>
-      {props.chat.responses.map((response, responseIndex) =>
-        response.type === "bot" ? (
-          <C.MessageGroup key={responseIndex}>
-            {response.payload.messages.map((botMessage, botMessageIndex) => (
-              <C.Message type="bot" key={botMessageIndex}>
-                <C.MessageBody
-                  dangerouslySetInnerHTML={{
-                    __html: snarkdown(botMessage.text),
-                  }}
-                />
-                {botMessage.choices.length > 0 && (
-                  <C.ChoicesContainer>
-                    {botMessage.choices.map((choice, choiceIndex) => (
-                      <C.ChoiceButton
-                        key={choiceIndex}
-                        {...(() => {
-                          return botMessage.selectedChoiceId
-                            ? {
-                                disabled: true,
-                                selected:
-                                  botMessage.selectedChoiceId ===
-                                  choice.choiceId,
-                              }
-                            : {
-                                onClick: () => {
-                                  props.chat.conversationHandler.sendChoice(
-                                    choice.choiceId
-                                  );
-                                },
-                              };
-                        })()}
-                      >
-                        {choice.choiceText}
-                      </C.ChoiceButton>
-                    ))}
-                  </C.ChoicesContainer>
-                )}
-              </C.Message>
-            ))}
-          </C.MessageGroup>
-        ) : response.payload.type === "text" ? (
-          <C.MessageGroup key={responseIndex}>
-            <C.Message type="user">
+const MessageGroups: FC<{ chat: ChatHook }> = (props) => (
+  <C.MessageGroups>
+    {props.chat.responses.map((response, responseIndex) =>
+      response.type === "bot" ? (
+        <C.MessageGroup key={responseIndex}>
+          {response.payload.messages.map((botMessage, botMessageIndex) => (
+            <C.Message type="bot" key={botMessageIndex}>
               <C.MessageBody
                 dangerouslySetInnerHTML={{
-                  __html: snarkdown(response.payload.text),
+                  __html: snarkdown(botMessage.text),
                 }}
               />
+              {botMessage.choices.length > 0 && (
+                <C.ChoicesContainer>
+                  {botMessage.choices.map((choice, choiceIndex) => (
+                    <C.ChoiceButton
+                      key={choiceIndex}
+                      {...(() => {
+                        return botMessage.selectedChoiceId
+                          ? {
+                              disabled: true,
+                              selected:
+                                botMessage.selectedChoiceId === choice.choiceId,
+                            }
+                          : {
+                              onClick: () => {
+                                props.chat.conversationHandler.sendChoice(
+                                  choice.choiceId
+                                );
+                              },
+                            };
+                      })()}
+                    >
+                      {choice.choiceText}
+                    </C.ChoiceButton>
+                  ))}
+                </C.ChoicesContainer>
+              )}
             </C.Message>
-          </C.MessageGroup>
-        ) : null
-      )}
-      {props.chat.waiting && (
-        <C.MessageGroup>
-          <C.Message type="bot">
-            <C.PendingMessageDots />
+          ))}
+        </C.MessageGroup>
+      ) : response.payload.type === "text" ? (
+        <C.MessageGroup key={responseIndex}>
+          <C.Message type="user">
+            <C.MessageBody
+              dangerouslySetInnerHTML={{
+                __html: snarkdown(response.payload.text),
+              }}
+            />
           </C.Message>
         </C.MessageGroup>
-      )}
-    </C.MessageGroups>
-  )
+      ) : null
+    )}
+    {props.chat.waiting && (
+      <C.MessageGroup>
+        <C.Message type="bot">
+          <C.PendingMessageDots />
+        </C.Message>
+      </C.MessageGroup>
+    )}
+  </C.MessageGroups>
 );
 
 // Solution per https://github.com/emotion-js/emotion/issues/2102#issuecomment-727186154
@@ -138,7 +148,10 @@ const renderToStringWithStyles = (element: ReactElement): string => {
   return html;
 };
 
-export const Widget: React.FunctionComponent<Props> = (props) => {
+export const Widget = forwardRef<
+  { expand: () => void; collapse: () => void },
+  Props
+>((props, ref) => {
   // Chat
 
   const chat = useChat(props.config);
@@ -161,7 +174,20 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
     }
   }, [expanded, chat.conversationHandler]);
 
-  const messageGroupsRef = useRef<HTMLDivElement | null>(null);
+  const expand = useCallback(() => {
+    setExpanded(true);
+  }, [setExpanded]);
+
+  const collapse = useCallback(() => {
+    setExpanded(false);
+  }, [setExpanded]);
+
+  useImperativeHandle(ref, () => {
+    return {
+      expand,
+      collapse,
+    };
+  });
 
   // Input focus
 
@@ -294,7 +320,7 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
                   )}
                 </C.TitleBar>
               )}
-              <MessageGroups chat={chat} ref={messageGroupsRef} />
+              <MessageGroups chat={chat} />
             </C.Main>
             <C.Bottom>
               <C.Input
@@ -339,4 +365,4 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
       </>
     </ThemeProvider>
   );
-};
+});
