@@ -198,13 +198,18 @@ export const Widget: React.FunctionComponent<Props> = (props) => {
   const [bubble, setBubble] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeout1 = setTimeout(() => {
       setBubble(true);
     }, 3000);
 
-    setTimeout(() => {
+    const timeout2 = setTimeout(() => {
       setBubble(false);
     }, 20000);
+
+    return () => {
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+    }
   }, []);
 
   // Download
