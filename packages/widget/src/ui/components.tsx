@@ -88,8 +88,8 @@ export const Container = styled.div<{}>`
   position: fixed;
   top: 20px;
   right: 20px;
+  bottom: 90px;
   width: calc(100% - 40px);
-  height: calc(100vh - 104px);
   border-radius: ${(props) => props.theme.borderRadius}px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
   background-color: ${(props) => props.theme.white};
@@ -119,6 +119,9 @@ export const Main = styled.div<{}>`
 export const MessageGroups = styled.div<{}>`
   padding: ${(props) => props.theme.spacing}px;
   box-sizing: border-box;
+
+  z-index: 1;
+  position: relative;
 
   & > * {
     margin-bottom: ${(props) => props.theme.spacing}px;
