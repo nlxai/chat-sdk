@@ -4,7 +4,7 @@ import "@emotion/react";
 declare module "snarkdown";
 
 declare module "@emotion/react" {
-  // Duplicate of theme declaration at src/theme.ts
+  // Duplicate of theme declaration at src/theme.ts, plus extra fields
   export interface Theme {
     /** Primary color for interactive UI elements like buttons */
     primaryColor: string; 
@@ -22,5 +22,9 @@ declare module "@emotion/react" {
     spacing: number;
     /** Chat border radius */
     borderRadius: number;
+    /** Max height of the chat window */
+    chatWindowMaxHeight: number;
+    // Extra fields
+    windowInnerHeight: number | null;
   }
 }

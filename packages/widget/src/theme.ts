@@ -16,4 +16,6 @@ export interface Theme {
   spacing: number;
   /** Chat border radius */
   borderRadius: number;
+  /** Max height of the chat window */
+  chatWindowMaxHeight: number;
 }

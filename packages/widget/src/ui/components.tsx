@@ -84,11 +84,22 @@ export const PendingMessageDots: React.FunctionComponent<{}> = () => (
 
 // Container
 
+const top = 20;
+const bottom = 90;
+
 export const Container = styled.div<{}>`
   position: fixed;
-  top: 20px;
-  right: 20px;
-  bottom: 90px;
+  top: ${(props) => {
+    if (!props.theme.windowInnerHeight) {
+      return `${top}px`;
+    }
+    return Math.max(
+      props.theme.windowInnerHeight - props.theme.chatWindowMaxHeight - bottom,
+      top
+    );
+  }};
+  right: ${top}px;
+  bottom: ${bottom}px;
   width: calc(100% - 40px);
   border-radius: ${(props) => props.theme.borderRadius}px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);

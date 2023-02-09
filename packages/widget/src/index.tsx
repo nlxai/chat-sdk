@@ -152,6 +152,19 @@ export const Widget = forwardRef<
   { expand: () => void; collapse: () => void },
   Props
 >((props, ref) => {
+  const [windowInnerHeight, setWindowInnerHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    setWindowInnerHeight(window.innerHeight);
+    const handleResize = () => {
+      setWindowInnerHeight(window.innerHeight);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
   // Chat
 
   const chat = useChat(props.config);
@@ -258,7 +271,7 @@ export const Widget = forwardRef<
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
   }, [chat.responses]);
 
-  const mergedTheme = { ...constants.defaultTheme, ...(props.theme || {}) };
+  const mergedTheme = useMemo(() => ({ ...constants.defaultTheme, ...(props.theme || {}), windowInnerHeight }), [props.theme, windowInnerHeight]);
 
   return (
     <ThemeProvider theme={mergedTheme}>
