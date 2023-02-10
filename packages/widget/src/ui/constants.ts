@@ -12,7 +12,9 @@ export const defaultTheme: Theme = {
   lightMessageColor: "#EFEFEF",
   offWhite: "#f5f5f5",
   white: "#FFFFFF",
-  fontFamily: "'Source Sans Pro', sans-serif",
+  fontFamily:
+    ' -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
   spacing: 12,
   borderRadius: 8,
+  chatWindowMaxHeight: 640,
 };
