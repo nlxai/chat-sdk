@@ -152,12 +152,12 @@ export const Widget = forwardRef<
   { expand: () => void; collapse: () => void },
   Props
 >((props, ref) => {
-  const [windowInnerHeight, setWindowInnerHeight] = useState<number | null>(null);
+  const [windowInnerHeightValue, setWindowInnerHeightValue] = useState<number | null>(null);
 
   useEffect(() => {
-    setWindowInnerHeight(window.innerHeight);
+    setWindowInnerHeightValue(window.innerHeight);
     const handleResize = () => {
-      setWindowInnerHeight(window.innerHeight);
+      setWindowInnerHeightValue(window.innerHeight);
     }
     window.addEventListener("resize", handleResize);
     return () => {
@@ -271,7 +271,7 @@ export const Widget = forwardRef<
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
   }, [chat.responses]);
 
-  const mergedTheme = useMemo(() => ({ ...constants.defaultTheme, ...(props.theme || {}), windowInnerHeight }), [props.theme, windowInnerHeight]);
+  const mergedTheme = useMemo(() => ({ ...constants.defaultTheme, ...(props.theme || {}), windowInnerHeight: windowInnerHeightValue }), [props.theme, windowInnerHeightValue]);
 
   return (
     <ThemeProvider theme={mergedTheme}>
