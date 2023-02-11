@@ -15,7 +15,7 @@
     "@types/ramda": "^0.26.44",
     "preact": "^10.5.4",
     "prettier": "^1.19.1",
-    "typescript": "^4.0.5"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@nlxchat/core": "^1.0.3",

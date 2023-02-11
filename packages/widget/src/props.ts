@@ -1,5 +1,5 @@
-import { Config, ConversationHandler } from "@nlxchat/core";
-import { Theme } from "./theme";
+import { type Config, type ConversationHandler } from "@nlxchat/core";
+import { type Theme } from "./theme";
 
 export interface Props {
   config: Config;
@@ -15,5 +15,6 @@ export interface Props {
   bubble?: string;
   inputPlaceholder?: string;
   initiallyExpanded?: boolean;
+  useSessionStorage?: boolean;
   lowLevel?: (conversationHandler: ConversationHandler) => void;
 }
