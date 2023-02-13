@@ -100,11 +100,11 @@ Sets whether the widget is initially expanded.
 
 ### `useSessionStorage`
 
-When this option is set to `true`, the state of the chat conversation is persisted in [session storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) for 15 minutes. This allows the state and history of the conversation to persist between full page refreshes.
+When this option is set to `true`, the state of the chat conversation is persisted in [session storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) for an hour. This allows the state and history of the conversation to persist between full page refreshes.
 
 The information stored in session storage clears if:
 - the browser window is closed.
-- the widget is active on a page with session data set more than 15 minutes before.
+- the widget is active on a page with session data set more than an hour before.
 
 > When using the session storage feature, it is your responsibility to make sure that your website complies with your data protection and privacy policy requirements.
 
