@@ -69,6 +69,7 @@ export interface Config {
   botUrl: string;
   conversationId?: string;
   userId?: string;
+  responses?: Response[];
   failureMessages?: string[];
   greetingMessages?: string[];
   context?: Record<string, any>;
@@ -184,7 +185,8 @@ export const createConversation = (config: Config): ConversationHandler => {
 
   let state: InternalState = {
     responses:
-      config.greetingMessages && config.greetingMessages.length > 0
+      config.responses ||
+      (config.greetingMessages && config.greetingMessages.length > 0
         ? [
             {
               type: "bot",
@@ -202,7 +204,7 @@ export const createConversation = (config: Config): ConversationHandler => {
               },
             },
           ]
-        : [],
+        : []),
     userId: config.userId,
     conversationId: initialConversationId,
     contextSent: false,
@@ -330,7 +332,9 @@ export const createConversation = (config: Config): ConversationHandler => {
   const setupWebsocket = () => {
     const url = new URL(
       `${config.botUrl}${
-        config.experimental?.completeBotUrl ? "" : `&languageCode=${config.languageCode}`
+        config.experimental?.completeBotUrl
+          ? ""
+          : `&languageCode=${config.languageCode}`
       }`
     );
     url.searchParams.append("conversationId", state.conversationId);

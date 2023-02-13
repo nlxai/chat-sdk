@@ -16,10 +16,11 @@ import { render, unmountComponentAtNode } from "react-dom";
 import createCache from "@emotion/cache";
 import { ThemeProvider, CacheProvider } from "@emotion/react";
 
-import { useChat, ChatHook } from "@nlxchat/react";
+import { useChat, type ChatHook } from "@nlxchat/react";
+import { type Response, type Config } from "@nlxchat/core";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
-import { Props } from "./props";
+import { type Props } from "./props";
 import * as C from "./ui/components";
 
 export { Props } from "./props";
@@ -46,7 +47,7 @@ export const standalone = (
     },
     collapse: () => {
       ref.current?.collapse();
-    }
+    },
   };
 };
 
@@ -148,32 +149,110 @@ const renderToStringWithStyles = (element: ReactElement): string => {
   return html;
 };
 
+const sessionStorageKey = "nlxchat-session";
+
+interface SessionData {
+  conversationId: string;
+  responses: Response[];
+}
+
+const getConfigWithSession = (config: Config, session: SessionData) => {
+  return !config.conversationId && !config.responses
+    ? {
+        ...config,
+        conversationId: session.conversationId,
+        responses: session.responses,
+      }
+    : config;
+};
+
+export const saveSession = (chat: ChatHook) => {
+  sessionStorage.setItem(
+    sessionStorageKey,
+    JSON.stringify({
+      savedAt: new Date().getTime(),
+      responses: chat.responses,
+      conversationId: chat.conversationHandler.currentConversationId(),
+    })
+  );
+};
+
+export const clearSession = () => {
+  sessionStorage.removeItem(sessionStorageKey);
+};
+
+export const retrieveSession = (): SessionData | null => {
+  try {
+    const data = JSON.parse(sessionStorage.getItem(sessionStorageKey) || "");
+    const responses = data?.responses;
+    const conversationId = data?.conversationId;
+    const savedAt = data?.savedAt;
+    if (
+      responses &&
+      conversationId &&
+      savedAt &&
+      new Date().getTime() - savedAt < 15 * 60 * 1000
+    ) {
+      return { responses, conversationId };
+    }
+  } catch (err) {
+    return null;
+  }
+  return null;
+};
+
 export const Widget = forwardRef<
   { expand: () => void; collapse: () => void },
   Props
 >((props, ref) => {
-  const [windowInnerHeightValue, setWindowInnerHeightValue] = useState<number | null>(null);
+  const [windowInnerHeightValue, setWindowInnerHeightValue] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     setWindowInnerHeightValue(window.innerHeight);
     const handleResize = () => {
       setWindowInnerHeightValue(window.innerHeight);
-    }
+    };
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
-    }
+    };
   }, []);
+
+  const [savedSessionData, setSavedSessionData] = useState<SessionData | null>(
+    null
+  );
+
+  const configWithSession = useMemo(() => {
+    if (!savedSessionData || !props.useSessionStorage) {
+      return props.config;
+    }
+    return getConfigWithSession(props.config, savedSessionData);
+  }, [props.config, savedSessionData]);
 
   // Chat
 
-  const chat = useChat(props.config);
+  const chat = useChat(configWithSession);
+
+  useEffect(() => {
+    const session = retrieveSession();
+    if (session && props.useSessionStorage) {
+      setSavedSessionData(session);
+    }
+  }, []);
 
   useEffect(() => {
     if (props.lowLevel && chat.conversationHandler) {
       props.lowLevel(chat.conversationHandler);
     }
   }, [chat.conversationHandler]);
+
+  useEffect(() => {
+    if (props.useSessionStorage) {
+      saveSession(chat);
+    }
+  }, [chat.responses, props.useSessionStorage || false]);
 
   // Expanded state
 
@@ -248,7 +327,7 @@ export const Widget = forwardRef<
     return () => {
       clearTimeout(timeout1);
       clearTimeout(timeout2);
-    }
+    };
   }, []);
 
   // Download
@@ -271,7 +350,14 @@ export const Widget = forwardRef<
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
   }, [chat.responses]);
 
-  const mergedTheme = useMemo(() => ({ ...constants.defaultTheme, ...(props.theme || {}), windowInnerHeight: windowInnerHeightValue }), [props.theme, windowInnerHeightValue]);
+  const mergedTheme = useMemo(
+    () => ({
+      ...constants.defaultTheme,
+      ...(props.theme || {}),
+      windowInnerHeight: windowInnerHeightValue,
+    }),
+    [props.theme, windowInnerHeightValue]
+  );
 
   return (
     <ThemeProvider theme={mergedTheme}>

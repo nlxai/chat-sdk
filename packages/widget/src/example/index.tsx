@@ -1,10 +1,12 @@
 import { render } from "react-dom";
 import React from "react";
-import { standalone, Widget, Props } from "../";
+import { standalone, Widget, Props, clearSession } from "../";
 
 const botUrl = process.env.NLX_BOT_URL as string;
 
 const apiKey = process.env.NLX_BOT_API_KEY as string;
+
+// clearSession();
 
 const props: Props = {
   config: {
@@ -23,8 +25,9 @@ const props: Props = {
     downloadable: true,
     title: "My Chat",
   },
+  useSessionStorage: true,
 };
 
-// render(<Widget {...props} />, document.querySelector("#app"));
-const app = standalone(props);
-app.collapse();
+render(<Widget {...props} />, document.querySelector("#app"));
+// const app = standalone(props);
+// app.collapse();
