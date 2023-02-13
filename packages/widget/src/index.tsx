@@ -160,6 +160,7 @@ const getConfigWithSession = (config: Config, session: SessionData) => {
   return !config.conversationId && !config.responses
     ? {
         ...config,
+        triggerWelcomeIntent: false,
         conversationId: session.conversationId,
         responses: session.responses,
       }

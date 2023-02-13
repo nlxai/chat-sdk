@@ -106,6 +106,8 @@ The information stored in session storage clears if:
 - the browser window is closed.
 - the widget is active on a page with session data set more than an hour before.
 
+When using this option, `config.triggerWelcomeIntent` will have no effect.
+
 > When using the session storage feature, it is your responsibility to make sure that your website complies with your data protection and privacy policy requirements.
 
 ### `lowLevel`
