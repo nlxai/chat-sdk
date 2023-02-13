@@ -187,18 +187,18 @@ export const retrieveSession = (): SessionData | null => {
     const responses = data?.responses;
     const conversationId = data?.conversationId;
     const savedAt = data?.savedAt;
-    if (
-      responses &&
-      conversationId &&
-      savedAt &&
-      new Date().getTime() - savedAt < 15 * 60 * 1000
-    ) {
-      return { responses, conversationId };
+    if (responses && conversationId && savedAt) {
+      if (new Date().getTime() - savedAt < 15 * 60 * 1000) {
+        return { responses, conversationId };
+      } else {
+        clearSession();
+        return null;
+      }
     }
+    return null;
   } catch (err) {
     return null;
   }
-  return null;
 };
 
 export const Widget = forwardRef<
