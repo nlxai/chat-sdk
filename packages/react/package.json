@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/react",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "React hook wrapper for the NLX Chat SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -19,7 +19,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@nlxchat/core": "^1.0.9",
+    "@nlxchat/core": "^1.0.10",
     "ramda": "^0.27.1"
   },
   "peerDependencies": {
