@@ -390,6 +390,7 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   if (config.triggerWelcomeIntent) {
+    console.warn("The `triggerWelcomeIntent` configuration option is deprecated. Use the `sendWelcomeIntent` method returned by the conversation client.");
     sendIntent(welcomeIntent);
   }
 

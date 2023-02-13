@@ -98,6 +98,18 @@ When set to a non-empty string, a small bubble will appear above the chat pin wh
 
 Sets whether the widget is initially expanded.
 
+### `useSessionStorage`
+
+When this option is set to `true`, the state of the chat conversation is persisted in [session storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) for an hour. This allows the state and history of the conversation to persist between full page refreshes.
+
+The information stored in session storage clears if:
+- the browser window is closed.
+- the widget is active on a page with session data set more than an hour before.
+
+When using this option, `config.triggerWelcomeIntent` will have no effect.
+
+> When using the session storage feature, it is your responsibility to make sure that your website complies with your data protection and privacy policy requirements.
+
 ### `lowLevel`
 
 If you need low-level control of the widget, this configuration value gives access to the [conversationHandler](https://github.com/nlxai/chat-sdk/blob/94d5fade43c6ed05ddf95de7140bf5bf1e6f916e/packages/core/src/index.ts#L84-L95) object through a callback, called once on widget initialization:
