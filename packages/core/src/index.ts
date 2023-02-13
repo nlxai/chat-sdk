@@ -330,14 +330,15 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   const setupWebsocket = () => {
-    const url = new URL(
-      `${config.botUrl}${
-        config.experimental?.completeBotUrl
-          ? ""
-          : `&languageCode=${config.languageCode}`
-      }`
-    );
-    url.searchParams.append("conversationId", state.conversationId);
+    const url = new URL(config.botUrl);
+    if (!config.experimental?.completeBotUrl) {
+      url.searchParams.set("languageCode", config.languageCode);
+      url.searchParams.set(
+        "channelKey",
+        `${url.searchParams.get("channelKey") || ""}-${config.languageCode}`
+      );
+    }
+    url.searchParams.set("conversationId", state.conversationId);
     socket = new ReconnectingWebSocket(url.href);
     socketMessageQueueCheckInterval = setInterval(checkQueue, 500);
     socket.onmessage = function(e) {
@@ -390,7 +391,9 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   if (config.triggerWelcomeIntent) {
-    console.warn("The `triggerWelcomeIntent` configuration option is deprecated. Use the `sendWelcomeIntent` method returned by the conversation client.");
+    console.warn(
+      "The `triggerWelcomeIntent` configuration option is deprecated. Use the `sendWelcomeIntent` method returned by the conversation client."
+    );
     sendIntent(welcomeIntent);
   }
 
