@@ -16,6 +16,7 @@ const props: Props = {
       "nlx-api-key": apiKey,
     },
     userId: "1234",
+    failureMessages: ["Something went wrong"],
     context: {
       a: "b",
     },
@@ -28,6 +29,12 @@ const props: Props = {
   useSessionStorage: true,
 };
 
-render(<Widget {...props} />, document.querySelector("#app"));
-// const app = standalone(props);
-// app.collapse();
+const app = standalone(props);
+
+setTimeout(() => {
+  app.expand();
+}, 500);
+
+setTimeout(() => {
+  app.getConversationHandler()?.sendIntent("abcd");
+}, 100);

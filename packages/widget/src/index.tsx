@@ -17,7 +17,11 @@ import createCache from "@emotion/cache";
 import { ThemeProvider, CacheProvider } from "@emotion/react";
 
 import { useChat, type ChatHook } from "@nlxchat/react";
-import { type Response, type Config } from "@nlxchat/core";
+import {
+  type Response,
+  type Config,
+  type ConversationHandler,
+} from "@nlxchat/core";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
 import { type Props } from "./props";
@@ -25,18 +29,25 @@ import * as C from "./ui/components";
 
 export { Props } from "./props";
 
-export const standalone = (
-  props: Props
-): {
+export interface WidgetInstance {
   teardown: () => void;
   expand: () => void;
   collapse: () => void;
-} => {
+  getConversationHandler: () => ConversationHandler | undefined;
+}
+
+interface WidgetRef {
+  expand: () => void;
+  collapse: () => void;
+  conversationHandler: ConversationHandler;
+}
+
+export const standalone = (props: Props): WidgetInstance => {
   const node = document.createElement("div");
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${constants.largeZIndex};`);
   document.body.appendChild(node);
-  const ref = createRef<{ expand: () => void; collapse: () => void }>();
+  const ref = createRef<WidgetRef>();
   render(<Widget {...props} ref={ref} />, node);
   return {
     teardown: () => {
@@ -47,6 +58,9 @@ export const standalone = (
     },
     collapse: () => {
       ref.current?.collapse();
+    },
+    getConversationHandler: () => {
+      return ref.current?.conversationHandler;
     },
   };
 };
@@ -202,10 +216,7 @@ export const retrieveSession = (): SessionData | null => {
   }
 };
 
-export const Widget = forwardRef<
-  { expand: () => void; collapse: () => void },
-  Props
->((props, ref) => {
+export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   const [windowInnerHeightValue, setWindowInnerHeightValue] = useState<
     number | null
   >(null);
@@ -279,6 +290,7 @@ export const Widget = forwardRef<
     return {
       expand,
       collapse,
+      conversationHandler: chat.conversationHandler,
     };
   });
 

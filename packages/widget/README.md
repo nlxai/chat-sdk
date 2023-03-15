@@ -103,6 +103,7 @@ Sets whether the widget is initially expanded.
 When this option is set to `true`, the state of the chat conversation is persisted in [session storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) for an hour. This allows the state and history of the conversation to persist between full page refreshes.
 
 The information stored in session storage clears if:
+
 - the browser window is closed.
 - the widget is active on a page with session data set more than an hour before.
 
@@ -134,9 +135,11 @@ If you need low-level control of the widget, this configuration value gives acce
 ## The widget instance
 
 The `standalone` function (`window.chat.standalone` if you are using the packaged version) returns an object that you can use to control the widget programmatically. It has the following methods:
-* `expand`: expand the widget programmatically. You can do this as a response to e.g. a button on your page being clicked.
-* `collapse`: collapse the widget programmatically.
-* `teardown`: remove the chat widget from the page. This cleans up all internal event listeners.
+
+- `expand`: expand the widget programmatically. You can do this as a response to e.g. a button on your page being clicked.
+- `collapse`: collapse the widget programmatically.
+- `teardown`: remove the chat widget from the page. This cleans up all internal event listeners.
+- `getConversationHandler`: a function that returns the current [conversation handler](https://github.com/nlxai/chat-sdk/tree/master/packages/core#api-reference) object. Note that this handler might not be available synchronously after widget initialization, and therefore an `undefined` check is highly recommended before use.
 
 ## Recipes
 
@@ -156,7 +159,7 @@ const handleExpand = (conversationHandler) => {
 
 window.chat.standalone({
   config: {
-    // usual bot configuration
+    // Bot configuration (`botUrl` etc.)
   },
   initiallyExpanded: false,
   onExpand: handleExpand,
@@ -168,7 +171,7 @@ window.chat.standalone({
 ```js
 const widget = window.chat.standalone({
   config: {
-    // usual bot configuration
+    // Bot configuration (`botUrl` etc.)
   },
   initiallyExpanded: false,
 });
@@ -177,6 +180,29 @@ const widget = window.chat.standalone({
 document.querySelector("#my-button").addEventListener("click", () => {
   widget.expand();
 });
+```
+
+### Trigger a custom message after a period of time spent on a page
+
+This example triggers a custom intent after a period of time spent on the `/product` page of a website.
+
+```js
+const widget = window.chat.standalone({
+  config: {
+    // Bot configuration (`botUrl` etc.)
+  },
+  initiallyExpanded: false,
+});
+
+if (window.location.pathname === "/product") {
+  setTimeout(() => {
+    const conversationHandler = widget.getConversationHandler();
+    if (conversationHandler) {
+      conversationHandler.sendIntent("ProductInfoIntent");
+    }
+    widget.expand();
+  }, 20000);
+}
 ```
 
 ## License

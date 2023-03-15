@@ -36,7 +36,7 @@ convo.sendText("hello");
 
 The package exports a main function called `createConversation`, which is called with the bot configuration and returns a conversation handler object.
 
-This return object has the following methods:
+The conversation handler has the following methods:
 
 #### `sendText: (text: string) => void`
 
