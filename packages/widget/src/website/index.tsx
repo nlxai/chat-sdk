@@ -1,12 +1,12 @@
 import { render } from "react-dom";
-import React from "react";
+import React, { useState } from "react";
 import { standalone, Widget, Props, clearSession } from "../";
 
 const botUrl = process.env.NLX_BOT_URL as string;
 
 const apiKey = process.env.NLX_BOT_API_KEY as string;
 
-// clearSession();
+clearSession();
 
 const props: Props = {
   config: {
@@ -29,12 +29,23 @@ const props: Props = {
   useSessionStorage: true,
 };
 
-const app = standalone(props);
+const App = () => {
+  const [color, setColor] = useState("#f00");
+  const theme = {
+    primaryColor: color,
+  };
+  return (
+    <>
+      <input
+        type="color"
+        value={color}
+        onInput={(ev: any) => {
+          setColor(ev.target.value);
+        }}
+      />
+      <Widget {...props} theme={theme} />
+    </>
+  );
+};
 
-setTimeout(() => {
-  app.expand();
-}, 500);
-
-setTimeout(() => {
-  app.getConversationHandler()?.sendIntent("abcd");
-}, 100);
+render(<App />, document.getElementById("app"));
