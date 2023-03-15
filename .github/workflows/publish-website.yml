@@ -20,9 +20,9 @@ jobs:
       - name: Build 🔧
         run:
           npm run build:website
-        working-directory: ./packages/website
+        working-directory: ./packages/widget
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: ./packages/website/dist # output folder from `npm run build:website`
+          folder: ./packages/widget/dist # output folder from `npm run build:website`
