@@ -5,10 +5,16 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "dev": "parcel serve -p 8081 src/example/index.html",
+    "dev": "parcel serve -p 8081",
+    "build:website": "parcel build --public-url ./",
     "build:standalone": "node bin/build.js",
     "build": "rm -rf lib && mkdir lib && tsc && npm run build:standalone",
     "prepublish": "npm run build"
+  },
+  "targets": {
+    "website": {
+      "source": "src/website/index.html"
+    }
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
