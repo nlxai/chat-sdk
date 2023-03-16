@@ -172,6 +172,9 @@ export const Message = styled.div<{ type: "user" | "bot" }>`
     props.type === "user"
       ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
       : "margin-right: 20px; margin-left: 0; border-radius: 10px 10px 10px 0; align-self: flex-start;"}
+  p {
+    color: ${(props) => (props.type === "user" ? props.theme.white : "#232323")};
+  }
 `;
 
 // MessageBody
@@ -237,6 +240,10 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
     ${(props) => focusShadow(props.theme)}
   }
 
+  svg {
+    fill: ${(props) => props.theme.white};
+  }
+
   ${hoverBg}
 `;
 
@@ -279,6 +286,10 @@ export const Pin = styled.button<{}>`
   > img {
     max-width: 30px;
     max-height: 30px;
+  }
+
+  > svg {
+    fill: ${(props) => props.theme.white};
   }
 
   ${hoverBg}
@@ -362,7 +373,7 @@ export const PinBubbleButton = styled.button<{}>`
   width: 32px;
   height: 32px;
   border: 0;
-  color: #fff;
+  color: ${(props) => props.theme.white};
   cursor: pointer;
   padding: 6px;
   display: flex;
@@ -376,6 +387,7 @@ export const PinBubbleButton = styled.button<{}>`
   svg {
     width: 100%;
     height: 100%;
+    fill: ${(props) => props.theme.white};
   }
   :hover {
     background-color: rgba(255, 255, 255, 0.1);

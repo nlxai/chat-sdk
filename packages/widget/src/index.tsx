@@ -28,6 +28,8 @@ import { type Props } from "./props";
 import * as C from "./ui/components";
 
 export { Props } from "./props";
+export { type Theme } from "./theme";
+export { defaultTheme } from "./ui/constants";
 
 export interface WidgetInstance {
   teardown: () => void;
