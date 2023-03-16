@@ -1,6 +1,13 @@
 import { render } from "react-dom";
 import React, { type FC, useState, useEffect, useRef } from "react";
-import { Widget, Props, clearSession, type Theme, defaultTheme } from "../";
+import {
+  Widget,
+  Props,
+  clearSession,
+  type Theme,
+  type TitleBar,
+  defaultTheme,
+} from "../";
 import { type Config } from "@nlxchat/core";
 import "./index.css";
 
@@ -11,9 +18,9 @@ const apiKey = process.env.NLX_BOT_API_KEY as string;
 clearSession();
 
 const titleBar = {
-    downloadable: true,
-    title: "My Chat",
-  };
+  downloadable: true,
+  title: "My Chat",
+};
 
 const props: Props = {
   config: {
@@ -51,6 +58,49 @@ const CodeEditor: FC<{ code: string }> = (props) => {
         dangerouslySetInnerHTML={{ __html: escapeForHighlightJs(props.code) }}
       ></code>
     </pre>
+  );
+};
+
+const TitleBarEditor: FC<{
+  value: TitleBar;
+  onChange: (val: Partial<TitleBar>) => void;
+}> = (props) => {
+  const titleBar = props.value;
+  return (
+    <div>
+      <label>
+        <span>Title:</span>{" "}
+        <input
+          type="text"
+          placeholder="Enter title"
+          value={titleBar.title}
+          onInput={(ev: any) => {
+            props.onChange({ title: ev.target.value });
+          }}
+        />
+      </label>
+      <label>
+        <span>Square icon:</span>{" "}
+        <input
+          type="text"
+          placeholder="Enter full icon URL"
+          value={titleBar.logo}
+          onInput={(ev: any) => {
+            props.onChange({ logo: ev.target.value });
+          }}
+        />
+      </label>
+      <label>
+        <span>Downloadable:</span>{" "}
+        <input
+          type="checkbox"
+          checked={titleBar.downloadable}
+          onChange={(ev: any) => {
+            props.onChange({ downloadable: ev.target.checked });
+          }}
+        />
+      </label>
+    </div>
   );
 };
 
@@ -226,11 +276,16 @@ const App = () => {
 
   const [config, setConfig] = useState<Config>(getInitialConfig());
 
+  const [titleBar, setTitleBar] = useState<TitleBar>({
+    title: "Support",
+    downloadable: false,
+  });
+
   const [behavior, setBehavior] = useState<Behavior>(Behavior.Simple);
 
-  const code = `<html lang="en">
-  <!-- Standalone chat widget sample HTML -->
-  <!-- Downloaded from https://dialogstudio.nlx.ai -->
+  const code = `<!-- Standalone chat widget sample HTML -->
+<!-- Downloaded from https://nlxai.github.io/chat-sdk -->
+<html lang="en">
   <head>
     <title>NLX Widget Sample HTML</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -247,23 +302,23 @@ const App = () => {
             },
             languageCode: "en-US"
           },
-          titleBar: {
-            title: "My Logo",
-            logo: ""
-          },${
-            behavior === Behavior.WelcomeIntentOnOpen
-              ? indentBy(
-                  "          ",
-                  `
+          titleBar: ${indentBy(
+            "          ",
+            JSON.stringify(titleBar, null, 2)
+          )},${
+    behavior === Behavior.WelcomeIntentOnOpen
+      ? indentBy(
+          "          ",
+          `
 onExpand: () => {
   const conversationHandler = widget.getConversationHandler();
   if (conversationHandler) {
     conversationHandler.sendWelcomeIntent();
   }
 },`
-                )
-              : ""
-          }
+        )
+      : ""
+  }
           theme: ${indentBy("          ", JSON.stringify(theme, null, 2))}
         });${
           behavior === Behavior.CustomIntentOnInactivity
@@ -317,11 +372,24 @@ setTimeout(() => {
         />
       </section>
       <section>
-        <h2>Theme</h2>
+        <div className="section-title">
+          <h2>Theme</h2>
+        </div>
         <ThemeEditor
           value={theme}
           onChange={(val) => {
             setTheme((prev) => ({ ...prev, ...val }));
+          }}
+        />
+      </section>
+      <section>
+        <div className="section-title">
+          <h2>Title bar</h2>
+        </div>
+        <TitleBarEditor
+          value={titleBar}
+          onChange={(val) => {
+            setTitleBar((prev) => ({ ...prev, ...val }));
           }}
         />
       </section>
@@ -353,6 +421,10 @@ setTimeout(() => {
           />{" "}
           Send custom intent after a period of inactivity
         </label>
+        <blockquote>
+          Note: these behavior settings only change the generated code snippet
+          below and are not available interactively on this page.
+        </blockquote>
       </section>
       <section>
         <div className="section-title">

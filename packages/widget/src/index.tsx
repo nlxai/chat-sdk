@@ -27,7 +27,7 @@ import * as constants from "./ui/constants";
 import { type Props } from "./props";
 import * as C from "./ui/components";
 
-export { Props } from "./props";
+export { type Props, type TitleBar } from "./props";
 export { type Theme } from "./theme";
 export { defaultTheme } from "./ui/constants";
 
