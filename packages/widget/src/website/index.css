@@ -24,7 +24,7 @@ body {
 header a {
   display: flex;
   align-items: center;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
 }
 
@@ -38,7 +38,7 @@ header span {
   padding-left: 12px;
   margin-left: 12px;
   border-left: 1px solid #ababab;
-  line-height: 0.9;
+  line-height: 1.1;
 }
 
 p,
