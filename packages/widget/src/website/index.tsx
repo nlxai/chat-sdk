@@ -57,7 +57,7 @@ const ConfigEditor: FC<{
   return (
     <div>
       <label>
-        Bot URL:
+        <span>Bot URL:</span>{" "}
         <input
           type="url"
           placeholder="Enter bot URL"
@@ -68,13 +68,24 @@ const ConfigEditor: FC<{
         />
       </label>
       <label>
-        API key:
+        <span>API key:</span>{" "}
         <input
           type="text"
           placeholder="Enter API key"
-          value={config.headers?.apiKey}
+          value={config.headers?.["nlx-api-key"]}
           onInput={(ev: any) => {
-            props.onChange({ headers: { apiKey: ev.target.value } });
+            props.onChange({ headers: { "nlx-api-key": ev.target.value } });
+          }}
+        />
+      </label>
+      <label>
+        <span>Language code:</span>{" "}
+        <input
+          type="text"
+          placeholder="Enter language code"
+          value={config.languageCode}
+          onInput={(ev: any) => {
+            props.onChange({ headers: { languageCode: ev.target.value } });
           }}
         />
       </label>
@@ -90,7 +101,7 @@ const ThemeEditor: FC<{
   return (
     <div>
       <label>
-        Primary color:
+        <span>Primary color:</span>
         <input
           type="color"
           value={theme.primaryColor}
@@ -100,7 +111,7 @@ const ThemeEditor: FC<{
         />
       </label>
       <label>
-        Dark message color:
+        <span>Dark message color:</span>
         <input
           type="color"
           value={theme.darkMessageColor}
@@ -110,7 +121,7 @@ const ThemeEditor: FC<{
         />
       </label>
       <label>
-        Light message color:
+        <span>Light message color:</span>
         <input
           type="color"
           value={theme.lightMessageColor}
@@ -120,7 +131,7 @@ const ThemeEditor: FC<{
         />
       </label>
       <label>
-        Default white:
+        <span>Default white:</span>
         <input
           type="color"
           value={theme.white}
@@ -130,7 +141,7 @@ const ThemeEditor: FC<{
         />
       </label>
       <label>
-        Default off-white:
+        <span>Default off-white:</span>
         <input
           type="color"
           value={theme.offWhite}
@@ -140,7 +151,7 @@ const ThemeEditor: FC<{
         />
       </label>
       <label>
-        Spacing unit:
+        <span>Spacing unit:</span>
         <input
           type="range"
           min="6"
@@ -154,7 +165,7 @@ const ThemeEditor: FC<{
         <span>{theme.spacing}px</span>
       </label>
       <label>
-        Border radius:
+        <span>Border radius:</span>
         <input
           type="range"
           min="2"
@@ -185,20 +196,32 @@ enum Behavior {
   CustomIntentOnInactivity,
 }
 
+const indentBy = (indendStr: string, str: string) =>
+  str
+    .split("\n")
+    .map((str, index) => `${index === 0 ? "" : indendStr}${str}`)
+    .join("\n");
+
+const getInitialConfig = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const botUrl = searchParams.get("botUrl") || "";
+  const apiKey = searchParams.get("apiKey") || "";
+  const languageCode = searchParams.get("languageCode") || "en-US";
+  return {
+    botUrl,
+    headers: {
+      "nlx-api-key": apiKey,
+    },
+    languageCode,
+  };
+};
+
 const App = () => {
   const [theme, setTheme] = useState<Partial<Theme>>(defaultTheme);
 
-  const [config, setConfig] = useState<Config>({
-    botUrl: "",
-    headers: {
-      "nlx-api-key": "",
-    },
-    languageCode: "en-US",
-  });
+  const [config, setConfig] = useState<Config>(getInitialConfig());
 
   const [behavior, setBehavior] = useState<Behavior>(Behavior.Simple);
-
-  const [customIntent, setCustomIntent] = useState<string>("");
 
   const code = `<html lang="en">
   <!-- Standalone chat widget sample HTML -->
@@ -222,12 +245,35 @@ const App = () => {
           titleBar: {
             title: "My Logo",
             logo: ""
-          },
-          theme: ${JSON.stringify(theme, null, 2)
-            .split("\n")
-            .map((str, index) => `${index === 0 ? "" : "          "}${str}`)
-            .join("\n")}
-        });
+          },${
+            behavior === Behavior.WelcomeIntentOnOpen
+              ? indentBy(
+                  "          ",
+                  `
+onExpand: () => {
+  const conversationHandler = widget.getConversationHandler();
+  if (conversationHandler) {
+    conversationHandler.sendWelcomeIntent();
+  }
+},`
+                )
+              : ""
+          }
+          theme: ${indentBy("          ", JSON.stringify(theme, null, 2))}
+        });${
+          behavior === Behavior.CustomIntentOnInactivity
+            ? indentBy(
+                "        ",
+                `
+setTimeout(() => {
+  const conversationHandler = widget.getConversationHandler();
+  if (conversationHandler) {
+    conversationHandler.sendIntent("MyCustomIntent");
+  }
+}, 16000);`
+              )
+            : ""
+        }
       });
     </script>
   </body>
@@ -255,7 +301,9 @@ const App = () => {
         <a href="https://github.com/nlxai/chat-sdk">Chat SDK GitHub page</a>.
       </p>
       <section>
-        <h2>Configuration</h2>
+        <div className="section-title">
+          <h2>Configuration</h2>
+        </div>
         <ConfigEditor
           value={config}
           onChange={(val) => {
@@ -273,34 +321,48 @@ const App = () => {
         />
       </section>
       <section>
-        <h2>Behavior</h2>
+        <div className="section-title">
+          <h2>Behavior</h2>
+        </div>
         <label>
           <input
             type="radio"
             checked={behavior === Behavior.Simple}
             onChange={() => setBehavior(Behavior.Simple)}
-          />
-          {" "}Simple chat
+          />{" "}
+          Simple chat
         </label>
         <label>
           <input
             type="radio"
             checked={behavior === Behavior.WelcomeIntentOnOpen}
             onChange={() => setBehavior(Behavior.WelcomeIntentOnOpen)}
-          />
-          {" "}Send welcome intent when the chat is opened
+          />{" "}
+          Send welcome intent when the chat is opened
         </label>
         <label>
           <input
             type="radio"
             checked={behavior === Behavior.CustomIntentOnInactivity}
             onChange={() => setBehavior(Behavior.CustomIntentOnInactivity)}
-          />
-          {" "}Send custom intent after a period of inactivity
+          />{" "}
+          Send custom intent after a period of inactivity
         </label>
       </section>
       <section>
-        <h2>Generated code</h2>
+        <div className="section-title">
+          <h2>Generated code</h2>
+          <a
+            href={window.URL.createObjectURL(
+              new Blob([code], {
+                type: "text/plain",
+              })
+            )}
+            download={`index.html`}
+          >
+            Download
+          </a>
+        </div>
         <CodeEditor code={code} />
       </section>
       <Widget {...props} theme={theme} />

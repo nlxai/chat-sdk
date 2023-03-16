@@ -9,6 +9,10 @@ body {
   margin: 0;
 }
 
+pre {
+  margin: 0;
+}
+
 body {
   padding: 20px;
 }
@@ -37,6 +41,13 @@ header span {
   line-height: 0.9;
 }
 
+p,
+label,
+input,
+a {
+  font-size: 12px;
+}
+
 label {
   display: flex;
   align-items: center;
@@ -44,7 +55,8 @@ label {
   color: #676767;
 }
 
-label input {
+label > * + * {
+  display: inline-block;
   margin-left: 12px;
 }
 
@@ -59,10 +71,21 @@ code {
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 16px;
   margin: 0;
 }
 
 section {
   padding: 20px 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  padding-bottom: 6px;
+}
+
+.section-title > * + * {
+  display: inline-block;
+  margin-left: 12px;
 }
