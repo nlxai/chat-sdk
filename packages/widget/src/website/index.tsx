@@ -67,7 +67,7 @@ const TitleBarEditor: FC<{
 }> = (props) => {
   const titleBar = props.value;
   return (
-    <div>
+    <>
       <label>
         <span>Title:</span>{" "}
         <input
@@ -100,7 +100,7 @@ const TitleBarEditor: FC<{
           }}
         />
       </label>
-    </div>
+    </>
   );
 };
 
@@ -110,7 +110,7 @@ const ConfigEditor: FC<{
 }> = (props) => {
   const config = props.value;
   return (
-    <div>
+    <>
       <label>
         <span>Bot URL:</span>{" "}
         <input
@@ -144,7 +144,7 @@ const ConfigEditor: FC<{
           }}
         />
       </label>
-    </div>
+    </>
   );
 };
 
@@ -154,7 +154,23 @@ const ThemeEditor: FC<{
 }> = (props) => {
   const theme = props.value;
   return (
-    <div>
+    <>
+      <label>
+        <span>Font:</span>
+        <select
+          value={theme.fontFamily}
+          onChange={(ev: any) => {
+            props.onChange({ fontFamily: ev.target.value || defaultTheme.fontFamily });
+          }}
+        >
+          <option value={""}>Default (system)</option>
+          {["Helvetica", "Arial", "Monaco", "Georgia", "monospace"].map((val) => (
+            <option key={val} value={val}>
+              {val}
+            </option>
+          ))}
+        </select>
+      </label>
       <label>
         <span>Primary color:</span>
         <input
@@ -233,7 +249,7 @@ const ThemeEditor: FC<{
         />
         <span>{theme.borderRadius}px</span>
       </label>
-    </div>
+    </>
   );
 };
 
