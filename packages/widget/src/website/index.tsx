@@ -310,12 +310,14 @@ const App = () => {
       ? indentBy(
           "          ",
           `
+// CUSTOM BEHAVIOR SNIPPET
 onExpand: () => {
   const conversationHandler = widget.getConversationHandler();
   if (conversationHandler) {
     conversationHandler.sendWelcomeIntent();
   }
-},`
+},
+// CUSTOM BEHAVIOR SNIPPET END`
         )
       : ""
   }
@@ -325,12 +327,14 @@ onExpand: () => {
             ? indentBy(
                 "        ",
                 `
+// CUSTOM BEHAVIOR SNIPPET
 setTimeout(() => {
   const conversationHandler = widget.getConversationHandler();
   if (conversationHandler) {
     conversationHandler.sendIntent("MyCustomIntent");
   }
-}, 16000);`
+}, 16000);
+// CUSTOM BEHAVIOR SNIPPET END`
               )
             : ""
         }
