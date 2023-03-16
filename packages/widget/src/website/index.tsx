@@ -10,6 +10,11 @@ const apiKey = process.env.NLX_BOT_API_KEY as string;
 
 clearSession();
 
+const titleBar = {
+    downloadable: true,
+    title: "My Chat",
+  };
+
 const props: Props = {
   config: {
     botUrl,
@@ -365,7 +370,7 @@ setTimeout(() => {
         </div>
         <CodeEditor code={code} />
       </section>
-      <Widget {...props} theme={theme} />
+      <Widget config={config} theme={theme} titleBar={titleBar} />
     </>
   );
 };
