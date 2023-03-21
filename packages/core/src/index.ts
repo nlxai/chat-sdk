@@ -36,6 +36,7 @@ export interface BotMessage {
 export interface Choice {
   choiceId: string;
   choiceText: string;
+  choicePayload?: string;
 }
 
 // User message
