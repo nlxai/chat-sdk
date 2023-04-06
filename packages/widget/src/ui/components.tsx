@@ -49,6 +49,7 @@ const bounceKeyframes = keyframes`
 const Dot = styled.div<{}>`
   width: 6px;
   height: 6px;
+  flex: 0 0 6px;
   border-radius: 50%;
   background-color: #bebebe;
   animation: ${bounceKeyframes} 1s infinite ease-in-out;
