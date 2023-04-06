@@ -46,7 +46,9 @@ const bounceKeyframes = keyframes`
 }
 `;
 
+// The 'display: block !important' rule circumvents typical base CSS rules that set 'display: none' on empty HTML elements
 const Dot = styled.div<{}>`
+  display: block !important;
   width: 6px;
   height: 6px;
   flex: 0 0 6px;
