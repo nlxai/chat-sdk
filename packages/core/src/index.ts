@@ -86,6 +86,7 @@ export interface Config {
     // Prevent the `languageCode` parameter to be appended to the bot URL - used in special deployment environments such as the sandbox chat inside Dialog Studio
     completeBotUrl?: boolean;
   };
+  environment?: "production" | "development";
 }
 
 const welcomeIntent = "NLX.Welcome";
@@ -168,7 +169,8 @@ export const shouldReinitialize = (
       config1.experimental?.completeBotUrl,
       config2.experimental?.completeBotUrl
     ) ||
-    !equals(config1.headers, config2.headers)
+    !equals(config1.headers, config2.headers) ||
+    !equals(config1.environment, config2.environment)
   );
 };
 
@@ -290,6 +292,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       ...body,
       languageCode: config.languageCode,
       channelType: config.experimental?.channelType,
+      environment: config.environment,
     };
     if (isUsingWebSockets()) {
       if (socket && socket.readyState === 1) {

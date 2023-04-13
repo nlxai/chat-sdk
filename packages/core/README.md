@@ -11,13 +11,14 @@ import createConversation from "@nlxchat/core";
 const config = {
   botUrl: "", // obtain from NLX deployments page
   headers: {
-    "nlx-api-key": "" // obtain from NLX deployments page
+    "nlx-api-key": "", // obtain from NLX deployments page
   },
   userId: "abcd-1234", // optional property to identify the user
   conversationId: "", // start with a specific conversation ID - useful if you want to resume a previous conversation
   context: {}, // context that is shared with the bot
   triggerWelcomeIntent: true, // set whether the welcome intent should trigger when the conversation is initialized
-  languageCode: "es-US" // optional language code for standard bots that do not run on US English
+  languageCode: "es-US", // optional language code for standard bots that do not run on US English
+  environment: "production", // optional environment name for multi-environment bots to control which data request environment should be used.  "production" or "development" are the only supported values.
 };
 
 // Start the conversation
@@ -77,6 +78,7 @@ Reset the conversation. This makes sure that information previously collected by
 ## Upgrading to 1.0.0
 
 Starting 1.0.0, the language code is automatically appended to the bot URL. If you're upgrading your SDK, please make sure:
+
 - you initialize the app with a `languageCode` parameter (this is now mandatory).
 - if you appended the language code to the URL manually before, make sure to remove it (`https://bots.studio.nlx.ai/abcd/efgh` instead of `https://bots.studio.nlx.ai/abcd/efgh-en-US`).
 
@@ -101,7 +103,7 @@ const convo = createConversation(config);
 
 const sendTextWrapped = promisify(convo.sendText, convo);
 
-sendTextWrapped("Hello").then(response => {
+sendTextWrapped("Hello").then((response) => {
   console.log(response);
 });
 ```
