@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/core",
-  "version": "1.0.12",
+  "version": "1.0.15",
   "description": "NLX Chat SDK core",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
