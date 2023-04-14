@@ -5,6 +5,13 @@ import { v4 as uuid } from "uuid";
 
 // Bot response
 
+export type Context = Record<string, any>;
+
+export interface SlotValue {
+  slotId: string;
+  value: any;
+}
+
 export interface BotResponse {
   type: "bot";
   receivedAt: Time;
@@ -16,7 +23,7 @@ export interface BotResponsePayload {
   messages: Array<BotMessage>;
   metadata?: BotResponseMetadata;
   payload?: string;
-  context?: Record<string, any>;
+  context?: Context;
 }
 
 export interface BotResponseMetadata {
@@ -56,9 +63,9 @@ export type UserResponsePayload =
       type: "choice";
       choiceId: string;
     }
-  | {
+  | ({
       type: "structured";
-    };
+    } & StructuredRequest);
 
 export type Response = BotResponse | UserResponse;
 
@@ -102,13 +109,13 @@ export type State = Response[];
 interface StructuredRequest {
   choiceId?: string;
   intentId?: string;
-  slots?: Array<{ slotId: string; value: any }>;
+  slots?: SlotValue[];
 }
 
 interface BotRequest {
   conversationId?: string;
   userId?: string;
-  context?: any;
+  context?: Context;
   request: {
     unstructured?: {
       text: string;
@@ -118,12 +125,12 @@ interface BotRequest {
 }
 
 export interface ConversationHandler {
-  sendText: (text: string) => void;
-  sendSlots: (slots: Array<{ slotId: string; value: any }>) => void;
-  sendChoice: (choiceId: string) => void;
-  sendWelcomeIntent: () => void;
-  sendIntent: (intentId: string) => void;
-  sendStructured: (request: StructuredRequest) => void;
+  sendText: (text: string, context?: Context) => void;
+  sendSlots: (slots: SlotValue[], context?: Context) => void;
+  sendChoice: (choiceId: string, context?: Context) => void;
+  sendWelcomeIntent: (context?: Context) => void;
+  sendIntent: (intentId: string, context?: Context) => void;
+  sendStructured: (request: StructuredRequest, context?: Context) => void;
   subscribe: (subscriber: Subscriber) => void;
   unsubscribe: (subscriber: Subscriber) => void;
   unsubscribeAll: () => void;
@@ -369,12 +376,13 @@ export const createConversation = (config: Config): ConversationHandler => {
     setupWebsocket();
   }
 
-  const appendStructuredUserResponse = () => {
+  const appendStructuredUserResponse = (structured: StructuredRequest) => {
     const newResponse: Response = {
       type: "user",
       receivedAt: new Date().getTime(),
       payload: {
         type: "structured",
+        ...structured,
       },
     };
     setState(
@@ -385,9 +393,10 @@ export const createConversation = (config: Config): ConversationHandler => {
     );
   };
 
-  const sendIntent = (intentId: string) => {
-    appendStructuredUserResponse();
+  const sendIntent = (intentId: string, context?: Context) => {
+    appendStructuredUserResponse({ intentId });
     sendToBot({
+      context,
       request: {
         structured: {
           intentId,
@@ -416,7 +425,7 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   return {
-    sendText: (text) => {
+    sendText: (text, context) => {
       const newResponse: Response = {
         type: "user",
         receivedAt: new Date().getTime(),
@@ -432,6 +441,7 @@ export const createConversation = (config: Config): ConversationHandler => {
         newResponse
       );
       sendToBot({
+        context,
         request: {
           unstructured: {
             text,
@@ -439,17 +449,19 @@ export const createConversation = (config: Config): ConversationHandler => {
         },
       });
     },
-    sendStructured: (structured: StructuredRequest) => {
-      appendStructuredUserResponse();
+    sendStructured: (structured: StructuredRequest, context) => {
+      appendStructuredUserResponse(structured);
       sendToBot({
+        context,
         request: {
           structured,
         },
       });
     },
-    sendSlots: (slots) => {
-      appendStructuredUserResponse();
+    sendSlots: (slots, context) => {
+      appendStructuredUserResponse({ slots });
       sendToBot({
+        context,
         request: {
           structured: {
             slots,
@@ -458,10 +470,10 @@ export const createConversation = (config: Config): ConversationHandler => {
       });
     },
     sendIntent,
-    sendWelcomeIntent: () => {
-      sendIntent(welcomeIntent);
+    sendWelcomeIntent: (context) => {
+      sendIntent(welcomeIntent, context);
     },
-    sendChoice: (choiceId) => {
+    sendChoice: (choiceId, context) => {
       const containsChoice = (botMessage: BotMessage) =>
         (botMessage.choices || [])
           .map((choice) => choice.choiceId)
@@ -520,6 +532,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       );
 
       sendToBot({
+        context,
         request: {
           structured: {
             choiceId,
