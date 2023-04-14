@@ -66,6 +66,8 @@ export type Time = number;
 
 // Config and state
 
+export type Environment = "production" | "development";
+
 export interface Config {
   botUrl: string;
   conversationId?: string;
@@ -75,6 +77,7 @@ export interface Config {
   greetingMessages?: string[];
   context?: Record<string, any>;
   triggerWelcomeIntent?: boolean;
+  environment?: Environment;
   headers?: {
     [key: string]: string;
   };
@@ -86,7 +89,6 @@ export interface Config {
     // Prevent the `languageCode` parameter to be appended to the bot URL - used in special deployment environments such as the sandbox chat inside Dialog Studio
     completeBotUrl?: boolean;
   };
-  environment?: "production" | "development";
 }
 
 const welcomeIntent = "NLX.Welcome";
