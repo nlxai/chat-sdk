@@ -184,6 +184,10 @@ export const shouldReinitialize = (
 };
 
 export const createConversation = (config: Config): ConversationHandler => {
+  if (config.context) {
+    console.warn("Setting a context in the main chat configuration is deprecated. You can send context as a second argument to all send methods instead.");
+  }
+
   let socket: ReconnectingWebSocket | undefined;
 
   // Check if the bot URL has a language code appended to it
@@ -295,10 +299,10 @@ export const createConversation = (config: Config): ConversationHandler => {
     const bodyWithContext = {
       userId: state.userId,
       conversationId: state.conversationId,
-      ...(config.context && !state.contextSent
-        ? { context: config.context }
-        : {}),
       ...body,
+      ...(config.context && !state.contextSent
+        ? { context: {...config.context, ...(body.context || {})} }
+        : {}),
       languageCode: config.languageCode,
       channelType: config.experimental?.channelType,
       environment: config.environment,
