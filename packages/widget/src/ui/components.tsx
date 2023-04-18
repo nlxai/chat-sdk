@@ -53,7 +53,7 @@ const Dot = styled.div<{}>`
   height: 6px;
   flex: 0 0 6px;
   border-radius: 50%;
-  background-color: #bebebe;
+  background-color: ${(props) => props.theme.darkMessageColor};
   animation: ${bounceKeyframes} 1s infinite ease-in-out;
   margin-right: 4px;
   &:last-of-type {
