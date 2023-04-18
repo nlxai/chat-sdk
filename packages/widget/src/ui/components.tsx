@@ -199,6 +199,11 @@ export const MessageBody = styled.p<{}>`
   a,
   a:visited {
     color: inherit;
+    font-size: ${constants.fontSize}px;
+  }
+  p {
+    margin: 0;
+    font-size: ${constants.fontSize}px;
   }
   img {
     max-width: 80px;

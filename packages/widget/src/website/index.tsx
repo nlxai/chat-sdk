@@ -246,7 +246,7 @@ const indentBy = (indendStr: string, str: string) =>
     .map((str, index) => `${index === 0 ? "" : indendStr}${str}`)
     .join("\n");
 
-const getInitialConfig = () => {
+const getInitialConfig = (): Config => {
   const searchParams = new URLSearchParams(window.location.search);
   const botUrl = searchParams.get("botUrl") || "";
   const apiKey = searchParams.get("apiKey") || "";

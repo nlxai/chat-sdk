@@ -1,4 +1,4 @@
-import snarkdown from "snarkdown";
+import { marked } from "marked";
 import React, {
   type FC,
   type ReactNode,
@@ -105,7 +105,7 @@ const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
             <C.Message type="bot" key={botMessageIndex}>
               <C.MessageBody
                 dangerouslySetInnerHTML={{
-                  __html: snarkdown(botMessage.text),
+                  __html: marked(botMessage.text),
                 }}
               />
               {botMessage.choices.length > 0 && (
@@ -142,7 +142,7 @@ const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
           <C.Message type="user">
             <C.MessageBody
               dangerouslySetInnerHTML={{
-                __html: snarkdown(response.payload.text),
+                __html: marked(response.payload.text),
               }}
             />
           </C.Message>
