@@ -1,6 +1,7 @@
 import snarkdown from "snarkdown";
 import React, {
   type FC,
+  type ReactNode,
   createRef,
   useEffect,
   useCallback,
@@ -74,7 +75,28 @@ const toStringWithLeadingZero = (n: number): string => {
   return `${n}`;
 };
 
-const MessageGroups: FC<{ chat: ChatHook }> = (props) => (
+const Loader: FC<{ message?: string }> = (props) => {
+  const [showMessage, setShowMessage] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowMessage(true);
+    }, 2000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [setShowMessage]);
+
+  return (
+    <C.LoaderContainer>
+      <C.PendingMessageDots />
+      {showMessage && props.message && (
+        <C.LoaderText>{props.message}</C.LoaderText>
+      )}
+    </C.LoaderContainer>
+  );
+};
+
+const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
   <C.MessageGroups>
     {props.chat.responses.map((response, responseIndex) =>
       response.type === "bot" ? (
@@ -127,13 +149,7 @@ const MessageGroups: FC<{ chat: ChatHook }> = (props) => (
         </C.MessageGroup>
       ) : null
     )}
-    {props.chat.waiting && (
-      <C.MessageGroup>
-        <C.Message type="bot">
-          <C.PendingMessageDots />
-        </C.Message>
-      </C.MessageGroup>
-    )}
+    {props.children}
   </C.MessageGroups>
 );
 
@@ -434,7 +450,15 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                   )}
                 </C.TitleBar>
               )}
-              <MessageGroups chat={chat} />
+              <MessageGroups chat={chat}>
+                {chat.waiting && (
+                  <C.MessageGroup>
+                    <C.Message type="bot">
+                      <Loader message={props.loaderMessage} />
+                    </C.Message>
+                  </C.MessageGroup>
+                )}
+              </MessageGroups>
             </C.Main>
             <C.Bottom>
               <C.Input

@@ -77,6 +77,16 @@ const DotsContainer = styled.div<{}>`
   padding: 4px 0;
 `;
 
+export const LoaderContainer = styled.div<{}>`
+  display: flex;
+`;
+
+export const LoaderText = styled.span<{}>`
+  display: inline-block;
+  margin-left: 10px;
+  font-size: ${constants.fontSize}px;
+`;
+
 export const PendingMessageDots: React.FunctionComponent<{}> = () => (
   <DotsContainer>
     <Dot />
@@ -176,7 +186,8 @@ export const Message = styled.div<{ type: "user" | "bot" }>`
       ? "margin-left: 20px; margin-right: 0; border-radius: 10px 10px 0 10px; align-self: flex-end;"
       : "margin-right: 20px; margin-left: 0; border-radius: 10px 10px 10px 0; align-self: flex-start;"}
   p {
-    color: ${(props) => (props.type === "user" ? props.theme.white : "#232323")};
+    color: ${(props) =>
+      props.type === "user" ? props.theme.white : "#232323"};
   }
 `;
 

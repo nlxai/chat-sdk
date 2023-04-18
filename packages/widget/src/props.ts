@@ -12,6 +12,7 @@ export interface Props {
   theme?: Partial<Theme>;
   chatIcon?: string;
   titleBar?: TitleBar;
+  loaderMessage?: string;
   onExpand?: (conversationHandler: ConversationHandler) => void;
   onCollapse?: (conversationHandler: ConversationHandler) => void;
   bubble?: string;
