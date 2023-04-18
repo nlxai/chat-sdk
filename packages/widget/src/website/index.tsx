@@ -2,7 +2,6 @@ import { render } from "react-dom";
 import React, { type FC, useState, useEffect, useRef } from "react";
 import {
   Widget,
-  Props,
   clearSession,
   type Theme,
   type TitleBar,
@@ -11,37 +10,7 @@ import {
 import { type Config } from "@nlxchat/core";
 import "./index.css";
 
-const botUrl = process.env.NLX_BOT_URL as string;
-
-const apiKey = process.env.NLX_BOT_API_KEY as string;
-
 clearSession();
-
-const titleBar = {
-  downloadable: true,
-  title: "My Chat",
-};
-
-const props: Props = {
-  config: {
-    botUrl,
-    languageCode: "en-US",
-    headers: {
-      "nlx-api-key": apiKey,
-    },
-    userId: "1234",
-    failureMessages: ["Something went wrong"],
-    context: {
-      a: "b",
-    },
-  },
-  bubble: "Need help?",
-  titleBar: {
-    downloadable: true,
-    title: "My Chat",
-  },
-  useSessionStorage: true,
-};
 
 const CodeEditor: FC<{ code: string }> = (props) => {
   const codeRef = useRef(null);
@@ -160,15 +129,19 @@ const ThemeEditor: FC<{
         <select
           value={theme.fontFamily}
           onChange={(ev: any) => {
-            props.onChange({ fontFamily: ev.target.value || defaultTheme.fontFamily });
+            props.onChange({
+              fontFamily: ev.target.value || defaultTheme.fontFamily,
+            });
           }}
         >
           <option value={""}>Default (system)</option>
-          {["Helvetica", "Arial", "Monaco", "Georgia", "monospace"].map((val) => (
-            <option key={val} value={val}>
-              {val}
-            </option>
-          ))}
+          {["Helvetica", "Arial", "Monaco", "Georgia", "monospace"].map(
+            (val) => (
+              <option key={val} value={val}>
+                {val}
+              </option>
+            )
+          )}
         </select>
       </label>
       <label>
@@ -297,6 +270,10 @@ const App = () => {
     downloadable: false,
   });
 
+  const [loaderMessage, setLoaderMessage] = useState<string>(
+    "Your request is taking longer than expected, please wait"
+  );
+
   const [behavior, setBehavior] = useState<Behavior>(Behavior.Simple);
 
   const code = `<!-- Standalone chat widget sample HTML -->
@@ -404,7 +381,7 @@ setTimeout(() => {
       </section>
       <section>
         <div className="section-title">
-          <h2>Title bar</h2>
+          <h2>User interface</h2>
         </div>
         <TitleBarEditor
           value={titleBar}
@@ -412,6 +389,13 @@ setTimeout(() => {
             setTitleBar((prev) => ({ ...prev, ...val }));
           }}
         />
+        <label>
+          <span>Loader message:</span>
+          <input
+            value={loaderMessage}
+            onChange={(ev) => setLoaderMessage(ev.target.value)}
+          />{" "}
+        </label>
       </section>
       <section>
         <div className="section-title">
@@ -462,7 +446,12 @@ setTimeout(() => {
         </div>
         <CodeEditor code={code} />
       </section>
-      <Widget config={config} theme={theme} titleBar={titleBar} />
+      <Widget
+        config={config}
+        theme={theme}
+        titleBar={titleBar}
+        loaderMessage={loaderMessage}
+      />
     </>
   );
 };
