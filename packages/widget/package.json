@@ -1,6 +1,6 @@
 {
   "name": "@nlxchat/widget",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Standalone chat widget based on the NLX Chat SDK",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
