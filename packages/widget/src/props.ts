@@ -13,6 +13,7 @@ export interface Props {
   chatIcon?: string;
   titleBar?: TitleBar;
   loaderMessage?: string;
+  showLoaderMessageAfter?: number;
   onExpand?: (conversationHandler: ConversationHandler) => void;
   onCollapse?: (conversationHandler: ConversationHandler) => void;
   bubble?: string;

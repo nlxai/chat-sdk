@@ -111,6 +111,18 @@ When using this option, `config.triggerWelcomeIntent` will have no effect.
 
 > When using the session storage feature, it is your responsibility to make sure that your website complies with your data protection and privacy policy requirements.
 
+### `loaderMessage`
+
+When a bot response is expected, the UI shows a message bubble with a loading animation. By setting a `loaderMessage` property, a message will appear next to it, by default after a few seconds. This can help long responses seem less frustrating to the user.
+
+Some example strategies:
+- inform the user of the delay: `Your request is taking longer than expected, please wait`.
+- inform the user what is happening exactly: `Processing your booking`.
+
+### `showLoaderMessageAfter`
+
+A duration in milliseconds after which the `loaderMessage` should appear. If you want the loader message to appear instantly, simply set this value to `0`.
+
 ### `lowLevel`
 
 If you need low-level control of the widget, this configuration value gives access to the [conversationHandler](https://github.com/nlxai/chat-sdk/blob/94d5fade43c6ed05ddf95de7140bf5bf1e6f916e/packages/core/src/index.ts#L84-L95) object through a callback, called once on widget initialization:

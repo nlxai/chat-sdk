@@ -75,16 +75,17 @@ const toStringWithLeadingZero = (n: number): string => {
   return `${n}`;
 };
 
-const Loader: FC<{ message?: string }> = (props) => {
-  const [showMessage, setShowMessage] = useState(false);
+const Loader: FC<{ message?: string; showAfter?: number; }> = (props) => {
+  const [showMessage, setShowMessage] = useState(props.showAfter === 0);
   useEffect(() => {
+    const timeoutDuration = typeof props.showAfter === "number" ? props.showAfter : 2500;
     const timeout = setTimeout(() => {
       setShowMessage(true);
-    }, 2000);
+    }, timeoutDuration);
     return () => {
       clearTimeout(timeout);
     };
-  }, [setShowMessage]);
+  }, [setShowMessage, props.showAfter]);
 
   return (
     <C.LoaderContainer>
@@ -454,7 +455,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                 {chat.waiting && (
                   <C.MessageGroup>
                     <C.Message type="bot">
-                      <Loader message={props.loaderMessage} />
+                      <Loader message={props.loaderMessage} showAfter={props.showLoaderMessageAfter} />
                     </C.Message>
                   </C.MessageGroup>
                 )}
