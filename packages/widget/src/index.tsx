@@ -129,8 +129,10 @@ const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
                               },
                             };
                       })()}
+                      dangerouslySetInnerHTML={{
+                        __html: marked(choice.choiceText),
+                      }}
                     >
-                      {choice.choiceText}
                     </C.ChoiceButton>
                   ))}
                 </C.ChoicesContainer>

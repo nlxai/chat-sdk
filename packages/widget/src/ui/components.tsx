@@ -471,6 +471,20 @@ export const ChoiceButton = styled.button<{
   font-family: ${(props) => props.theme.fontFamily};
   padding: 4px 12px;
 
+  & p, & em, & a, & strong {
+    font-size: ${constants.fontSize}px;
+    margin: 0;
+
+    ${(props) =>
+      props.selected
+        ? `
+    color: ${props.theme.white};
+    `
+        : `
+    color: ${props.theme.primaryColor};
+    `}
+  }
+
   :focus {
     outline: none;
   }
