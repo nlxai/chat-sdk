@@ -284,16 +284,16 @@ const App = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <script defer src="https://unpkg.com/@nlxchat/widget@1.0.17/lib/umd/widget.js"></script>
+    <script defer src="https://unpkg.com/@nlxchat/widget@1.0.19/lib/umd/widget.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const widget = chat.standalone({
           config: {
-            botUrl: "",
+            botUrl: "${config.botUrl}",
             headers: {
-              "nlx-api-key": ""
+              "nlx-api-key": "${config.headers?.["nlx-api-key"] || ""}"
             },
-            languageCode: "en-US"
+            languageCode: "${config.languageCode}"
           },
           titleBar: ${indentBy(
             "          ",
