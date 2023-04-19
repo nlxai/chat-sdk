@@ -106,10 +106,10 @@ export const Container = styled.div<{}>`
     if (!props.theme.windowInnerHeight) {
       return `${top}px`;
     }
-    return Math.max(
+    return `${Math.max(
       props.theme.windowInnerHeight - props.theme.chatWindowMaxHeight - bottom,
       top
-    );
+    )}px`;
   }};
   right: ${top}px;
   bottom: ${bottom}px;
