@@ -471,7 +471,13 @@ export const ChoiceButton = styled.button<{
   font-family: ${(props) => props.theme.fontFamily};
   padding: 4px 12px;
 
-  & p, & em, & a, & strong {
+  & p,
+  & em,
+  & a,
+  & strong,
+  & span,
+  & i,
+  & b {
     font-size: ${constants.fontSize}px;
     margin: 0;
 
