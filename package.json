@@ -1,6 +1,6 @@
 {
   "name": "nlx-chat-sdk",
-  "version": "0.5.2",
+  "version": "1.0.17",
   "private": true,
   "description": "SDK to talk to NLX bots",
   "workspaces": [

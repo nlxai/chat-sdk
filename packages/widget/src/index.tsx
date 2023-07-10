@@ -276,12 +276,6 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   }, []);
 
   useEffect(() => {
-    if (props.lowLevel && chat.conversationHandler) {
-      props.lowLevel(chat.conversationHandler);
-    }
-  }, [chat.conversationHandler]);
-
-  useEffect(() => {
     if (props.useSessionStorage) {
       saveSession(chat);
     }

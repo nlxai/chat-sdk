@@ -20,9 +20,10 @@ export interface BotResponse {
 
 export interface BotResponsePayload {
   conversationId?: string;
-  messages: Array<BotMessage>;
+  messages: BotMessage[];
   metadata?: BotResponseMetadata;
   payload?: string;
+  modalities?: Record<string, Record<string, any>>;
   context?: Context;
 }
 
@@ -82,7 +83,6 @@ export interface Config {
   responses?: Response[];
   failureMessages?: string[];
   greetingMessages?: string[];
-  context?: Record<string, any>;
   triggerWelcomeIntent?: boolean;
   environment?: Environment;
   headers?: {
@@ -169,7 +169,6 @@ export const shouldReinitialize = (
     !equals(config1.userId, config2.userId) ||
     !equals(config1.conversationId, config2.conversationId) ||
     !equals(config1.languageCode, config2.languageCode) ||
-    !equals(config1.context, config2.context) ||
     !equals(
       config1.experimental?.channelType,
       config2.experimental?.channelType
@@ -184,10 +183,6 @@ export const shouldReinitialize = (
 };
 
 export const createConversation = (config: Config): ConversationHandler => {
-  if (config.context) {
-    console.warn("Setting a context in the main chat configuration is deprecated. You can send context as a second argument to all send methods instead.");
-  }
-
   let socket: ReconnectingWebSocket | undefined;
 
   // Check if the bot URL has a language code appended to it
@@ -300,9 +295,6 @@ export const createConversation = (config: Config): ConversationHandler => {
       userId: state.userId,
       conversationId: state.conversationId,
       ...body,
-      ...(config.context && !state.contextSent
-        ? { context: {...config.context, ...(body.context || {})} }
-        : {}),
       languageCode: config.languageCode,
       channelType: config.experimental?.channelType,
       environment: config.environment,

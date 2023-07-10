@@ -10,15 +10,14 @@ export interface TitleBar {
 export interface Props {
   config: Config;
   theme?: Partial<Theme>;
-  chatIcon?: string;
   titleBar?: TitleBar;
+  chatIcon?: string;
+  bubble?: string;
+  inputPlaceholder?: string;
+  initiallyExpanded?: boolean;
   loaderMessage?: string;
   showLoaderMessageAfter?: number;
   onExpand?: (conversationHandler: ConversationHandler) => void;
   onCollapse?: (conversationHandler: ConversationHandler) => void;
-  bubble?: string;
-  inputPlaceholder?: string;
-  initiallyExpanded?: boolean;
   useSessionStorage?: boolean;
-  lowLevel?: (conversationHandler: ConversationHandler) => void;
 }
