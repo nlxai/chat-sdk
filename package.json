@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "npm run build",
     "build": "lerna run build",
     "publish": "rm -f packages/*/package-lock.json && lerna publish"
   },
