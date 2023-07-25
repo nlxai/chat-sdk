@@ -83,7 +83,6 @@ export interface Config {
   responses?: Response[];
   failureMessages?: string[];
   greetingMessages?: string[];
-  triggerWelcomeIntent?: boolean;
   environment?: Environment;
   headers?: {
     [key: string]: string;
@@ -396,13 +395,6 @@ export const createConversation = (config: Config): ConversationHandler => {
     });
   };
 
-  if (config.triggerWelcomeIntent) {
-    console.warn(
-      "The `triggerWelcomeIntent` configuration option is deprecated. Use the `sendWelcomeIntent` method returned by the conversation client."
-    );
-    sendIntent(welcomeIntent);
-  }
-
   const unsubscribe = (subscriber: Subscriber) => {
     subscribers = subscribers.filter((fn) => fn !== subscriber);
   };
@@ -547,9 +539,6 @@ export const createConversation = (config: Config): ConversationHandler => {
       if (isUsingWebSockets()) {
         teardownWebsocket();
         setupWebsocket();
-      }
-      if (config.triggerWelcomeIntent) {
-        sendIntent(welcomeIntent);
       }
     },
     destroy: () => {
