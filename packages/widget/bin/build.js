@@ -13,5 +13,5 @@ fs.mkdir("lib/umd", () => {
     .on("error", (error) => {
       console.error(error.toString());
     })
-    .pipe(fs.createWriteStream("lib/umd/widget.js"));
+    .pipe(fs.createWriteStream("lib/umd/index.js"));
 });

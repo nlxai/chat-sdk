@@ -284,7 +284,7 @@ const App = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <script defer src="https://unpkg.com/@nlxchat/widget@1.0.19/lib/umd/widget.js"></script>
+    <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0/lib/umd/index.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         const widget = chat.standalone({

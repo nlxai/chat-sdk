@@ -10,3 +10,8 @@
 ## 1.0.2
 
 * fix the logic that assembles the websocket URL.
+
+## 2.0.0
+
+* context is now sent by individual requests and cannot be added when initializing the SDK.
+* new UMD standalone modules: `window.nlxChat.core`. 

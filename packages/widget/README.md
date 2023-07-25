@@ -41,13 +41,13 @@ import { Widget } from "@nlxchat/widget";
 render(<Widget config={{ botUrl: "" }} />, document.getElementById("app"));
 ```
 
-There is also a packaged version of the SDK that exposes the `chat.standalone` and `chat.widget` as a global on window:
+There is also a packaged version of the SDK that exposes the `nlxChat.standalone` as a global on window:
 
 ```html
 <body>
-  <script src="https://unpkg.com/@nlxchat/widget@0.5.0/lib/umd/widget.js"></script>
+  <script src="https://unpkg.com/@nlxchat/widget@2.0.0/lib/umd/index.js"></script>
   <script>
-    window.chat.standalone({
+    window.nlxChat.standalone({
       config: {
         botUrl: "",
         headers: {
@@ -123,27 +123,6 @@ Some example strategies:
 
 A duration in milliseconds after which the `loaderMessage` should appear. If you want the loader message to appear instantly, simply set this value to `0`.
 
-### `lowLevel`
-
-If you need low-level control of the widget, this configuration value gives access to the [conversationHandler](https://github.com/nlxai/chat-sdk/blob/94d5fade43c6ed05ddf95de7140bf5bf1e6f916e/packages/core/src/index.ts#L84-L95) object through a callback, called once on widget initialization:
-
-```jsx
-<Widget
-  config={{
-    botUrl: ""
-  }}
-  lowLevel={(conversationHandler) => {
-    // Send e.g. custom slot values, or save the handler in a ref or on the window global
-    conversationHandler.sendSlots([
-      {
-        slotId: "name",
-        value: "Alex"
-      }
-    ]);
-  }
-/>
-```
-
 ## The widget instance
 
 The `standalone` function (`window.chat.standalone` if you are using the packaged version) returns an object that you can use to control the widget programmatically. It has the following methods:
@@ -169,7 +148,7 @@ const handleExpand = (conversationHandler) => {
   }
 };
 
-window.chat.standalone({
+window.nlxChat.standalone({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
@@ -181,7 +160,7 @@ window.chat.standalone({
 ### Open the widget from the outside
 
 ```js
-const widget = window.chat.standalone({
+const widget = window.nlxChat.standalone({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
@@ -199,7 +178,7 @@ document.querySelector("#my-button").addEventListener("click", () => {
 This example triggers a custom intent after a period of time spent on the `/product` page of a website.
 
 ```js
-const widget = window.chat.standalone({
+const widget = window.nlxChat.standalone({
   config: {
     // Bot configuration (`botUrl` etc.)
   },

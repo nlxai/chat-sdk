@@ -143,7 +143,6 @@ interface InternalState {
   responses: Response[];
   conversationId: string;
   userId?: string;
-  contextSent: boolean;
 }
 
 const fromInternal = (internalState: InternalState): State =>
@@ -218,7 +217,6 @@ export const createConversation = (config: Config): ConversationHandler => {
         : []),
     userId: config.userId,
     conversationId: initialConversationId,
-    contextSent: false,
   };
 
   const setState = (
@@ -257,9 +255,6 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   const messageResponseHandler = (response: any) => {
-    if (!state.contextSent) {
-      state = { ...state, contextSent: true };
-    }
     if (response && response.messages) {
       const newResponse: Response = {
         type: "bot",
@@ -547,7 +542,6 @@ export const createConversation = (config: Config): ConversationHandler => {
     reset: (options) => {
       setState({
         conversationId: uuid(),
-        contextSent: false,
         responses: options?.clearResponses ? [] : state.responses,
       });
       if (isUsingWebSockets()) {
