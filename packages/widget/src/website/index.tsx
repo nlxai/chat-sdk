@@ -287,7 +287,7 @@ const App = () => {
     <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.1/lib/umd/index.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        const widget = chat.standalone({
+        const widget = nlxChat.widget.standalone({
           config: {
             botUrl: "${config.botUrl}",
             headers: {
