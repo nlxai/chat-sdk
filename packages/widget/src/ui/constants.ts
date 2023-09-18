@@ -10,7 +10,6 @@ export const defaultTheme: Theme = {
   primaryColor: "#2663da",
   darkMessageColor: "#2663da",
   lightMessageColor: "#EFEFEF",
-  offWhite: "#f5f5f5",
   white: "#FFFFFF",
   fontFamily:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',

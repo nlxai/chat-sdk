@@ -185,16 +185,6 @@ const ThemeEditor: FC<{
         />
       </label>
       <label>
-        <span>Default off-white:</span>
-        <input
-          type="color"
-          value={theme.offWhite}
-          onInput={(ev: any) => {
-            props.onChange({ offWhite: ev.target.value });
-          }}
-        />
-      </label>
-      <label>
         <span>Spacing unit:</span>
         <input
           type="range"
