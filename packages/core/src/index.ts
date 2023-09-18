@@ -19,6 +19,7 @@ export interface BotResponse {
 }
 
 export interface BotResponsePayload {
+  expirationTimestamp?: number;
   conversationId?: string;
   messages: BotMessage[];
   metadata?: BotResponseMetadata;

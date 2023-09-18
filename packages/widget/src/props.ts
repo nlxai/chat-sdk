@@ -7,6 +7,8 @@ export interface TitleBar {
   title: string;
 }
 
+export type StorageType = "localStorage" | "sessionStorage";
+
 export interface Props {
   config: Config;
   theme?: Partial<Theme>;
@@ -17,7 +19,7 @@ export interface Props {
   initiallyExpanded?: boolean;
   loaderMessage?: string;
   showLoaderMessageAfter?: number;
+  persistIn?: StorageType;
   onExpand?: (conversationHandler: ConversationHandler) => void;
   onCollapse?: (conversationHandler: ConversationHandler) => void;
-  useSessionStorage?: boolean;
 }

@@ -2,15 +2,12 @@ import { createRoot } from "react-dom/client";
 import React, { type FC, useState, useEffect, useRef } from "react";
 import {
   Widget,
-  clearSession,
   type Theme,
   type TitleBar,
   defaultTheme,
 } from "../";
 import { type Config } from "@nlxchat/core";
 import "./index.css";
-
-clearSession();
 
 const CodeEditor: FC<{ code: string }> = (props) => {
   const codeRef = useRef(null);
@@ -229,6 +226,7 @@ enum Behavior {
   WelcomeIntentOnOpen,
   CustomIntentOnInactivity,
   UseSessionStorage,
+  UseLocalStorage,
 }
 
 const indentBy = (indendStr: string, str: string) =>
@@ -310,7 +308,15 @@ onExpand: () => {
           "          ",
           `
 // CUSTOM BEHAVIOR SNIPPET
-useSessionStorage: true,
+persistIn: "sessionStorage",
+// CUSTOM BEHAVIOR SNIPPET END`
+        )
+      : behavior === Behavior.UseLocalStorage
+      ? indentBy(
+          "          ",
+          `
+// CUSTOM BEHAVIOR SNIPPET
+persistIn: "localStorage",
 // CUSTOM BEHAVIOR SNIPPET END`
         )
       : ""
@@ -432,7 +438,15 @@ setTimeout(() => {
             checked={behavior === Behavior.UseSessionStorage}
             onChange={() => setBehavior(Behavior.UseSessionStorage)}
           />{" "}
-          Retain conversation through refreshes
+          Retain conversation through refreshes (SessionStorage)
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={behavior === Behavior.UseLocalStorage}
+            onChange={() => setBehavior(Behavior.UseLocalStorage)}
+          />{" "}
+          Retain conversation through refreshes and closed browser sessions (LocalStorage)
         </label>
         <blockquote>
           Note: these behavior settings only change the generated code snippet
@@ -460,6 +474,7 @@ setTimeout(() => {
         theme={theme}
         titleBar={titleBar}
         loaderMessage={loaderMessage}
+        persistIn="sessionStorage"
       />
     </>
   );

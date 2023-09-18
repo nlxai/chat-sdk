@@ -13,7 +13,7 @@ import React, {
   forwardRef,
 } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { render, unmountComponentAtNode } from "react-dom";
+import { createRoot } from "react-dom/client";
 import createCache from "@emotion/cache";
 import { ThemeProvider, CacheProvider } from "@emotion/react";
 
@@ -25,7 +25,7 @@ import {
 } from "@nlxchat/core";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
-import { type Props } from "./props";
+import { type Props, type StorageType } from "./props";
 import * as C from "./ui/components";
 
 export { type Props, type TitleBar } from "./props";
@@ -50,11 +50,12 @@ export const standalone = (props: Props): WidgetInstance => {
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${constants.largeZIndex};`);
   document.body.appendChild(node);
+  const root = createRoot(node);
   const ref = createRef<WidgetRef>();
-  render(<Widget {...props} ref={ref} />, node);
+  root.render(<Widget {...props} ref={ref} />);
   return {
     teardown: () => {
-      unmountComponentAtNode(node);
+      root.unmount();
     },
     expand: () => {
       ref.current?.expand();
@@ -184,10 +185,10 @@ const renderToStringWithStyles = (element: ReactElement): string => {
   return html;
 };
 
-const sessionStorageKey = "nlxchat-session";
+const storageKey = "nlxchat-session";
 
 interface SessionData {
-  conversationId: string;
+  conversationId?: string;
   responses: Response[];
 }
 
@@ -201,9 +202,11 @@ const getConfigWithSession = (config: Config, session: SessionData) => {
     : config;
 };
 
-export const saveSession = (chat: ChatHook) => {
-  sessionStorage.setItem(
-    sessionStorageKey,
+const saveSession = (chat: ChatHook, persistIn: StorageType) => {
+  const storage =
+    persistIn === "sessionStorage" ? sessionStorage : localStorage;
+  storage.setItem(
+    storageKey,
     JSON.stringify({
       savedAt: new Date().getTime(),
       responses: chat.responses,
@@ -212,22 +215,30 @@ export const saveSession = (chat: ChatHook) => {
   );
 };
 
-export const clearSession = () => {
-  sessionStorage.removeItem(sessionStorageKey);
+export const clearSession = (persistIn: StorageType) => {
+  const storage =
+    persistIn === "sessionStorage" ? sessionStorage : localStorage;
+  storage.removeItem(storageKey);
 };
 
-export const retrieveSession = (): SessionData | null => {
+export const retrieveSession = (persistIn: StorageType): SessionData | null => {
   try {
-    const data = JSON.parse(sessionStorage.getItem(sessionStorageKey) || "");
-    const responses = data?.responses;
-    const conversationId = data?.conversationId;
-    const savedAt = data?.savedAt;
-    if (responses && conversationId && savedAt) {
-      if (new Date().getTime() - savedAt < 60 * 60 * 1000) {
+    const storage =
+      persistIn === "sessionStorage" ? sessionStorage : localStorage;
+    const data = JSON.parse(storage.getItem(storageKey) || "");
+    const responses: Response[] | undefined = data?.responses;
+    const conversationId: string | undefined = data?.conversationId;
+    if (responses && conversationId) {
+      let expirationTimestamp: number | undefined = undefined;
+      responses.forEach((response) => {
+        if (response.type === "bot") {
+          expirationTimestamp = response.payload.expirationTimestamp;
+        }
+      });
+      if (!expirationTimestamp || new Date().getTime() < expirationTimestamp) {
         return { responses, conversationId };
       } else {
-        clearSession();
-        return null;
+        return { responses };
       }
     }
     return null;
@@ -257,7 +268,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   );
 
   const configWithSession = useMemo(() => {
-    if (!savedSessionData || !props.useSessionStorage) {
+    if (!savedSessionData || !props.persistIn) {
       return props.config;
     }
     return getConfigWithSession(props.config, savedSessionData);
@@ -268,17 +279,19 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   const chat = useChat(configWithSession);
 
   useEffect(() => {
-    const session = retrieveSession();
-    if (session && props.useSessionStorage) {
-      setSavedSessionData(session);
+    if (props.persistIn) {
+      const session = retrieveSession(props.persistIn);
+      if (session) {
+        setSavedSessionData(session);
+      }
     }
   }, []);
 
   useEffect(() => {
-    if (props.useSessionStorage) {
-      saveSession(chat);
+    if (props.persistIn) {
+      saveSession(chat, props.persistIn);
     }
-  }, [chat.responses, props.useSessionStorage || false]);
+  }, [chat.responses, props.persistIn]);
 
   // Expanded state
 
@@ -411,9 +424,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                   </C.TitleContainer>
                   {props.titleBar.downloadable && (
                     <>
-                      <a
-                        style={{ display: "none" }}
-                        ref={downloadNodeRef}
+                      <C.DiscreteLink
                         href={window.URL.createObjectURL(
                           new Blob(
                             [
@@ -430,18 +441,8 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                         )}
                         download={`chat-${dateTimestamp}.html`}
                       >
-                        Download
-                      </a>
-                      <C.DiscreteButton
-                        onClick={() => {
-                          if (downloadNodeRef.current !== null) {
-                            downloadNodeRef.current.click();
-                          }
-                        }}
-                      >
                         <DownloadIcon />
-                        <span>Download</span>
-                      </C.DiscreteButton>
+                      </C.DiscreteLink>
                     </>
                   )}
                 </C.TitleBar>

@@ -247,6 +247,10 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
     ${(props) => focusShadow(props.theme)}
   }
 
+  :disabled {
+    cursor: auto;
+  }
+
   svg {
     fill: ${(props) => props.theme.primaryColor};
   }
@@ -527,10 +531,12 @@ export const Title = styled.p<{}>`
 
 // DiscreteButton
 
-export const DiscreteButton = styled.button<{}>`
-  color: #565656;
+export const DiscreteLink = styled.a<{}>`
+  color: ${(props) => props.theme.white};
   border: 0;
   display: inline-flex;
+  width: 12px;
+  height: 12px;
   align-items: center;
   font-size: 11px;
   border-radius: 4px;
@@ -538,16 +544,16 @@ export const DiscreteButton = styled.button<{}>`
   background: none;
   cursor: pointer;
   :hover {
-    color: ${(props) => props.theme.primaryColor};
+    background: rgba(255, 255, 255, 0.2);
   }
   :focus {
     outline: none;
     box-shadow: 0 0 0 3px #dedede;
   }
   > svg {
+    color: ${(props) => props.theme.white};
     width: 12px;
     height: 12px;
-    margin-right: 6px;
   }
 `;
 
