@@ -238,6 +238,7 @@ enum Behavior {
   Simple,
   WelcomeIntentOnOpen,
   CustomIntentOnInactivity,
+  UseSessionStorage,
 }
 
 const indentBy = (indendStr: string, str: string) =>
@@ -310,6 +311,14 @@ onExpand: () => {
     conversationHandler.sendWelcomeIntent();
   }
 },
+// CUSTOM BEHAVIOR SNIPPET END`
+        )
+      : behavior === Behavior.UseSessionStorage
+      ? indentBy(
+          "          ",
+          `
+// CUSTOM BEHAVIOR SNIPPET
+useSessionStorage: true,
 // CUSTOM BEHAVIOR SNIPPET END`
         )
       : ""
@@ -424,6 +433,14 @@ setTimeout(() => {
             onChange={() => setBehavior(Behavior.CustomIntentOnInactivity)}
           />{" "}
           Send custom intent after a period of inactivity
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={behavior === Behavior.UseSessionStorage}
+            onChange={() => setBehavior(Behavior.UseSessionStorage)}
+          />{" "}
+          Retain conversation through refreshes
         </label>
         <blockquote>
           Note: these behavior settings only change the generated code snippet
