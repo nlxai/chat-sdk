@@ -75,10 +75,11 @@ const toStringWithLeadingZero = (n: number): string => {
   return `${n}`;
 };
 
-const Loader: FC<{ message?: string; showAfter?: number; }> = (props) => {
+const Loader: FC<{ message?: string; showAfter?: number }> = (props) => {
   const [showMessage, setShowMessage] = useState(props.showAfter === 0);
   useEffect(() => {
-    const timeoutDuration = typeof props.showAfter === "number" ? props.showAfter : 2500;
+    const timeoutDuration =
+      typeof props.showAfter === "number" ? props.showAfter : 2500;
     const timeout = setTimeout(() => {
       setShowMessage(true);
     }, timeoutDuration);
@@ -132,8 +133,7 @@ const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
                       dangerouslySetInnerHTML={{
                         __html: marked(choice.choiceText),
                       }}
-                    >
-                    </C.ChoiceButton>
+                    ></C.ChoiceButton>
                   ))}
                 </C.ChoicesContainer>
               )}
@@ -450,7 +450,10 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                 {chat.waiting && (
                   <C.MessageGroup>
                     <C.Message type="bot">
-                      <Loader message={props.loaderMessage} showAfter={props.showLoaderMessageAfter} />
+                      <Loader
+                        message={props.loaderMessage}
+                        showAfter={props.showLoaderMessageAfter}
+                      />
                     </C.Message>
                   </C.MessageGroup>
                 )}
@@ -470,16 +473,18 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                   }
                 }}
               />
-              <C.IconButton
-                disabled={Boolean(!submit)}
-                onClick={() => {
-                  if (submit) {
-                    submit();
-                  }
-                }}
-              >
-                <AirplaneIcon />
-              </C.IconButton>
+              <C.BottomButtonsContainer>
+                <C.IconButton
+                  disabled={Boolean(!submit)}
+                  onClick={() => {
+                    if (submit) {
+                      submit();
+                    }
+                  }}
+                >
+                  <AirplaneIcon />
+                </C.IconButton>
+              </C.BottomButtonsContainer>
             </C.Bottom>
           </C.Container>
         )}

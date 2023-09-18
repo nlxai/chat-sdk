@@ -178,8 +178,8 @@ export const Message = styled.div<{ type: "user" | "bot" }>`
     props.type === "user"
       ? props.theme.darkMessageColor
       : props.theme.lightMessageColor};
-  color: ${(props) => (props.type === "user" ? props.theme.white : "#232323")};
-  padding: 6px 10px;
+  color: ${(props) => (props.type === "user" ? props.theme.white : "#676767")};
+  padding: ${props => `${props.theme.spacing}px ${props.theme.spacing}px`};
   max-width: calc(100% - 20px);
   ${(props) =>
     props.type === "user"
@@ -215,22 +215,10 @@ export const MessageBody = styled.p<{}>`
 
 export const Bottom = styled.div<{}>`
   height: ${constants.bottomHeight}px;
-  display: flex;
+  position: relative;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   border-bottom-left-radius: ${(props) => props.theme.borderRadius}px;
   border-bottom-right-radius: ${(props) => props.theme.borderRadius}px;
-  align-items: center;
-  justify-content: center;
-  padding: 0 ${(props) => props.theme.spacing}px;
-  background-color: ${(props) => props.theme.offWhite};
-
-  > * {
-    margin-right: 8px;
-  }
-
-  > :last-child {
-    margin-right: 0;
-  }
 `;
 
 export const IconButton = styled.button<{ disabled?: boolean }>`
@@ -249,8 +237,8 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   `}
   border: 0;
   box-shadow: none;
-  background-color: ${(props) => props.theme.primaryColor};
-  color: ${(props) => props.theme.white};
+  color: ${(props) => props.theme.primaryColor};
+  background: none;
   position: relative;
   cursor: pointer;
 
@@ -260,26 +248,32 @@ export const IconButton = styled.button<{ disabled?: boolean }>`
   }
 
   svg {
-    fill: ${(props) => props.theme.white};
+    fill: ${(props) => props.theme.primaryColor};
   }
 
   ${hoverBg}
 `;
 
+export const BottomButtonsContainer = styled.div<{}>`
+  position: absolute;
+  top: 50%;
+  right: ${(props) => `${props.theme.spacing}px`};
+  transform: translate3d(0, -50%, 0);
+`
+
 export const Input = styled.input<{}>`
   display: block;
   flex: 1;
-  height: 35px;
-  border-radius: 18px;
-  padding: 0 14px;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  padding: ${(props) => `0 ${2 * props.theme.spacing}px`};
   font-size: ${constants.fontSize}px;
   font-family: ${(props) => props.theme.fontFamily};
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: none;
 
   :focus {
     outline: none;
-    border: 1px solid ${(props) => props.theme.primaryColor};
-    ${(props) => focusShadow(props.theme)}
   }
 `;
 
@@ -499,12 +493,12 @@ export const ChoiceButton = styled.button<{
 // TitleBar
 
 export const TitleBar = styled.div<{}>`
-  height: 48px;
-  padding: 0 ${(props) => props.theme.spacing}px;
+  height: ${constants.bottomHeight}px;
+  padding: 0 ${(props) => 2 * props.theme.spacing}px;
   border-top-left-radius: ${(props) => props.theme.borderRadius}px;
   border-top-right-radius: ${(props) => props.theme.borderRadius}px;
-  background-color: ${(props) => props.theme.offWhite};
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: ${(props) => props.theme.primaryColor};
+  color: ${(props) => props.theme.white};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -527,6 +521,7 @@ export const Title = styled.p<{}>`
   font-size: 16px;
   font-weight: bold;
   margin: 0;
+  color: ${(props) => props.theme.white};
   font-family: ${(props) => props.theme.fontFamily};
 `;
 
