@@ -9,11 +9,8 @@
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
-    "paths": {
-      "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
-    },
     "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": false,
     "esModuleInterop": true
   }
 }

@@ -1,4 +1,4 @@
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import React, { type FC, useState, useEffect, useRef } from "react";
 import {
   Widget,
@@ -465,4 +465,4 @@ setTimeout(() => {
   );
 };
 
-render(<App />, document.getElementById("app"));
+createRoot(document.getElementById("app") as Element).render(<App />);
