@@ -288,6 +288,7 @@ const App = () => {
     <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.1/lib/umd/index.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
+        let welcomeIntentSent = false;
         const widget = nlxChat.widget.standalone({
           config: {
             botUrl: "${config.botUrl}",
@@ -307,8 +308,9 @@ const App = () => {
 // CUSTOM BEHAVIOR SNIPPET
 onExpand: () => {
   const conversationHandler = widget.getConversationHandler();
-  if (conversationHandler) {
+  if (conversationHandler && !welcomeIntentSent) {
     conversationHandler.sendWelcomeIntent();
+    welcomeIntentSent = true;
   }
 },
 // CUSTOM BEHAVIOR SNIPPET END`
