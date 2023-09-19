@@ -1,11 +1,6 @@
-import { createRoot } from "react-dom/client";
 import React, { type FC, useState, useEffect, useRef } from "react";
-import {
-  Widget,
-  type Theme,
-  type TitleBar,
-  defaultTheme,
-} from "../";
+import { createRoot } from "react-dom/client";
+import { Widget, type Theme, type TitleBar, defaultTheme } from "../";
 import { type Config } from "@nlxchat/core";
 import "./index.css";
 
@@ -446,7 +441,8 @@ setTimeout(() => {
             checked={behavior === Behavior.UseLocalStorage}
             onChange={() => setBehavior(Behavior.UseLocalStorage)}
           />{" "}
-          Retain conversation through refreshes and closed browser sessions (LocalStorage)
+          Retain conversation through refreshes and closed browser sessions
+          (LocalStorage)
         </label>
         <blockquote>
           Note: these behavior settings only change the generated code snippet
