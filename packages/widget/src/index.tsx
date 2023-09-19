@@ -18,11 +18,7 @@ import createCache from "@emotion/cache";
 import { ThemeProvider, CacheProvider } from "@emotion/react";
 
 import { useChat, type ChatHook } from "@nlxchat/react";
-import {
-  type Response,
-  type Config,
-  type ConversationHandler,
-} from "@nlxchat/core";
+import { type Response, type ConversationHandler } from "@nlxchat/core";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
 import { type Props, type StorageType } from "./props";
@@ -192,23 +188,12 @@ interface SessionData {
   responses: Response[];
 }
 
-const getConfigWithSession = (config: Config, session: SessionData) => {
-  return !config.conversationId && !config.responses
-    ? {
-        ...config,
-        conversationId: session.conversationId,
-        responses: session.responses,
-      }
-    : config;
-};
-
 const saveSession = (chat: ChatHook, persistIn: StorageType) => {
   const storage =
     persistIn === "sessionStorage" ? sessionStorage : localStorage;
   storage.setItem(
     storageKey,
     JSON.stringify({
-      savedAt: new Date().getTime(),
       responses: chat.responses,
       conversationId: chat.conversationHandler.currentConversationId(),
     })
@@ -228,7 +213,7 @@ export const retrieveSession = (persistIn: StorageType): SessionData | null => {
     const data = JSON.parse(storage.getItem(storageKey) || "");
     const responses: Response[] | undefined = data?.responses;
     const conversationId: string | undefined = data?.conversationId;
-    if (responses && conversationId) {
+    if (responses) {
       let expirationTimestamp: number | undefined = undefined;
       responses.forEach((response) => {
         if (response.type === "bot" && response.payload.expirationTimestamp) {
@@ -263,29 +248,26 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
     };
   }, []);
 
-  const [savedSessionData, setSavedSessionData] = useState<SessionData | null>(
-    null
+  const savedSessionData = useMemo(
+    () => (props.persistIn ? retrieveSession(props.persistIn) : null),
+    [props.persistIn]
   );
 
   const configWithSession = useMemo(() => {
-    if (!savedSessionData || !props.persistIn) {
+    if (!savedSessionData) {
       return props.config;
     }
-    return getConfigWithSession(props.config, savedSessionData);
+    return {
+      ...props.config,
+      conversationId:
+        savedSessionData.conversationId || props.config.conversationId,
+      responses: savedSessionData.responses || props.config.responses,
+    };
   }, [props.config, savedSessionData]);
 
   // Chat
 
   const chat = useChat(configWithSession);
-
-  useEffect(() => {
-    if (props.persistIn) {
-      const session = retrieveSession(props.persistIn);
-      if (session) {
-        setSavedSessionData(session);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     if (props.persistIn) {
@@ -371,8 +353,6 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   }, []);
 
   // Download
-
-  const downloadNodeRef = useRef<HTMLAnchorElement>(null);
 
   const submit =
     chat.inputValue.replace(/ /gi, "") !== "" &&

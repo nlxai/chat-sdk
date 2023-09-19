@@ -177,6 +177,7 @@ export const shouldReinitialize = (
       config2.experimental?.completeBotUrl
     ) ||
     !equals(config1.headers, config2.headers) ||
+    !equals(config1.responses, config2.responses) ||
     !equals(config1.environment, config2.environment)
   );
 };
