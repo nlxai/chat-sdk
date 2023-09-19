@@ -268,7 +268,7 @@ const App = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.1/lib/umd/index.js"></script>
+    <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.6/lib/umd/index.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
         let welcomeIntentSent = false;
