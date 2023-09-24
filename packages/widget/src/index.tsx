@@ -188,9 +188,9 @@ interface SessionData {
   responses: Response[];
 }
 
-const saveSession = (chat: ChatHook, persistIn: StorageType) => {
+const saveSession = (chat: ChatHook, storeIn: StorageType) => {
   const storage =
-    persistIn === "sessionStorage" ? sessionStorage : localStorage;
+    storeIn === "sessionStorage" ? sessionStorage : localStorage;
   storage.setItem(
     storageKey,
     JSON.stringify({
@@ -200,16 +200,16 @@ const saveSession = (chat: ChatHook, persistIn: StorageType) => {
   );
 };
 
-export const clearSession = (persistIn: StorageType) => {
+export const clearSession = (storeIn: StorageType) => {
   const storage =
-    persistIn === "sessionStorage" ? sessionStorage : localStorage;
+    storeIn === "sessionStorage" ? sessionStorage : localStorage;
   storage.removeItem(storageKey);
 };
 
-export const retrieveSession = (persistIn: StorageType): SessionData | null => {
+export const retrieveSession = (storeIn: StorageType): SessionData | null => {
   try {
     const storage =
-      persistIn === "sessionStorage" ? sessionStorage : localStorage;
+      storeIn === "sessionStorage" ? sessionStorage : localStorage;
     const data = JSON.parse(storage.getItem(storageKey) || "");
     const responses: Response[] | undefined = data?.responses;
     const conversationId: string | undefined = data?.conversationId;
@@ -249,8 +249,8 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   }, []);
 
   const savedSessionData = useMemo(
-    () => (props.persistIn ? retrieveSession(props.persistIn) : null),
-    [props.persistIn]
+    () => (props.storeIn ? retrieveSession(props.storeIn) : null),
+    [props.storeIn]
   );
 
   const configWithSession = useMemo(() => {
@@ -270,10 +270,10 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   const chat = useChat(configWithSession);
 
   useEffect(() => {
-    if (props.persistIn) {
-      saveSession(chat, props.persistIn);
+    if (props.storeIn) {
+      saveSession(chat, props.storeIn);
     }
-  }, [chat.responses, props.persistIn]);
+  }, [chat.responses, props.storeIn]);
 
   // Expanded state
 

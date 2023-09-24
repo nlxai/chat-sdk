@@ -19,7 +19,7 @@ export interface Props {
   initiallyExpanded?: boolean;
   loaderMessage?: string;
   showLoaderMessageAfter?: number;
-  persistIn?: StorageType;
+  storeIn?: StorageType;
   onExpand?: (conversationHandler: ConversationHandler) => void;
   onCollapse?: (conversationHandler: ConversationHandler) => void;
 }

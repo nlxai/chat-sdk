@@ -268,10 +268,9 @@ const App = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.6/lib/umd/index.js"></script>
+    <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.10/lib/umd/index.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        let welcomeIntentSent = false;
         const widget = nlxChat.widget.standalone({
           config: {
             botUrl: "${config.botUrl}",
@@ -289,12 +288,14 @@ const App = () => {
           "          ",
           `
 // CUSTOM BEHAVIOR SNIPPET
-onExpand: () => {
-  const conversationHandler = widget.getConversationHandler();
-  if (conversationHandler && !welcomeIntentSent) {
-    conversationHandler.sendWelcomeIntent();
-    welcomeIntentSent = true;
+onExpand: (conversationHandler) => {
+  const checkMessages = (messages) => {
+    if (messages.length === 0) {
+      conversationHandler.sendWelcomeIntent();
+    }
+    conversationHandler.unsubscribe(checkMessages);
   }
+  conversationHandler.subscribe(checkMessages);
 },
 // CUSTOM BEHAVIOR SNIPPET END`
         )
@@ -303,7 +304,7 @@ onExpand: () => {
           "          ",
           `
 // CUSTOM BEHAVIOR SNIPPET
-persistIn: "sessionStorage",
+storeIn: "sessionStorage",
 // CUSTOM BEHAVIOR SNIPPET END`
         )
       : behavior === Behavior.UseLocalStorage
@@ -311,7 +312,7 @@ persistIn: "sessionStorage",
           "          ",
           `
 // CUSTOM BEHAVIOR SNIPPET
-persistIn: "localStorage",
+storeIn: "localStorage",
 // CUSTOM BEHAVIOR SNIPPET END`
         )
       : ""
@@ -470,7 +471,7 @@ setTimeout(() => {
         theme={theme}
         titleBar={titleBar}
         loaderMessage={loaderMessage}
-        persistIn="sessionStorage"
+        storeIn="sessionStorage"
       />
     </>
   );
