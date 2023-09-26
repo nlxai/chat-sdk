@@ -24,7 +24,7 @@ export interface BotResponsePayload {
   messages: BotMessage[];
   metadata?: BotResponseMetadata;
   payload?: string;
-  modalities?: Record<string, Record<string, any>>;
+  modalities?: Record<string, any>;
   context?: Context;
 }
 
