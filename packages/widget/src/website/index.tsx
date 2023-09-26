@@ -1,6 +1,13 @@
 import React, { type FC, useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import { Widget, type Theme, type TitleBar, defaultTheme } from "../";
+import htm from "htm";
+import {
+  Widget,
+  type Theme,
+  type CustomModality,
+  type TitleBar,
+  defaultTheme,
+} from "../";
 import { type Config } from "@nlxchat/core";
 import "./index.css";
 
@@ -20,6 +27,18 @@ const CodeEditor: FC<{ code: string }> = (props) => {
       ></code>
     </pre>
   );
+};
+
+const customModalities: Record<string, CustomModality> = {
+  PredictiveCard: (handler, { createElement }) => {
+    const html = htm.bind(createElement);
+    return ({ data }: { data: any }) =>
+      html`
+        <div>
+          <h1>!!${data.title}</h1>
+        </div>
+      `;
+  },
 };
 
 const TitleBarEditor: FC<{
@@ -471,7 +490,7 @@ setTimeout(() => {
         theme={theme}
         titleBar={titleBar}
         loaderMessage={loaderMessage}
-        storeIn="sessionStorage"
+        customModalities={customModalities}
       />
     </>
   );

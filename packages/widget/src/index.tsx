@@ -21,10 +21,21 @@ import { useChat, type ChatHook } from "@nlxchat/react";
 import { type Response, type ConversationHandler } from "@nlxchat/core";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
-import { type Props, type StorageType } from "./props";
+import {
+  type Props,
+  type StorageType,
+  type CustomModality,
+  type CustomModalityComponent,
+} from "./props";
 import * as C from "./ui/components";
+import { map } from "ramda";
 
-export { type Props, type TitleBar } from "./props";
+export {
+  type Props,
+  type TitleBar,
+  type CustomModality,
+  type CustomModalityComponent,
+} from "./props";
 export { type Theme } from "./theme";
 export { defaultTheme } from "./ui/constants";
 
@@ -95,7 +106,11 @@ const Loader: FC<{ message?: string; showAfter?: number }> = (props) => {
   );
 };
 
-const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
+const MessageGroups: FC<{
+  chat: ChatHook;
+  children?: ReactNode;
+  customModalities: Record<string, CustomModalityComponent>;
+}> = (props) => (
   <C.MessageGroups>
     {props.chat.responses.map((response, responseIndex) =>
       response.type === "bot" ? (
@@ -136,6 +151,15 @@ const MessageGroups: FC<{ chat: ChatHook; children?: ReactNode }> = (props) => (
               )}
             </C.Message>
           ))}
+          {Object.entries(response.payload.modalities || {}).map(
+            ([key, value]) => {
+              const Component = props.customModalities[key];
+              if (Component) {
+                return <Component key={key} data={value} />;
+              }
+              return null;
+            }
+          )}
         </C.MessageGroup>
       ) : response.payload.type === "text" ? (
         <C.MessageGroup key={responseIndex}>
@@ -189,8 +213,7 @@ interface SessionData {
 }
 
 const saveSession = (chat: ChatHook, storeIn: StorageType) => {
-  const storage =
-    storeIn === "sessionStorage" ? sessionStorage : localStorage;
+  const storage = storeIn === "sessionStorage" ? sessionStorage : localStorage;
   storage.setItem(
     storageKey,
     JSON.stringify({
@@ -201,8 +224,7 @@ const saveSession = (chat: ChatHook, storeIn: StorageType) => {
 };
 
 export const clearSession = (storeIn: StorageType) => {
-  const storage =
-    storeIn === "sessionStorage" ? sessionStorage : localStorage;
+  const storage = storeIn === "sessionStorage" ? sessionStorage : localStorage;
   storage.removeItem(storageKey);
 };
 
@@ -302,6 +324,14 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
       conversationHandler: chat.conversationHandler,
     };
   });
+
+  const customModalities = map<
+    Record<string, CustomModality>,
+    Record<string, CustomModalityComponent>
+  >(
+    (mod) => mod(chat.conversationHandler, React),
+    props.customModalities || {}
+  );
 
   // Input focus
 
@@ -410,7 +440,10 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                             [
                               renderToStringWithStyles(
                                 <ThemeProvider theme={mergedTheme}>
-                                  <MessageGroups chat={chat} />
+                                  <MessageGroups
+                                    chat={chat}
+                                    customModalities={{}}
+                                  />
                                 </ThemeProvider>
                               ),
                             ],
@@ -427,7 +460,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                   )}
                 </C.TitleBar>
               )}
-              <MessageGroups chat={chat}>
+              <MessageGroups chat={chat} customModalities={customModalities}>
                 {chat.waiting && (
                   <C.MessageGroup>
                     <C.Message type="bot">

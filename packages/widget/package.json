@@ -26,6 +26,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/tinycolor2": "^1.4.2",
     "browserify": "^17.0.0",
+    "htm": "^3.1.1",
     "parcel": ">=2.9.3",
     "prettier": "^1.19.1",
     "react": "^18.2.0",
