@@ -299,7 +299,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
 
   // Expanded state
 
-  const [expanded, setExpanded] = useState(Boolean(props.initiallyExpanded));
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (expanded) {

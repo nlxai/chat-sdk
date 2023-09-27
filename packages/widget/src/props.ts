@@ -24,7 +24,6 @@ export interface Props {
   chatIcon?: string;
   bubble?: string;
   inputPlaceholder?: string;
-  initiallyExpanded?: boolean;
   loaderMessage?: string;
   showLoaderMessageAfter?: number;
   storeIn?: StorageType;

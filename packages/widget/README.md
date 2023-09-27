@@ -94,20 +94,9 @@ Renders an optional title bar at the top. If the object is provided, it has the 
 
 When set to a non-empty string, a small bubble will appear above the chat pin when the chat is not expanded, helping the user understand what the chat is for. This bubble appears 3s after the chat is loaded, and disappears after 20s.
 
-### `initiallyExpanded`
+### `storeIn`
 
-Sets whether the widget is initially expanded.
-
-### `useSessionStorage`
-
-When this option is set to `true`, the state of the chat conversation is persisted in [session storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) for an hour. This allows the state and history of the conversation to persist between full page refreshes.
-
-The information stored in session storage clears if:
-
-- the browser window is closed.
-- the widget is active on a page with session data set more than an hour before.
-
-When using this option, `config.triggerWelcomeIntent` will have no effect.
+When this option is set to `"localStorage"` or `"sessionStorage"`, the state of the chat conversation is persisted in [local](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) or [session](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage) storage respectively. This allows the state and history of the conversation to persist between full page refreshes.
 
 > When using the session storage feature, it is your responsibility to make sure that your website complies with your data protection and privacy policy requirements.
 
@@ -116,6 +105,7 @@ When using this option, `config.triggerWelcomeIntent` will have no effect.
 When a bot response is expected, the UI shows a message bubble with a loading animation. By setting a `loaderMessage` property, a message will appear next to it, by default after a few seconds. This can help long responses seem less frustrating to the user.
 
 Some example strategies:
+
 - inform the user of the delay: `Your request is taking longer than expected, please wait`.
 - inform the user what is happening exactly: `Processing your booking`.
 
@@ -136,24 +126,22 @@ The `standalone` function (`window.chat.standalone` if you are using the package
 
 ### Fine-grain control on triggering the welcome intent
 
-When using the `config.triggerWelcomeIntent` configuration option, the welcome intent is triggered on widget initialization regardless of whether the widget is expanded or not (through the `initiallyExpanded` option). If you want to trigger the welcome intent only when the widget is expanded by the user (especially helpful for managing costs), you can use the following pattern:
+You can trigger the welcome intent when the widget is expanded, provided there are no messages already in the chat, using the following pattern:
 
 ```js
-let welcomeIntentSent = false;
-
-const handleExpand = (conversationHandler) => {
-  if (!welcomeIntentSent) {
-    conversationHandler.sendWelcomeIntent();
-    welcomeIntentSent = true;
-  }
-};
-
 window.nlxChat.standalone({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
-  initiallyExpanded: false,
-  onExpand: handleExpand,
+  onExpand: () => {
+    const checkMessages = (messages) => {
+      if (messages.length === 0) {
+        conversationHandler.sendWelcomeIntent();
+      }
+      conversationHandler.unsubscribe(checkMessages);
+    };
+    conversationHandler.subscribe(checkMessages);
+  },
 });
 ```
 
@@ -164,7 +152,6 @@ const widget = window.nlxChat.standalone({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
-  initiallyExpanded: false,
 });
 
 // Expand the widget as a result of a button on the page being clicked
@@ -182,7 +169,6 @@ const widget = window.nlxChat.standalone({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
-  initiallyExpanded: false,
 });
 
 if (window.location.pathname === "/product") {
