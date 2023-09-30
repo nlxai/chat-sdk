@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build:standalone": "node bin/build.js",
-    "build": "rm -rf lib && mkdir lib && tsc && npm run build:standalone",
+    "build:umd": "node bin/build.js",
+    "build": "rm -rf lib && mkdir lib && tsc && npm run build:umd",
     "prepublish": "npm run build"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",

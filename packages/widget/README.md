@@ -11,11 +11,11 @@ The chat widget is a styled, configurable UI widget you can drop in on your webs
 You can render a chat widget in your document with just a few lines of code:
 
 ```jsx
-import { standalone } from "@nlxchat/widget";
+import { create } from "@nlxchat/widget";
 
 // This will render the widget as the last element in the <body>
 
-standalone({
+create({
   config: {
     botUrl: "",
     headers: {
@@ -33,21 +33,13 @@ standalone({
 });
 ```
 
-If you are running a React application, you can use the component version with the same configuration API as props:
-
-```jsx
-import { Widget } from "@nlxchat/widget";
-
-render(<Widget config={{ botUrl: "" }} />, document.getElementById("app"));
-```
-
-There is also a packaged version of the SDK that exposes the `nlxChat.standalone` as a global on window:
+There is also a packaged version of the SDK that exposes the `nlxChat.widget.create` as a global on window:
 
 ```html
 <body>
   <script src="https://unpkg.com/@nlxchat/widget@2.0.0/lib/umd/index.js"></script>
   <script>
-    window.nlxChat.standalone({
+    window.nlxChat.widget.create({
       config: {
         botUrl: "",
         headers: {
@@ -115,7 +107,7 @@ A duration in milliseconds after which the `loaderMessage` should appear. If you
 
 ## The widget instance
 
-The `standalone` function (`window.chat.standalone` if you are using the packaged version) returns an object that you can use to control the widget programmatically. It has the following methods:
+The `create` function (`window.nlxChat.widget.create` if you are using the packaged version) returns an object that you can use to control the widget programmatically. It has the following methods:
 
 - `expand`: expand the widget programmatically. You can do this as a response to e.g. a button on your page being clicked.
 - `collapse`: collapse the widget programmatically.
@@ -129,7 +121,7 @@ The `standalone` function (`window.chat.standalone` if you are using the package
 You can trigger the welcome intent when the widget is expanded, provided there are no messages already in the chat, using the following pattern:
 
 ```js
-window.nlxChat.standalone({
+window.nlxChat.widget.create({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
@@ -148,7 +140,7 @@ window.nlxChat.standalone({
 ### Open the widget from the outside
 
 ```js
-const widget = window.nlxChat.standalone({
+const widget = window.nlxChat.widget.create({
   config: {
     // Bot configuration (`botUrl` etc.)
   },
@@ -165,7 +157,7 @@ document.querySelector("#my-button").addEventListener("click", () => {
 This example triggers a custom intent after a period of time spent on the `/product` page of a website.
 
 ```js
-const widget = window.nlxChat.standalone({
+const widget = window.nlxChat.widget.create({
   config: {
     // Bot configuration (`botUrl` etc.)
   },

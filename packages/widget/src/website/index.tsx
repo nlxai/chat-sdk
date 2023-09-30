@@ -279,7 +279,7 @@ const App = () => {
 
   const [behavior, setBehavior] = useState<Behavior>(Behavior.Simple);
 
-  const code = `<!-- Standalone chat widget sample HTML -->
+  const code = `<!-- Chat widget sample HTML -->
 <!-- Downloaded from https://nlxai.github.io/chat-sdk -->
 <html lang="en">
   <head>
@@ -290,7 +290,7 @@ const App = () => {
     <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.11/lib/umd/index.js"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {
-        const widget = nlxChat.widget.standalone({
+        const widget = nlxChat.widget.create({
           config: {
             botUrl: "${config.botUrl}",
             headers: {

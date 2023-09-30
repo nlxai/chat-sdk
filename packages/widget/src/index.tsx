@@ -52,7 +52,7 @@ interface WidgetRef {
   conversationHandler: ConversationHandler;
 }
 
-export const standalone = (props: Props): WidgetInstance => {
+export const create = (props: Props): WidgetInstance => {
   const node = document.createElement("div");
   node.setAttribute("id", "widget-container");
   node.setAttribute("style", `z-index: ${constants.largeZIndex};`);
