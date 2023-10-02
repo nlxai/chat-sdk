@@ -8,8 +8,10 @@ import React, {
   useImperativeHandle,
   useRef,
   useState,
+  useContext,
   useMemo,
   ReactElement,
+  createContext,
   forwardRef,
 } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -24,16 +26,16 @@ import * as constants from "./ui/constants";
 import {
   type Props,
   type StorageType,
-  type CustomModality,
   type CustomModalityComponent,
 } from "./props";
 import * as C from "./ui/components";
-import { map } from "ramda";
+
+export { default as React } from "react";
+export { default as ReactDOM } from "react-dom";
 
 export {
   type Props,
   type TitleBar,
-  type CustomModality,
   type CustomModalityComponent,
 } from "./props";
 export { type Theme } from "./theme";
@@ -257,6 +259,14 @@ export const retrieveSession = (storeIn: StorageType): SessionData | null => {
   }
 };
 
+const ConversationHandlerContext = createContext<ConversationHandler | null>(
+  null
+);
+
+export const useConversationHandler = () => {
+  return useContext(ConversationHandlerContext);
+};
+
 export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   const [windowInnerHeightValue, setWindowInnerHeightValue] = useState<
     number | null
@@ -327,14 +337,6 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
       conversationHandler: chat.conversationHandler,
     };
   });
-
-  const customModalities = map<
-    Record<string, CustomModality>,
-    Record<string, CustomModalityComponent>
-  >(
-    (mod) => mod(chat.conversationHandler, React),
-    props.customModalities || {}
-  );
 
   // Input focus
 
@@ -413,112 +415,114 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   );
 
   return (
-    <ThemeProvider theme={mergedTheme}>
-      <>
-        {props.bubble ? (
-          <C.PinBubble
-            isActive={!expanded && bubble}
-            onClick={() => {
-              setBubble(false);
-            }}
-            content={props.bubble}
-          />
-        ) : null}
-        {expanded && (
-          <C.Container>
-            <C.Main ref={chat.messagesContainerRef}>
-              {props.titleBar && (
-                <C.TitleBar>
-                  <C.TitleContainer>
-                    {props.titleBar.logo && (
-                      <C.TitleIcon src={props.titleBar.logo} />
+    <ConversationHandlerContext.Provider value={chat.conversationHandler}>
+      <ThemeProvider theme={mergedTheme}>
+        <>
+          {props.bubble ? (
+            <C.PinBubble
+              isActive={!expanded && bubble}
+              onClick={() => {
+                setBubble(false);
+              }}
+              content={props.bubble}
+            />
+          ) : null}
+          {expanded && (
+            <C.Container>
+              <C.Main ref={chat.messagesContainerRef}>
+                {props.titleBar && (
+                  <C.TitleBar>
+                    <C.TitleContainer>
+                      {props.titleBar.logo && (
+                        <C.TitleIcon src={props.titleBar.logo} />
+                      )}
+                      <C.Title>{props.titleBar.title}</C.Title>
+                    </C.TitleContainer>
+                    {props.titleBar.downloadable && (
+                      <>
+                        <C.DiscreteLink
+                          href={window.URL.createObjectURL(
+                            new Blob(
+                              [
+                                renderToStringWithStyles(
+                                  <ThemeProvider theme={mergedTheme}>
+                                    <MessageGroups
+                                      chat={chat}
+                                      customModalities={{}}
+                                    />
+                                  </ThemeProvider>
+                                ),
+                              ],
+                              {
+                                type: "text/plain",
+                              }
+                            )
+                          )}
+                          download={`chat-${dateTimestamp}.html`}
+                        >
+                          <DownloadIcon />
+                        </C.DiscreteLink>
+                      </>
                     )}
-                    <C.Title>{props.titleBar.title}</C.Title>
-                  </C.TitleContainer>
-                  {props.titleBar.downloadable && (
-                    <>
-                      <C.DiscreteLink
-                        href={window.URL.createObjectURL(
-                          new Blob(
-                            [
-                              renderToStringWithStyles(
-                                <ThemeProvider theme={mergedTheme}>
-                                  <MessageGroups
-                                    chat={chat}
-                                    customModalities={{}}
-                                  />
-                                </ThemeProvider>
-                              ),
-                            ],
-                            {
-                              type: "text/plain",
-                            }
-                          )
-                        )}
-                        download={`chat-${dateTimestamp}.html`}
-                      >
-                        <DownloadIcon />
-                      </C.DiscreteLink>
-                    </>
-                  )}
-                </C.TitleBar>
-              )}
-              <MessageGroups chat={chat} customModalities={customModalities}>
-                {chat.waiting && (
-                  <C.MessageGroup>
-                    <C.Message type="bot">
-                      <Loader
-                        message={props.loaderMessage}
-                        showAfter={props.showLoaderMessageAfter}
-                      />
-                    </C.Message>
-                  </C.MessageGroup>
+                  </C.TitleBar>
                 )}
-              </MessageGroups>
-            </C.Main>
-            <C.Bottom>
-              <C.Input
-                ref={inputRef}
-                value={chat.inputValue}
-                placeholder={props.inputPlaceholder || "Type something..."}
-                onChange={(event: any) => {
-                  chat.setInputValue(event.target.value);
-                }}
-                onKeyPress={(event: any) => {
-                  if (event.key === "Enter" && submit) {
-                    submit();
-                  }
-                }}
-              />
-              <C.BottomButtonsContainer>
-                <C.IconButton
-                  disabled={Boolean(!submit)}
-                  onClick={() => {
-                    if (submit) {
+                <MessageGroups chat={chat} customModalities={props.customModalities}>
+                  {chat.waiting && (
+                    <C.MessageGroup>
+                      <C.Message type="bot">
+                        <Loader
+                          message={props.loaderMessage}
+                          showAfter={props.showLoaderMessageAfter}
+                        />
+                      </C.Message>
+                    </C.MessageGroup>
+                  )}
+                </MessageGroups>
+              </C.Main>
+              <C.Bottom>
+                <C.Input
+                  ref={inputRef}
+                  value={chat.inputValue}
+                  placeholder={props.inputPlaceholder || "Type something..."}
+                  onChange={(event: any) => {
+                    chat.setInputValue(event.target.value);
+                  }}
+                  onKeyPress={(event: any) => {
+                    if (event.key === "Enter" && submit) {
                       submit();
                     }
                   }}
-                >
-                  <AirplaneIcon />
-                </C.IconButton>
-              </C.BottomButtonsContainer>
-            </C.Bottom>
-          </C.Container>
-        )}
-        <C.Pin
-          onClick={() => {
-            setExpanded(!expanded);
-          }}
-        >
-          {expanded ? (
-            <CloseIcon />
-          ) : props.chatIcon ? (
-            <img src={props.chatIcon} />
-          ) : (
-            <ChatIcon />
+                />
+                <C.BottomButtonsContainer>
+                  <C.IconButton
+                    disabled={Boolean(!submit)}
+                    onClick={() => {
+                      if (submit) {
+                        submit();
+                      }
+                    }}
+                  >
+                    <AirplaneIcon />
+                  </C.IconButton>
+                </C.BottomButtonsContainer>
+              </C.Bottom>
+            </C.Container>
           )}
-        </C.Pin>
-      </>
-    </ThemeProvider>
+          <C.Pin
+            onClick={() => {
+              setExpanded(!expanded);
+            }}
+          >
+            {expanded ? (
+              <CloseIcon />
+            ) : props.chatIcon ? (
+              <img src={props.chatIcon} />
+            ) : (
+              <ChatIcon />
+            )}
+          </C.Pin>
+        </>
+      </ThemeProvider>
+    </ConversationHandlerContext.Provider>
   );
 });

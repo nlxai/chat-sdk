@@ -4,15 +4,18 @@ import React, {
   useState,
   useEffect,
   useRef,
+  createElement,
 } from "react";
 import { createRoot } from "react-dom/client";
+import { createPortal } from "react-dom";
 import htm from "htm";
 import {
   Widget,
   type Theme,
-  type CustomModality,
+  type CustomModalityComponent,
   type TitleBar,
   defaultTheme,
+  useConversationHandler,
 } from "../";
 import { type Config } from "@nlxchat/core";
 import "./index.css";
@@ -48,28 +51,98 @@ const CodeEditor: FC<{ code: string }> = (props) => {
   );
 };
 
-const customModalities: Record<string, CustomModality> = {
-  Documents: (handler, { createElement }) => {
-    const html = htm.bind(createElement);
-    return ({ data }: { data: any }) => {
-      return html`
-        <div className="slides-container">
-          <div className="slides">
-            ${data.map(
-              (document: { id: string; title: string; description: string }) =>
-                html`<div className="slide" key=${document.id}>
-                  <div className="slide-title">${document.title}</div>
-                  <div className="slide-description">
-                    ${document.description.substr(0, 160)}...
-                  </div>
-                </div>`
-            )}
-          </div>
+interface Document {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  url: string;
+}
+
+const html = htm.bind(createElement);
+
+const customModalities: Record<string, CustomModalityComponent> = {
+  Hotels: ({ data }: { data: Document[] }) => {
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+
+    const selected = data.find((document) => document.id === selectedId);
+
+    const portalContainer = document.querySelector("#portal");
+
+    const handler = useConversationHandler();
+
+    return html`
+      ${selected && portalContainer
+        ? createPortal(
+            html`<div className="popover-container">
+              <div className="popover">
+                <div className="popover-title">
+                  <h1>${selected.name}</h1>
+                  <button
+                    className="popover-close"
+                    onClick=${() => {
+                      setSelectedId(null);
+                    }}
+                  >
+                    <${CloseIcon} />
+                  </button>
+                </div>
+                <img src=${selected.imageUrl} alt="${selected.name} photo" />
+                <div className="popover-content">
+                  <p>${selected.description}</p>
+                  <button
+                    className="cta-button"
+                    onClick=${() => {
+                      handler?.sendChoice(selected.id);
+                    }}
+                  >
+                    Select
+                  </button>
+                </div>
+              </div>
+            </div>`,
+            portalContainer
+          )
+        : null}
+      <div className="slides-container">
+        <div className="slides">
+          ${data.map(
+            (document) =>
+              html`<div
+                className=${`slide ${
+                  selectedId === document.id ? "slide--active" : ""
+                }`}
+                key=${document.id}
+                onClick=${() => {
+                  setSelectedId(document.id);
+                }}
+              >
+                <div className="slide-title">${document.name}</div>
+                <div
+                  className="slide-image"
+                  style=${{
+                    backgroundImage: `url(${document.imageUrl})`,
+                  }}
+                />
+                <div className="slide-description">
+                  ${document.description.substr(0, 100)}${document.description
+                    .length > 98
+                    ? "..."
+                    : ""}
+                </div>
+              </div>`
+          )}
         </div>
-      `;
-    };
+      </div>
+    `;
   },
 };
+
+const CloseIcon: FC<{}> = () => (
+  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+  </svg>
+);
 
 const GitHubIcon: FC<{}> = () => (
   <svg width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor">
@@ -548,7 +621,6 @@ ${sendWelcomeOnTimeoutSnippet}
         titleBar={titleBar}
         loaderMessage={loaderMessage}
         customModalities={customModalities}
-        storeIn="localStorage"
       />
     </>
   );
