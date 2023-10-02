@@ -466,7 +466,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                     )}
                   </C.TitleBar>
                 )}
-                <MessageGroups chat={chat} customModalities={props.customModalities}>
+                <MessageGroups chat={chat} customModalities={props.customModalities || {}}>
                   {chat.waiting && (
                     <C.MessageGroup>
                       <C.Message type="bot">
