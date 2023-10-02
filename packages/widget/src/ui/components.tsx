@@ -179,7 +179,7 @@ export const Message = styled.div<{ type: "user" | "bot" }>`
       ? props.theme.darkMessageColor
       : props.theme.lightMessageColor};
   color: ${(props) => (props.type === "user" ? props.theme.white : "#676767")};
-  padding: ${props => `${props.theme.spacing}px ${props.theme.spacing}px`};
+  padding: ${(props) => `${props.theme.spacing}px ${props.theme.spacing}px`};
   max-width: calc(100% - 20px);
   ${(props) =>
     props.type === "user"
@@ -263,7 +263,7 @@ export const BottomButtonsContainer = styled.div<{}>`
   top: 50%;
   right: ${(props) => `${props.theme.spacing}px`};
   transform: translate3d(0, -50%, 0);
-`
+`;
 
 export const Input = styled.input<{}>`
   display: block;
@@ -350,24 +350,22 @@ export const PinBubbleContainer = styled.div<{
   z-index: ${constants.largeZIndex};
   padding: 0px 16px 0px 0px;
   background-color: ${(props) =>
-    tinycolor(props.theme.primaryColor)
-      .darken(10)
-      .toRgbString()};
+    tinycolor(props.theme.primaryColor).darken(10).toRgbString()};
   color: #fff;
   transition: opacity 0.2s, transform 0.2s;
   ${(props) =>
-      props.isActive
-        ? `
+    props.isActive
+      ? `
     opacity: 1;
     transform: translate3d(0, 0, 0);
     pointer-events: all;
     `
-        : `
+      : `
     opacity: 0;
     transform: translate3d(0, 10px, 0);
     pointer-events: none;
   `}
-    ::after {
+  ::after {
     position: absolute;
     top: 32px;
     right: 22px;
@@ -377,10 +375,7 @@ export const PinBubbleContainer = styled.div<{
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
     border-top: 6px solid
-      ${(props) =>
-        tinycolor(props.theme.primaryColor)
-          .darken(10)
-          .toRgbString()};
+      ${(props) => tinycolor(props.theme.primaryColor).darken(10).toRgbString()};
   }
 `;
 
@@ -438,32 +433,41 @@ export const ChoiceButton = styled.button<{
   selected?: boolean;
 }>`
   ${(props) =>
-    props.selected
-      ? `
+    `
   background-color: ${props.theme.primaryColor};
   color: ${props.theme.white};
-  `
-      : `
-  background-color: ${props.theme.white};
-  color: ${props.theme.primaryColor};
   `}
   ${(props) =>
-    props.disabled
+    props.selected
       ? `
-  opacity: 0.4;
+  outline: 2px solid ${props.theme.primaryColor};
+  outline-offset: 2px;
+  `
+      : `
+  `}
+  ${(props) => {
+    const hoverColor = tinycolor(props.theme.primaryColor)
+      .brighten(5)
+      .toRgbString();
+    return props.disabled
+      ? `
+  opacity: 0.5;
       `
       : `
   cursor: pointer;
+
   :hover {
-    background-color: #efefef;
+    background-color: ${hoverColor};
+    border-color: ${hoverColor};
   }
 
   :focus {
     outline: none;
     ${focusShadow(props.theme)}
   }
-      `}
-  border-radius: 9999px;
+      `;
+  }}
+  border-radius: ${(props) => props.theme.borderRadius}px;
   border: 1px solid ${(props) => props.theme.primaryColor};
   font-size: ${constants.fontSize}px;
   font-family: ${(props) => props.theme.fontFamily};
@@ -479,15 +483,12 @@ export const ChoiceButton = styled.button<{
     font-size: ${constants.fontSize}px;
     margin: 0;
 
-    ${(props) =>
-      props.selected
-        ? `
+    ${(props) => `
     color: ${props.theme.white};
-    `
-        : `
-    color: ${props.theme.primaryColor};
-    `}
+  `}
   }
+
+  text-align: left;
 
   :focus {
     outline: none;
