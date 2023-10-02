@@ -46,7 +46,7 @@ export interface WidgetInstance {
   getConversationHandler: () => ConversationHandler | undefined;
 }
 
-interface WidgetRef {
+export interface WidgetRef {
   expand: () => void;
   collapse: () => void;
   conversationHandler: ConversationHandler;

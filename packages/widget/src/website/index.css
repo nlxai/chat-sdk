@@ -1,7 +1,7 @@
 * {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  color: #343434;
+  color: #333;
 }
 
 html,
@@ -41,28 +41,54 @@ header span {
   line-height: 1.1;
 }
 
+label {
+  display: block;
+}
+
+p {
+  margin: 0;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
 p,
 label,
 input,
 a {
-  font-size: 12px;
+  font-size: 1rem;
+}
+
+input[type="text"],
+input[type="url"],
+select {
+  padding: 6px;
+  display: block;
+  width: 100%;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 label {
-  display: flex;
-  align-items: center;
   padding: 4px 0;
   color: #676767;
 }
 
 label > * + * {
-  display: inline-block;
-  margin-left: 12px;
+  margin-top: 0px;
 }
 
 code,
 code * {
+  font-size: 1rem;
   font-family: monospace !important;
+  line-height: 1.4;
+}
+
+.label-text {
+  margin: 0 0 4px 0;
 }
 
 code {
@@ -71,30 +97,94 @@ code {
 }
 
 h2 {
-  font-size: 16px;
+  font-size: 1.125rem;
   margin: 0;
 }
 
 section {
-  padding: 20px 0;
+  margin-top: 40px;
 }
 
 .section-title {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding-bottom: 6px;
 }
 
-.section-title > * + * {
-  display: inline-block;
-  margin-left: 12px;
+section > * + * {
+  margin-top: 10px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+}
+
+.radio > * + * {
+  margin-left: 6px;
+}
+
+.radio input {
+  margin: 0;
 }
 
 blockquote {
-  font-size: 10px;
+  font-size: 1rem;
   color: #898989;
   padding-left: 6px;
   margin: 10px 0 0 0;
   border-left: 2px solid #cecece;
+}
 
+/* Carousel example */
+
+.slides {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slides::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.slides::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.slides::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slide {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 276px;
+  height: 240px;
+  margin-right: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  background: #eee;
+  transform-origin: center center;
+  transform: scale(1);
+  transition: transform 0.5s;
+  position: relative;
+}
+
+.slide-title {
+  font-size: 1rem;
+}
+
+.slide-description {
+  font-size: 1rem;
+  color: #676767;
+}
+
+.slide > * + * {
+  margin-top: 10px;
 }

@@ -1,4 +1,10 @@
-import React, { type FC, useState, useEffect, useRef } from "react";
+import React, {
+  type FC,
+  type ReactNode,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { createRoot } from "react-dom/client";
 import htm from "htm";
 import {
@@ -30,15 +36,36 @@ const CodeEditor: FC<{ code: string }> = (props) => {
 };
 
 const customModalities: Record<string, CustomModality> = {
-  PredictiveCard: (handler, { createElement }) => {
+  Documents: (handler, { createElement }) => {
     const html = htm.bind(createElement);
-    return ({ data }: { data: any }) =>
-      html`
-        <div>
-          <h1>!!${data.title}</h1>
+    return ({ data }: { data: any }) => {
+      return html`
+        <div className="slides">
+          ${data.map(
+            (document: { id: string; title: string; description: string }) =>
+              html`<div className="slide" key=${document.id}>
+                <div className="slide-title">${document.title}</div>
+                <div className="slide-description">
+                  ${document.description.substr(0, 240)}...
+                </div>
+              </div>`
+          )}
         </div>
       `;
+    };
   },
+};
+
+const Labeled: FC<{ label: string; children: ReactNode }> = ({
+  label,
+  children,
+}) => {
+  return (
+    <label>
+      <p className="label-text">{label}</p>
+      <div>{children}</div>
+    </label>
+  );
 };
 
 const TitleBarEditor: FC<{
@@ -48,8 +75,7 @@ const TitleBarEditor: FC<{
   const titleBar = props.value;
   return (
     <>
-      <label>
-        <span>Title:</span>{" "}
+      <Labeled label="Title">
         <input
           type="text"
           placeholder="Enter title"
@@ -58,9 +84,8 @@ const TitleBarEditor: FC<{
             props.onChange({ title: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>Square icon:</span>{" "}
+      </Labeled>
+      <Labeled label="Icon URL (square)">
         <input
           type="text"
           placeholder="Enter full icon URL"
@@ -69,9 +94,8 @@ const TitleBarEditor: FC<{
             props.onChange({ logo: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>Downloadable:</span>{" "}
+      </Labeled>
+      <Labeled label="Downloadable">
         <input
           type="checkbox"
           checked={titleBar.downloadable}
@@ -79,7 +103,7 @@ const TitleBarEditor: FC<{
             props.onChange({ downloadable: ev.target.checked });
           }}
         />
-      </label>
+      </Labeled>
     </>
   );
 };
@@ -91,8 +115,7 @@ const ConfigEditor: FC<{
   const config = props.value;
   return (
     <>
-      <label>
-        <span>Bot URL:</span>{" "}
+      <Labeled label="Bot URL">
         <input
           type="url"
           placeholder="Enter bot URL"
@@ -101,9 +124,8 @@ const ConfigEditor: FC<{
             props.onChange({ botUrl: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>API key:</span>{" "}
+      </Labeled>
+      <Labeled label="API key">
         <input
           type="text"
           placeholder="Enter API key"
@@ -112,9 +134,8 @@ const ConfigEditor: FC<{
             props.onChange({ headers: { "nlx-api-key": ev.target.value } });
           }}
         />
-      </label>
-      <label>
-        <span>Language code:</span>{" "}
+      </Labeled>
+      <Labeled label="Language code">
         <input
           type="text"
           placeholder="Enter language code"
@@ -123,7 +144,7 @@ const ConfigEditor: FC<{
             props.onChange({ headers: { languageCode: ev.target.value } });
           }}
         />
-      </label>
+      </Labeled>
     </>
   );
 };
@@ -135,8 +156,7 @@ const ThemeEditor: FC<{
   const theme = props.value;
   return (
     <>
-      <label>
-        <span>Font:</span>
+      <Labeled label="Font">
         <select
           value={theme.fontFamily}
           onChange={(ev: any) => {
@@ -154,9 +174,8 @@ const ThemeEditor: FC<{
             )
           )}
         </select>
-      </label>
-      <label>
-        <span>Primary color:</span>
+      </Labeled>
+      <Labeled label="Primary color">
         <input
           type="color"
           value={theme.primaryColor}
@@ -164,9 +183,8 @@ const ThemeEditor: FC<{
             props.onChange({ primaryColor: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>Dark message color:</span>
+      </Labeled>
+      <Labeled label="Dark message color">
         <input
           type="color"
           value={theme.darkMessageColor}
@@ -174,9 +192,8 @@ const ThemeEditor: FC<{
             props.onChange({ darkMessageColor: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>Light message color:</span>
+      </Labeled>
+      <Labeled label="Light message color">
         <input
           type="color"
           value={theme.lightMessageColor}
@@ -184,9 +201,8 @@ const ThemeEditor: FC<{
             props.onChange({ lightMessageColor: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>Default white:</span>
+      </Labeled>
+      <Labeled label="Default white">
         <input
           type="color"
           value={theme.white}
@@ -194,9 +210,8 @@ const ThemeEditor: FC<{
             props.onChange({ white: ev.target.value });
           }}
         />
-      </label>
-      <label>
-        <span>Spacing unit:</span>
+      </Labeled>
+      <Labeled label="Spacing unit">
         <input
           type="range"
           min="6"
@@ -208,9 +223,8 @@ const ThemeEditor: FC<{
           }}
         />
         <span>{theme.spacing}px</span>
-      </label>
-      <label>
-        <span>Border radius:</span>
+      </Labeled>
+      <Labeled label="Border radius">
         <input
           type="range"
           min="2"
@@ -222,7 +236,7 @@ const ThemeEditor: FC<{
           }}
         />
         <span>{theme.borderRadius}px</span>
-      </label>
+      </Labeled>
     </>
   );
 };
@@ -261,6 +275,33 @@ const getInitialConfig = (): Config => {
     },
     languageCode,
   };
+};
+
+const RadioList = <T extends unknown>({
+  selected,
+  options,
+  onChange,
+}: {
+  selected: T;
+  options: { value: T; label: string }[];
+  onChange: (val: T) => void;
+}): ReactNode => {
+  return (
+    <div>
+      {options.map((option) => (
+        <label key={option.label} className="radio">
+          <input
+            type="radio"
+            checked={option.value === selected}
+            onChange={() => {
+              onChange(option.value);
+            }}
+          />{" "}
+          <p>{option.label}</p>
+        </label>
+      ))}
+    </div>
+  );
 };
 
 const App = () => {
@@ -370,6 +411,7 @@ setTimeout(() => {
           <span>Chat SDK</span>
         </a>
       </header>
+      <section>
       <p>
         The Chat SDK contains a number of packages designed to seamlessly
         integrate with NLX conversational experiences on your website, mobile
@@ -379,6 +421,7 @@ setTimeout(() => {
         More information is available on the{" "}
         <a href="https://github.com/nlxai/chat-sdk">Chat SDK GitHub page</a>.
       </p>
+      </section>
       <section>
         <div className="section-title">
           <h2>Configuration</h2>
@@ -411,59 +454,42 @@ setTimeout(() => {
             setTitleBar((prev) => ({ ...prev, ...val }));
           }}
         />
-        <label>
-          <span>Loader message:</span>
+        <Labeled label="Loader message">
           <input
+            type="text"
             value={loaderMessage}
             onChange={(ev) => setLoaderMessage(ev.target.value)}
-          />{" "}
-        </label>
+          />
+        </Labeled>
       </section>
       <section>
         <div className="section-title">
           <h2>Behavior</h2>
         </div>
-        <label>
-          <input
-            type="radio"
-            checked={behavior === Behavior.Simple}
-            onChange={() => setBehavior(Behavior.Simple)}
-          />{" "}
-          Simple chat
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={behavior === Behavior.WelcomeIntentOnOpen}
-            onChange={() => setBehavior(Behavior.WelcomeIntentOnOpen)}
-          />{" "}
-          Send welcome intent when the chat is opened
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={behavior === Behavior.CustomIntentOnInactivity}
-            onChange={() => setBehavior(Behavior.CustomIntentOnInactivity)}
-          />{" "}
-          Send custom intent after a period of inactivity
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={behavior === Behavior.UseSessionStorage}
-            onChange={() => setBehavior(Behavior.UseSessionStorage)}
-          />{" "}
-          Retain conversation through refreshes (SessionStorage)
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={behavior === Behavior.UseLocalStorage}
-            onChange={() => setBehavior(Behavior.UseLocalStorage)}
-          />{" "}
-          Retain conversation through refreshes and closed browser sessions
-          (LocalStorage)
-        </label>
+        <RadioList
+          selected={behavior}
+          onChange={setBehavior}
+          options={[
+            { value: Behavior.Simple, label: "Simple chat" },
+            {
+              value: Behavior.WelcomeIntentOnOpen,
+              label: "Send welcome intent when the chat is opened",
+            },
+            {
+              value: Behavior.CustomIntentOnInactivity,
+              label: "Send custom intent after a period of inactivity",
+            },
+            {
+              value: Behavior.UseSessionStorage,
+              label: "Retain conversation through refreshes (SessionStorage)",
+            },
+            {
+              value: Behavior.UseLocalStorage,
+              label:
+                "Retain conversation through refreshes and closed browser sessions",
+            },
+          ]}
+        />
         <blockquote>
           Note: these behavior settings only change the generated code snippet
           below and are not available interactively on this page.
@@ -491,6 +517,9 @@ setTimeout(() => {
         titleBar={titleBar}
         loaderMessage={loaderMessage}
         customModalities={customModalities}
+        onExpand={(handler) => {
+          handler.sendIntent("AnotherTestIntent");
+        }}
       />
     </>
   );
