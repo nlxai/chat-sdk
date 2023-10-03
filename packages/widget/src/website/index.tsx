@@ -522,8 +522,31 @@ const RadioList = <T extends unknown>({
   );
 };
 
+const saveTheme = (theme: Partial<Theme>) => {
+  localStorage.setItem("nlxchat-theme", JSON.stringify(theme));
+};
+
+const retrieveTheme = (): Partial<Theme> | null => {
+  try {
+    const themeString = localStorage.getItem("nlxchat-theme");
+    const theme = JSON.parse(themeString || "");
+    if (typeof theme !== "object") {
+      throw new Error("Invalid theme");
+    }
+    return theme;
+  } catch (_err) {
+    return null;
+  }
+};
+
 const App = () => {
-  const [theme, setTheme] = useState<Partial<Theme>>(defaultTheme);
+  const [theme, setTheme] = useState<Partial<Theme>>(
+    retrieveTheme() || defaultTheme
+  );
+
+  useEffect(() => {
+    saveTheme(theme);
+  }, [theme]);
 
   const [config, setConfig] = useState<Config>(getInitialConfig());
 

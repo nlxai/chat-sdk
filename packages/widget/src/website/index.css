@@ -352,6 +352,7 @@ blockquote {
   display: block;
   letter-spacing: 0.10rem;
   border: none;
+  border-radius: 6px;
   color: white;
   cursor: pointer;
   text-transform: uppercase;
