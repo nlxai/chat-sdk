@@ -103,6 +103,50 @@ const customModalities: Record<string, CustomModalityComponent> = {
       </div>
     `;
   },
+  Payment: ({ data }) => {
+    const containerRef = useRef<any>();
+    useEffect(() => {
+      try {
+        fetch("https://api.stripe.com/v1/payment_intents", {
+          headers: {
+            Authorization: `Bearer ${data.stripeApiKey}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          method: "POST",
+          body: new URLSearchParams({
+            amount: 1099,
+            currency: "usd",
+            "payment_method_types[]": "card",
+          }),
+        })
+          .then((res) => res.json())
+          .then((r) => {
+            console.log(r);
+            const stripe = (window as any).Stripe(data.stripeApiKey);
+            const appearance = {
+              theme: "flat",
+              variables: { colorPrimaryText: "#262626" },
+            };
+            const options = {
+              layout: {
+                type: "tabs",
+                defaultCollapsed: false,
+              },
+            };
+            const elements = stripe.elements({
+              clientSecret: r.client_secret,
+              appearance,
+            });
+            const paymentElement = elements.create("payment", options);
+            paymentElement.mount(containerRef.current);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (err) {}
+    }, []);
+    return html`<div ref=${containerRef} style=${{ padding: "12px" }}></div>`;
+  },
   FeedbackForm: () => {
     const handler = useConversationHandler();
     const [firstName, setFirstName] = useState("");
