@@ -105,6 +105,8 @@ const customModalities: Record<string, CustomModalityComponent> = {
   },
   Payment: ({ data }) => {
     const containerRef = useRef<any>();
+    const stripeRef = useRef<any>();
+    const stripeElementsRef = useRef<any>();
     useEffect(() => {
       try {
         fetch("https://api.stripe.com/v1/payment_intents", {
@@ -121,7 +123,6 @@ const customModalities: Record<string, CustomModalityComponent> = {
         })
           .then((res) => res.json())
           .then((r) => {
-            console.log(r);
             const stripe = (window as any).Stripe(data.stripeSecretKey);
             const appearance = {
               theme: "flat",
@@ -137,6 +138,8 @@ const customModalities: Record<string, CustomModalityComponent> = {
               clientSecret: r.client_secret,
               appearance,
             });
+            stripeRef.current = stripe;
+            stripeElementsRef.current = elements;
             const paymentElement = elements.create("payment", options);
             paymentElement.mount(containerRef.current);
           })
@@ -145,7 +148,22 @@ const customModalities: Record<string, CustomModalityComponent> = {
           });
       } catch (err) {}
     }, []);
-    return html`<div ref=${containerRef} style=${{ padding: "12px" }}></div>`;
+    return html`
+      <div ref=${containerRef} style=${{ padding: "12px" }}></div>
+      <button
+        className="chat-submit"
+        onClick=${() => {
+          stripeRef.current?.confirmPayment({
+            elements: stripeElementsRef.current,
+            confirmParams: {
+              return_url: `${window.location.origin}${window.location.search}`,
+            },
+          });
+        }}
+      >
+        Pay now
+      </button>
+    `;
   },
   FeedbackForm: () => {
     const handler = useConversationHandler();
@@ -219,7 +237,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
             setFeedback(ev.target.value);
           }}
         />
-        ${!submitted && html`<button type="submit">Submit</button>`}
+        ${!submitted && html`<button className="chat-submit" type="submit">Submit</button>`}
       </form>
     `;
   },

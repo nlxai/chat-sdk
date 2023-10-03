@@ -398,7 +398,7 @@ blockquote {
   color: #676767;
 }
 
-.chat-form button {
+.chat-submit {
   display: block;
   width: 100%;
   background-color: var(--primaryColor);
@@ -413,7 +413,7 @@ blockquote {
   letter-spacing: 0.05rem;
 }
 
-.chat-form button:hover {
+.chat-submit:hover {
   background-color: var(--primaryColorLighter);
 }
 
