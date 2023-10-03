@@ -503,6 +503,7 @@ ${sendWelcomeOnTimeoutSnippet}
         }
       });
     </script>
+    <div id="portal"></div>
   </body>
 </html>`;
 
