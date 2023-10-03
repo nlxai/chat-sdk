@@ -1,12 +1,8 @@
 export const documentModalityCode: string = `Hotels: ({ data }) => {
     const { React, ReactDOM } = nlxChat.widget;
-
     const [selectedId, setSelectedId] = React.useState<string | null>(null);
-
     const selected = data.find((document) => document.id === selectedId);
-
     const portalContainer = document.querySelector("#portal");
-
     const handler = nlxChat.widget.useConversationHandler();
 
     return html\`

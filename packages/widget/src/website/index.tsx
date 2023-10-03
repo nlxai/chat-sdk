@@ -6,6 +6,7 @@ import React, {
   useRef,
   createElement,
 } from "react";
+import tinycolor from "tinycolor2";
 import { createRoot } from "react-dom/client";
 import { createPortal } from "react-dom";
 import htm from "htm";
@@ -17,7 +18,7 @@ import {
   defaultTheme,
   useConversationHandler,
 } from "../";
-import { type Config } from "@nlxchat/core";
+import { type Config, type Response } from "@nlxchat/core";
 import "./index.css";
 import { documentModalityCode, sendWelcomeOnTimeoutSnippet } from "./snippets";
 
@@ -62,6 +63,118 @@ interface Document {
 const html = htm.bind(createElement);
 
 const customModalities: Record<string, CustomModalityComponent> = {
+  Consent: () => {
+    const [status, setStatus] = useState<"pending" | "accepted" | "denied">(
+      "pending"
+    );
+    return html`
+      <div className="chat-consent">
+        ${status === "pending" &&
+        html`
+          <p>
+            In order to enhance your experience in this chat, we would like to
+            temporarily store personal data according to our
+            <a>privacy policy</a>.
+          </p>
+          <button
+            onClick=${() => {
+              setStatus("accepted");
+            }}
+          >
+            Accept
+          </button>
+          <button
+            onClick=${() => {
+              setStatus("denied");
+            }}
+          >
+            Deny
+          </button>
+        `}
+        ${status === "accepted" &&
+        html`<p>
+          As requested, we are storing personal information in order to enhance
+          your experience on this chat.
+        </p>`}
+        ${status === "denied" &&
+        html`<p>
+          As requested, we will not store personal information in this chat.
+        </p>`}
+      </div>
+    `;
+  },
+  FeedbackForm: () => {
+    const handler = useConversationHandler();
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [feedback, setFeedback] = useState("");
+
+    const [submitted, setSubmitted] = useState<boolean>(false);
+
+    return html`
+      <form
+        className="chat-form"
+        onSubmit=${(ev: any) => {
+          ev.preventDefault();
+          setSubmitted(true);
+          handler?.sendSlots([
+            {
+              slotId: "Submitted",
+              value: "Yes",
+            },
+            {
+              slotId: "FirstName",
+              value: firstName,
+            },
+            {
+              slotId: "LastName",
+              value: lastName,
+            },
+            {
+              slotId: "Email",
+              value: email,
+            },
+          ]);
+        }}
+      >
+        <input
+          placeholder="First name"
+          required
+          value=${firstName}
+          onInput=${(ev: any) => {
+            setFirstName(ev.target.value);
+          }}
+        />
+        <input
+          placeholder="Last name"
+          required
+          value=${lastName}
+          onInput=${(ev: any) => {
+            setLastName(ev.target.value);
+          }}
+        />
+        <input
+          type="email"
+          required
+          placeholder="Email"
+          value=${email}
+          onInput=${(ev: any) => {
+            setEmail(ev.target.value);
+          }}
+        />
+        <textarea
+          placeholder="Feedback"
+          required
+          value=${feedback}
+          onInput=${(ev: any) => {
+            setFeedback(ev.target.value);
+          }}
+        />
+        ${!submitted && html`<button type="submit">Submit</button>`}
+      </form>
+    `;
+  },
   Hotels: ({ data }: { data: Document[] }) => {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -509,6 +622,19 @@ ${sendWelcomeOnTimeoutSnippet}
 
   return (
     <>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+:root {
+  --primaryColor: ${theme.primaryColor};
+  --primaryColorLighter: ${tinycolor(theme.primaryColor)
+    .brighten(10)
+    .toRgbString()};
+};
+}
+      `,
+        }}
+      ></style>
       <header>
         <a className="logo">
           <svg viewBox="0 -5 24 24" fill="currentColor" stroke="none">
@@ -622,6 +748,16 @@ ${sendWelcomeOnTimeoutSnippet}
         titleBar={titleBar}
         loaderMessage={loaderMessage}
         customModalities={customModalities}
+        onExpand={(handler) => {
+          const checkMessages = (messages: Response[]) => {
+            if (messages.length === 0) {
+              handler.sendWelcomeIntent();
+            }
+            handler.unsubscribe(checkMessages);
+          };
+          handler.subscribe(checkMessages);
+        }}
+        storeIn="localStorage"
       />
     </>
   );

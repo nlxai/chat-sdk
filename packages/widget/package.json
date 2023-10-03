@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "dev": "parcel serve -p 8081",
+    "dev": "parcel serve -p 8081 --no-cache",
     "build:website": "parcel build --public-url ./",
     "build:umd": "node bin/build.js",
     "build": "rm -rf lib && mkdir lib && tsc && npm run build:umd",
