@@ -539,6 +539,23 @@ const retrieveTheme = (): Partial<Theme> | null => {
   }
 };
 
+const saveTitleBar = (theme: TitleBar) => {
+  localStorage.setItem("nlxchat-titleBar", JSON.stringify(theme));
+};
+
+const retrieveTitleBar = (): TitleBar | null => {
+  try {
+    const titleBarString = localStorage.getItem("nlxchat-titleBar");
+    const titleBar = JSON.parse(titleBarString || "");
+    if (typeof titleBar !== "object") {
+      throw new Error("Invalid theme");
+    }
+    return titleBar;
+  } catch (_err) {
+    return null;
+  }
+};
+
 const App = () => {
   const [theme, setTheme] = useState<Partial<Theme>>(
     retrieveTheme() || defaultTheme
@@ -550,10 +567,16 @@ const App = () => {
 
   const [config, setConfig] = useState<Config>(getInitialConfig());
 
-  const [titleBar, setTitleBar] = useState<TitleBar>({
-    title: "Support",
-    downloadable: false,
-  });
+  const [titleBar, setTitleBar] = useState<TitleBar>(
+    retrieveTitleBar() || {
+      title: "Support",
+      downloadable: false,
+    }
+  );
+
+  useEffect(() => {
+    saveTitleBar(titleBar);
+  }, [titleBar]);
 
   const [loaderMessage, setLoaderMessage] = useState<string>(
     "Your request is taking longer than expected, please wait"
