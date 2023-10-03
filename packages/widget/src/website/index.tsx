@@ -122,7 +122,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
           .then((res) => res.json())
           .then((r) => {
             console.log(r);
-            const stripe = (window as any).Stripe(data.stripeApiKey);
+            const stripe = (window as any).Stripe(data.stripeSecretKey);
             const appearance = {
               theme: "flat",
               variables: { colorPrimaryText: "#262626" },
