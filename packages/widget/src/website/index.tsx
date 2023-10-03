@@ -114,7 +114,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
           },
           method: "POST",
           body: new URLSearchParams({
-            amount: 1099,
+            amount: "109",
             currency: "usd",
             "payment_method_types[]": "card",
           }),
