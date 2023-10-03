@@ -73,7 +73,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
         html`
           <p>
             In order to enhance your experience in this chat, we would like to
-            temporarily store personal data according to our
+            temporarily store personal data according to our${" "}
             <a>privacy policy</a>.
           </p>
           <button
@@ -93,8 +93,8 @@ const customModalities: Record<string, CustomModalityComponent> = {
         `}
         ${status === "accepted" &&
         html`<p>
-          As requested, we are storing personal information in order to enhance
-          your experience on this chat.
+          As requested, we might store certain personal or device identifiers to
+          enhance your experience on this chat.
         </p>`}
         ${status === "denied" &&
         html`<p>
@@ -141,6 +141,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
         <input
           placeholder="First name"
           required
+          disabled=${submitted}
           value=${firstName}
           onInput=${(ev: any) => {
             setFirstName(ev.target.value);
@@ -149,6 +150,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
         <input
           placeholder="Last name"
           required
+          disabled=${submitted}
           value=${lastName}
           onInput=${(ev: any) => {
             setLastName(ev.target.value);
@@ -158,6 +160,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
           type="email"
           required
           placeholder="Email"
+          disabled=${submitted}
           value=${email}
           onInput=${(ev: any) => {
             setEmail(ev.target.value);
@@ -166,6 +169,7 @@ const customModalities: Record<string, CustomModalityComponent> = {
         <textarea
           placeholder="Feedback"
           required
+          disabled=${submitted}
           value=${feedback}
           onInput=${(ev: any) => {
             setFeedback(ev.target.value);
@@ -757,7 +761,6 @@ ${sendWelcomeOnTimeoutSnippet}
           };
           handler.subscribe(checkMessages);
         }}
-        storeIn="localStorage"
       />
     </>
   );

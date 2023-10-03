@@ -391,6 +391,12 @@ blockquote {
   border-radius: 6px;
 }
 
+.chat-form input:disabled,
+.chat-form textarea:disabled {
+  background-color: #efefef;
+  color: #676767;
+}
+
 .chat-form button {
   display: block;
   width: 100%;
