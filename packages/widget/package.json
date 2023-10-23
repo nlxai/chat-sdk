@@ -5,16 +5,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "dev": "parcel serve -p 8081 --no-cache",
-    "build:website": "parcel build --public-url ./",
     "build:umd": "node bin/build.js",
     "build": "rm -rf lib && mkdir lib && tsc && npm run build:umd",
     "prepublish": "npm run build"
-  },
-  "targets": {
-    "website": {
-      "source": "src/website/index.html"
-    }
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
@@ -26,8 +19,6 @@
     "@types/react-dom": "^18.2.7",
     "@types/tinycolor2": "^1.4.2",
     "browserify": "^17.0.0",
-    "htm": "^3.1.1",
-    "parcel": ">=2.9.3",
     "prettier": "^1.19.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
