@@ -10,6 +10,7 @@ import tinycolor from "tinycolor2";
 import { createRoot } from "react-dom/client";
 import { createPortal } from "react-dom";
 import htm from "htm";
+import { type Config, type Response } from "@nlxchat/core";
 import {
   Widget,
   type Theme,
@@ -18,7 +19,6 @@ import {
   defaultTheme,
   useConversationHandler,
 } from "@nlxchat/widget";
-import { type Config, type Response } from "@nlxchat/core";
 import "./index.css";
 import { documentModalityCode, sendWelcomeOnTimeoutSnippet } from "./snippets";
 
@@ -237,7 +237,8 @@ const customModalities: Record<string, CustomModalityComponent> = {
             setFeedback(ev.target.value);
           }}
         />
-        ${!submitted && html`<button className="chat-submit" type="submit">Submit</button>`}
+        ${!submitted &&
+        html`<button className="chat-submit" type="submit">Submit</button>`}
       </form>
     `;
   },

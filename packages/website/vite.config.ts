@@ -13,12 +13,7 @@ export default defineConfig({
   },
   build: {
     commonjsOptions: {
-      include: [
-        /node_modules/,
-        "@nlxchat/core",
-        "@nlxchat/react",
-        "@nlxchat/widget"
-      ]
+      include: [/node_modules/, /core/, /react/, /widget/]
     }
   }
 });
