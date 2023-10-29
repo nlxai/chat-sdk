@@ -122,7 +122,7 @@ const normalizeSlots = (slotsWithLegacy: Slots | SlotValue[]): Slots => {
   return slots;
 };
 
-interface StructuredRequest {
+export interface StructuredRequest {
   choiceId?: string;
   intentId?: string;
   slots?: Slots | SlotValue[];

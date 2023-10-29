@@ -10,90 +10,6 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
-}
-
-pre {
-  margin: 0;
-}
-
-#app {
-}
-
-header {
-  background-color: var(--primaryColor);
-  padding: 10px 20px;
-  position: sticky;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  top: 0;
-  z-index: 20;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-  color: white;
-}
-
-header a {
-  display: flex;
-  align-items: center;
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-header .logo svg {
-  width: 32px;
-  height: 32px;
-}
-
-header nav a {
-  width: 24px;
-  height: 24px;
-  display: block;
-  color: #cecece;
-}
-
-header nav a:hover {
-  color: #fff;
-}
-
-header span {
-  display: inline-block;
-  padding-left: 14px;
-  margin-left: 16px;
-  border-left: 1px solid #cdcdcd;
-}
-
-main {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, calc(50% - 20px));
-  position: relative;
-  grid-gap: 40px;
-  padding: 40px 20px;
-}
-
-main > div:nth-child(2) {
-  position: sticky;
-  top: 0;
-}
-
-label {
-  display: block;
-}
-
-p {
-  margin: 0;
-}
-
-p,
-label,
-input,
-a {
-  font-size: 1rem;
-}
-
 input[type="text"],
 input[type="url"],
 select {
@@ -129,12 +45,6 @@ code * {
 code {
   padding: 4px;
   border-radius: 8px;
-}
-
-h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 0;
 }
 
 section:not(:first-child) {
