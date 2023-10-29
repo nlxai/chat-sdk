@@ -7,6 +7,9 @@ import { v4 as uuid } from "uuid";
 
 export type Context = Record<string, any>;
 
+export type Slots = Record<string, any>;
+
+// Legacy format
 export interface SlotValue {
   slotId: string;
   value: any;
@@ -101,15 +104,28 @@ export interface Config {
 const welcomeIntent = "NLX.Welcome";
 
 const defaultFailureMessages = [
-  "We encountered an issue. Please try again soon.",
+  "We encountered an issue. Please try again soon."
 ];
 
 export type State = Response[];
 
+const normalizeSlots = (slotsWithLegacy: Slots | SlotValue[]): Slots => {
+  let slots: Slots = {};
+  if (Array.isArray(slotsWithLegacy)) {
+    console.warn(
+      `The legacy slot format is deprecated. Instead of '[{ slotId: "MySlot", value: "my-value" }]', use '{ MySlot: "my-value" }'`
+    );
+    slotsWithLegacy.forEach(slot => {
+      slots[slot.slotId] = slot.value;
+    });
+  }
+  return slots;
+};
+
 interface StructuredRequest {
   choiceId?: string;
   intentId?: string;
-  slots?: SlotValue[];
+  slots?: Slots | SlotValue[];
 }
 
 interface BotRequest {
@@ -126,7 +142,7 @@ interface BotRequest {
 
 export interface ConversationHandler {
   sendText: (text: string, context?: Context) => void;
-  sendSlots: (slots: SlotValue[], context?: Context) => void;
+  sendSlots: (slots: Slots | SlotValue[], context?: Context) => void;
   sendChoice: (choiceId: string, context?: Context) => void;
   sendWelcomeIntent: (context?: Context) => void;
   sendIntent: (intentId: string, context?: Context) => void;
@@ -209,15 +225,15 @@ export const createConversation = (config: Config): ConversationHandler => {
                     messageId: undefined,
                     text: greetingMessage,
                     choices: [] as Array<Choice>,
-                    selectedChoiceId: undefined,
+                    selectedChoiceId: undefined
                   })
-                ),
-              },
-            },
+                )
+              }
+            }
           ]
         : []),
     userId: config.userId,
-    conversationId: initialConversationId,
+    conversationId: initialConversationId
   };
 
   const setState = (
@@ -227,9 +243,9 @@ export const createConversation = (config: Config): ConversationHandler => {
   ): void => {
     state = {
       ...state,
-      ...change,
+      ...change
     };
-    subscribers.forEach((subscriber) =>
+    subscribers.forEach(subscriber =>
       subscriber(fromInternal(state), newResponse)
     );
   };
@@ -242,14 +258,14 @@ export const createConversation = (config: Config): ConversationHandler => {
         messages: (config.failureMessages || defaultFailureMessages).map(
           (messageBody: string): BotMessage => ({
             text: messageBody,
-            choices: [] as Array<Choice>,
+            choices: [] as Array<Choice>
           })
-        ),
-      },
+        )
+      }
     };
     setState(
       {
-        responses: [...state.responses, newResponse],
+        responses: [...state.responses, newResponse]
       },
       newResponse
     );
@@ -265,13 +281,13 @@ export const createConversation = (config: Config): ConversationHandler => {
           messages: response.messages.map((message: any) => ({
             messageId: message.messageId,
             text: message.text,
-            choices: message.choices || [],
-          })),
-        },
+            choices: message.choices || []
+          }))
+        }
       };
       setState(
         {
-          responses: [...state.responses, newResponse],
+          responses: [...state.responses, newResponse]
         },
         newResponse
       );
@@ -293,7 +309,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       ...body,
       languageCode: config.languageCode,
       channelType: config.experimental?.channelType,
-      environment: config.environment,
+      environment: config.environment
     };
     if (isUsingWebSockets()) {
       if (socket && socket.readyState === 1) {
@@ -310,9 +326,9 @@ export const createConversation = (config: Config): ConversationHandler => {
           method: "POST",
           headers: {
             ...(config.headers || {}),
-            "content-type": "application/json",
+            "content-type": "application/json"
           },
-          body: JSON.stringify(bodyWithContext),
+          body: JSON.stringify(bodyWithContext)
         }
       )
         .then((res: any) => res.json())
@@ -374,12 +390,12 @@ export const createConversation = (config: Config): ConversationHandler => {
       receivedAt: new Date().getTime(),
       payload: {
         type: "structured",
-        ...structured,
-      },
+        ...structured
+      }
     };
     setState(
       {
-        responses: [...state.responses, newResponse],
+        responses: [...state.responses, newResponse]
       },
       newResponse
     );
@@ -391,14 +407,14 @@ export const createConversation = (config: Config): ConversationHandler => {
       context,
       request: {
         structured: {
-          intentId,
-        },
-      },
+          intentId
+        }
+      }
     });
   };
 
   const unsubscribe = (subscriber: Subscriber) => {
-    subscribers = subscribers.filter((fn) => fn !== subscriber);
+    subscribers = subscribers.filter(fn => fn !== subscriber);
   };
 
   const subscribe = (subscriber: Subscriber) => {
@@ -416,12 +432,12 @@ export const createConversation = (config: Config): ConversationHandler => {
         receivedAt: new Date().getTime(),
         payload: {
           type: "text",
-          text,
-        },
+          text
+        }
       };
       setState(
         {
-          responses: [...state.responses, newResponse],
+          responses: [...state.responses, newResponse]
         },
         newResponse
       );
@@ -429,9 +445,9 @@ export const createConversation = (config: Config): ConversationHandler => {
         context,
         request: {
           unstructured: {
-            text,
-          },
-        },
+            text
+          }
+        }
       });
     },
     sendStructured: (structured: StructuredRequest, context) => {
@@ -439,33 +455,34 @@ export const createConversation = (config: Config): ConversationHandler => {
       sendToBot({
         context,
         request: {
-          structured,
-        },
+          structured
+        }
       });
     },
-    sendSlots: (slots, context) => {
+    sendSlots: (slotsWithLegacy, context) => {
+      const slots = normalizeSlots(slotsWithLegacy);
       appendStructuredUserResponse({ slots });
       sendToBot({
         context,
         request: {
           structured: {
-            slots,
-          },
-        },
+            slots
+          }
+        }
       });
     },
     sendIntent,
-    sendWelcomeIntent: (context) => {
+    sendWelcomeIntent: context => {
       sendIntent(welcomeIntent, context);
     },
     sendChoice: (choiceId, context) => {
       const containsChoice = (botMessage: BotMessage) =>
         (botMessage.choices || [])
-          .map((choice) => choice.choiceId)
+          .map(choice => choice.choiceId)
           .indexOf(choiceId) > -1;
 
       const lastBotResponseIndex = findLastIndex(
-        (response) =>
+        response =>
           response.type === "bot" &&
           Boolean(response.payload.messages.find(containsChoice)),
         state.responses
@@ -478,8 +495,8 @@ export const createConversation = (config: Config): ConversationHandler => {
         receivedAt: new Date().getTime(),
         payload: {
           type: "choice",
-          choiceId,
-        },
+          choiceId
+        }
       };
 
       if (lastBotResponseIndex > -1) {
@@ -491,13 +508,13 @@ export const createConversation = (config: Config): ConversationHandler => {
           ...lastBotResponse,
           payload: {
             ...lastBotResponse.payload,
-            messages: lastBotResponse.payload.messages.map((botMessage) => ({
+            messages: lastBotResponse.payload.messages.map(botMessage => ({
               ...botMessage,
               selectedChoiceId: containsChoice(botMessage)
                 ? choiceId
-                : botMessage.selectedChoiceId,
-            })),
-          },
+                : botMessage.selectedChoiceId
+            }))
+          }
         };
 
         newResponses = update(
@@ -511,7 +528,7 @@ export const createConversation = (config: Config): ConversationHandler => {
 
       setState(
         {
-          responses: newResponses,
+          responses: newResponses
         },
         choiceResponse
       );
@@ -520,9 +537,9 @@ export const createConversation = (config: Config): ConversationHandler => {
         context,
         request: {
           structured: {
-            choiceId,
-          },
-        },
+            choiceId
+          }
+        }
       });
     },
     currentConversationId: () => {
@@ -533,10 +550,10 @@ export const createConversation = (config: Config): ConversationHandler => {
     unsubscribeAll: () => {
       subscribers = [];
     },
-    reset: (options) => {
+    reset: options => {
       setState({
         conversationId: uuid(),
-        responses: options?.clearResponses ? [] : state.responses,
+        responses: options?.clearResponses ? [] : state.responses
       });
       if (isUsingWebSockets()) {
         teardownWebsocket();
@@ -548,7 +565,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       if (isUsingWebSockets()) {
         teardownWebsocket();
       }
-    },
+    }
   };
 };
 

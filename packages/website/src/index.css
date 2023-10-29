@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 * {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -74,7 +78,6 @@ main > div:nth-child(2) {
   position: sticky;
   top: 0;
 }
-
 
 label {
   display: block;
@@ -206,13 +209,17 @@ blockquote {
 }
 
 .slides-container::after {
-  content: ' ';
+  content: " ";
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
   width: 60px;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
 }
 
 .slides {
@@ -257,8 +264,7 @@ blockquote {
 }
 
 .slide:hover,
-.slide--active
-{
+.slide--active {
   border-color: #000;
 }
 
@@ -288,7 +294,7 @@ blockquote {
 }
 
 .popover-container::before {
-  content: ' ';
+  content: " ";
   position: fixed;
   top: 0;
   left: 0;
@@ -350,7 +356,7 @@ blockquote {
   padding: 12px 20px;
   font-size: 1rem;
   display: block;
-  letter-spacing: 0.10rem;
+  letter-spacing: 0.1rem;
   border: none;
   border-radius: 6px;
   color: white;
