@@ -1,4 +1,4 @@
-import { type Ref, useState, useEffect, useRef, useMemo } from "preact/hooks";
+import { type Ref, useState, useEffect, useRef, useMemo } from "react";
 
 // Code from here on out is identical in the React and Preact packages
 import { last } from "ramda";
@@ -7,7 +7,7 @@ import createConversation, {
   ConversationHandler,
   shouldReinitialize,
   Response,
-} from "@nlxchat/core";
+} from "@nlx/chat-core";
 
 export interface ChatHook {
   conversationHandler: ConversationHandler;

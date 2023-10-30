@@ -4,17 +4,12 @@ import Markdown from "react-markdown";
 import { Prose } from "../components/Prose";
 
 const content = `
-To install
-
-\`\`\`css
-npm instal @nlxchat/widget
-\`\`\`
 `;
 
-export const Installation = () => {
+export const HeadlessApi = () => {
   return (
     <>
-      <PageTitle pretitle="Install" title="Installation" />
+      <PageTitle pretitle="Headless API" title="API Reference" />
       <Prose>
         <Markdown>{content}</Markdown>
       </Prose>

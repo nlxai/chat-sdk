@@ -10,7 +10,7 @@ import tinycolor from "tinycolor2";
 import { createRoot } from "react-dom/client";
 import { createPortal } from "react-dom";
 import htm from "htm";
-import { type Config, type Response } from "@nlxchat/core";
+import { type Config, type Response } from "@nlx/chat-core";
 import {
   Widget,
   type Theme,
@@ -18,7 +18,7 @@ import {
   type TitleBar,
   defaultTheme,
   useConversationHandler,
-} from "@nlxchat/widget";
+} from "@nlx/chat-widget";
 import "./index.css";
 import { documentModalityCode, sendWelcomeOnTimeoutSnippet } from "./snippets";
 

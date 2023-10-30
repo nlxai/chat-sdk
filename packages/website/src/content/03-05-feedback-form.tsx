@@ -4,17 +4,12 @@ import Markdown from "react-markdown";
 import { Prose } from "../components/Prose";
 
 const content = `
-To install
-
-\`\`\`css
-npm instal @nlxchat/widget
-\`\`\`
 `;
 
-export const Installation = () => {
+export const WebWidgetComponentsFeedbackForm = () => {
   return (
     <>
-      <PageTitle pretitle="Install" title="Installation" />
+      <PageTitle pretitle="Web widget components" title="Feedback form" />
       <Prose>
         <Markdown>{content}</Markdown>
       </Prose>

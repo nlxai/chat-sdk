@@ -19,8 +19,8 @@ import { createRoot } from "react-dom/client";
 import createCache from "@emotion/cache";
 import { ThemeProvider, CacheProvider } from "@emotion/react";
 
-import { useChat, type ChatHook } from "@nlxchat/react";
-import { type Response, type ConversationHandler } from "@nlxchat/core";
+import { useChat, type ChatHook } from "@nlx/chat-react";
+import { type Response, type ConversationHandler } from "@nlx/chat-core";
 import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
 import * as constants from "./ui/constants";
 import {

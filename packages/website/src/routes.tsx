@@ -1,8 +1,27 @@
 import React, { type ReactNode, type FC } from "react";
 import { flatten } from "ramda";
 import { Routes, Route } from "react-router-dom";
+// 1
 import { GettingStarted } from "./content/01-01-getting-started";
 import { Installation } from "./content/01-02-installation";
+// 2
+import { WebWidgetSetup } from "./content/02-01-web-widget-setup";
+import { WebWidgetTheming } from "./content/02-02-web-widget-theming";
+import { WebWidgetCustomBehaviors } from "./content/02-03-web-widget-custom-behaviors";
+// 3
+import { WebWidgetComponentsGettingStarted } from "./content/03-01-web-widget-components-getting-started";
+import { WebWidgetComponentsDatePicker } from "./content/03-02-date-picker";
+import { WebWidgetComponentsDisclaimer } from "./content/03-03-disclaimer";
+import { WebWidgetComponentsCarousel } from "./content/03-04-carousel";
+import { WebWidgetComponentsFeedbackForm } from "./content/03-05-feedback-form";
+import { WebWidgetComponentsPayments } from "./content/03-06-payments";
+// 4
+import { CustomWidgetsGettingStarted } from "./content/04-01-custom-widgets-getting-started";
+import { CustomWidgetsReact } from "./content/04-02-custom-widgets-react";
+import { CustomWidgetsOther } from "./content/04-03-custom-widgets-other";
+// 5
+import { HeadlessSetup } from "./content/05-01-headless-setup";
+import { HeadlessApi } from "./content/05-02-headless-api";
 
 export const routes: {
   heading: string;
@@ -13,81 +32,84 @@ export const routes: {
     items: [
       {
         label: "Getting started",
-        url: "#/getting-started",
+        url: "/getting-started",
         element: <GettingStarted />,
       },
       {
         label: "Installation",
-        url: "#/installation",
+        url: "/installation",
         element: <Installation />,
       },
     ],
   },
   {
-    heading: "Web Widget",
+    heading: "Web widget",
     items: [
-      { label: "Setup", url: "#/widget/setup", element: <p>Setup</p> },
-      { label: "Theming", url: "#/widget/theming", element: <p>Theming</p> },
+      { label: "Setup", url: "/widget-setup", element: <WebWidgetSetup /> },
+      {
+        label: "Theming",
+        url: "/widget-theming",
+        element: <WebWidgetTheming />,
+      },
       {
         label: "Custom behaviors",
-        url: "#/widget/custom-behaviors",
-        element: <p>Behaviors</p>,
+        url: "/widget-custom-behaviors",
+        element: <WebWidgetCustomBehaviors />,
       },
     ],
   },
   {
-    heading: "Web Widget Components",
+    heading: "Web widget components",
     items: [
       {
         label: "Getting started",
-        url: "#/widget-components/getting-started",
-        element: <p>comp</p>,
+        url: "/widget-components-getting-started",
+        element: <WebWidgetComponentsGettingStarted />,
       },
       {
-        label: "Date Picker",
-        url: "#/widget-components/datepicker",
-        element: <p>comp</p>,
+        label: "Date picker",
+        url: "/widget-components-datepicker",
+        element: <WebWidgetComponentsDatePicker />,
       },
       {
         label: "Disclaimer",
-        url: "#/widget-components/disclaimer",
-        element: <p>comp</p>,
+        url: "/widget-components-disclaimer",
+        element: <WebWidgetComponentsDisclaimer />,
       },
       {
         label: "Carousel",
-        url: "#/widget-components/carousel",
-        element: <p>comp</p>,
+        url: "/widget-components-carousel",
+        element: <WebWidgetComponentsCarousel />,
       },
-      { label: "Form", url: "#/widget-components/form", element: <p>comp</p> },
+      {
+        label: "Feedback form",
+        url: "/widget-components-feedback-form",
+        element: <WebWidgetComponentsFeedbackForm />,
+      },
       {
         label: "Payments",
-        url: "#/widget-components/payments",
-        element: <p>comp</p>,
+        url: "/widget-components-payments",
+        element: <WebWidgetComponentsPayments />,
       },
     ],
   },
   {
-    heading: "Building Your Own Widget",
+    heading: "Building your own widget",
     items: [
       {
         label: "Getting started",
-        url: "#/custom-widget/getting-started",
-        element: <p>comp</p>,
+        url: "/custom-widget-getting-started",
+        element: <CustomWidgetsGettingStarted />,
       },
       {
         label: "React & Preact",
-        url: "#/custom-widget/react-preact",
-        element: <p>comp</p>,
+        url: "/custom-widget-react-preact",
+        element: <CustomWidgetsReact />,
       },
       {
-        label: "Svelte",
-        url: "#/custom-widget/svelte",
-        element: <p>comp</p>,
-      },
-      {
-        label: "Other Frameworks",
-        url: "#/custom-widget/other-frameworks",
-        element: <p>comp</p>,
+        label: "Other frameworks",
+        url: "/custom-widget-other-frameworks",
+        element: <CustomWidgetsOther />,
       },
     ],
   },
@@ -96,10 +118,14 @@ export const routes: {
     items: [
       {
         label: "Getting Started",
-        url: "#/headless/getting-started",
-        element: <p>comp</p>,
+        url: "/headless-getting-started",
+        element: <HeadlessSetup />,
       },
-      { label: "Installation", url: "#/headless/", element: <p>comp</p> },
+      {
+        label: "Installation",
+        url: "/headless-installation",
+        element: <HeadlessApi />,
+      },
     ],
   },
 ];

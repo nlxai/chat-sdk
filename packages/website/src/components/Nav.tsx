@@ -20,7 +20,7 @@ const MenuListItem: FC<{
         className="mt-2 space-y-2 border-l-2 border-slate-100 dark:border-slate-800 lg:mt-4 lg:space-y-4 lg:border-slate-200"
       >
         {props.items.map((item, index) => {
-          const active = pathname === item.url.slice(1);
+          const active = pathname === item.url;
           return (
             <li className="relative" key={index}>
               <Link
@@ -50,7 +50,11 @@ export const Nav: FC<{}> = () => (
       <nav className="text-base lg:text-sm">
         <ul role="list" className="space-y-9">
           {routes.map((route, index) => (
-            <MenuListItem key={index} heading={route.heading} items={route.items} />
+            <MenuListItem
+              key={index}
+              heading={route.heading}
+              items={route.items}
+            />
           ))}
         </ul>
       </nav>
@@ -128,7 +132,7 @@ export const MobileNav: FC<{
                       className="mt-2 space-y-2 border-l-2 border-slate-100 dark:border-slate-800 lg:mt-4 lg:space-y-4 lg:border-slate-200"
                     >
                       {route.items.map((item, itemIndex) => {
-                        const active = pathname === item.url.slice(1);
+                        const active = pathname === item.url;
                         return (
                           <li className="relative" key={itemIndex}>
                             <Link
@@ -138,6 +142,9 @@ export const MobileNav: FC<{
                                   : "text-slate-500 before:hidden before:bg-slate-300 hover:text-slate-600 hover:before:block dark:text-slate-400 dark:before:bg-slate-700 dark:hover:text-slate-300"
                               }`}
                               to={item.url}
+                              onClick={() => {
+                                props.setMobileMenuExpanded(false);
+                              }}
                             >
                               {item.label}
                             </Link>
