@@ -9,7 +9,7 @@ export default defineConfig({
     port: 3010
   },
   optimizeDeps: {
-    include: ["@nlx/chat-core", "@nlx/chat-react", "@nlx/chat-widget"]
+    include: ["@nlxai/chat-core", "@nlxai/chat-react", "@nlxai/chat-widget"]
   },
   build: {
     commonjsOptions: {

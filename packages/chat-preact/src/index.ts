@@ -7,7 +7,7 @@ import createConversation, {
   ConversationHandler,
   shouldReinitialize,
   Response,
-} from "@nlx/chat-core";
+} from "@nlxai/chat-core";
 
 export interface ChatHook {
   conversationHandler: ConversationHandler;

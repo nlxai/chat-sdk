@@ -5,7 +5,7 @@ This is the core package of our official JavaScript SDK to communicate with NLX 
 ## Getting started
 
 ```js
-import createConversation from "@nlxchat/core";
+import createConversation from "@nlxai/chat-core";
 
 // Create some configuration
 const config = {
@@ -15,7 +15,6 @@ const config = {
   },
   userId: "abcd-1234", // optional property to identify the user
   conversationId: "", // start with a specific conversation ID - useful if you want to resume a previous conversation
-  triggerWelcomeIntent: true, // set whether the welcome intent should trigger when the conversation is initialized
   languageCode: "es-US", // optional language code for standard bots that do not run on US English
   environment: "production", // optional environment name for multi-environment bots to control which data request environment should be used.  "production" or "development" are the only supported values.
 };
@@ -96,7 +95,7 @@ This package is intentionally designed with a subscription-based API as opposed 
 If you need a promise-based wrapper, you can use the `promisify` helper available in the package:
 
 ```ts
-import { createConversation, promisify } from "@nlxchat/core";
+import { createConversation, promisify } from "@nlxai/chat-core";
 
 const convo = createConversation(config);
 

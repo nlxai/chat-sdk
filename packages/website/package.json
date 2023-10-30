@@ -1,5 +1,5 @@
 {
-  "name": "@nlxchat/website",
+  "name": "@nlxai/website",
   "private": true,
   "version": "0.0.1",
   "scripts": {
@@ -7,9 +7,9 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@nlx/chat-core": "^0.0.1",
-    "@nlx/chat-react": "^0.0.1",
-    "@nlx/chat-widget": "^0.0.1",
+    "@nlxai/chat-core": "^0.0.1",
+    "@nlxai/chat-react": "^0.0.1",
+    "@nlxai/chat-widget": "^0.0.1",
     "htm": "^3.1.1",
     "ramda": "^0.29.1",
     "react": "^18.2.0",

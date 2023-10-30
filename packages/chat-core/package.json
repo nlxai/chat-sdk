@@ -1,5 +1,5 @@
 {
-  "name": "@nlx/chat-core",
+  "name": "@nlxai/chat-core",
   "version": "0.0.1",
   "description": "NLX Chat SDK core",
   "main": "lib/index.js",

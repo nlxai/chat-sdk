@@ -4,13 +4,13 @@ This package provides the `useChat` [custom hook](https://preactjs.com/guide/v10
 
 ## Installation
 
-`npm install --save @nlxchat/preact preact`
+`npm install --save @nlxai/chat-preact preact`
 
 ## Usage
 
 ```jsx
 import { h } from "preact";
-import { useChat } from "@nlxchat/preact";
+import { useChat } from "@nlxai/chat-preact";
 
 const ChatWidget = () => {
   const chat = useChat({

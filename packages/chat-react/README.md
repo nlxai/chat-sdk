@@ -4,13 +4,13 @@ This package provides the `useChat` [custom hook](https://beta.reactjs.org/learn
 
 ## Installation
 
-`npm install --save @nlxchat/react react react-dom`
+`npm install --save @nlxai/chat-react react react-dom`
 
 ## Usage
 
 ```jsx
 import React from "react";
-import { useChat } from "@nlxchat/react";
+import { useChat } from "@nlxai/chat-react";
 
 const ChatWidget = () => {
   const chat = useChat({
@@ -53,7 +53,7 @@ The `useChat` hook returns an object containing the following fields:
 
 #### `conversationHandler`
 
-Contains the full conversation handler object from the [the @nlxchat/core package](https://github.com/nlxai/chat-sdk/blob/master/packages/core/README.md). This is mostly used for the `send*` methods like `sendText` or `sendStructured`, as the response subscription is handled by the hook automatically.
+Contains the full conversation handler object from the [the @nlxai/chat-core package](https://github.com/nlxai/chat-sdk/blob/master/packages/chat-core/README.md). This is mostly used for the `send*` methods like `sendText` or `sendStructured`, as the response subscription is handled by the hook automatically.
 
 #### `inputValue` and `setInputValue`
 

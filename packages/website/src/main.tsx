@@ -1,7 +1,7 @@
 import React, { type FC, useState } from "react";
 import "./index.css";
 import { createRoot } from "react-dom/client";
-import { type Theme, defaultTheme } from "@nlx/chat-widget";
+import { type Theme, defaultTheme } from "@nlxai/chat-widget";
 import tinycolor from "tinycolor2";
 import { HashRouter } from "react-router-dom";
 import { Header } from "./components/Header";

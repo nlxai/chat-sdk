@@ -7,7 +7,7 @@ const content = `
 To install
 
 \`\`\`css
-npm instal @nlxchat/widget
+npm instal @nlxai/chat-widget
 \`\`\`
 `;
 

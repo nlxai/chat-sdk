@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { type Config, type ConversationHandler } from "@nlx/chat-core";
+import { type Config, type ConversationHandler } from "@nlxai/chat-core";
 import { type Theme } from "./theme";
 
 export interface TitleBar {

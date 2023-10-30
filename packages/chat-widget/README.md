@@ -4,14 +4,14 @@ The chat widget is a styled, configurable UI widget you can drop in on your webs
 
 ## Installation
 
-`npm install --save @nlxchat/widget react react-dom`
+`npm install --save @nlxai/chat-widget react react-dom`
 
 ## Usage
 
 You can render a chat widget in your document with just a few lines of code:
 
 ```jsx
-import { create } from "@nlxchat/widget";
+import { create } from "@nlxai/chat-widget";
 
 // This will render the widget as the last element in the <body>
 
@@ -21,7 +21,6 @@ create({
     headers: {
       "nlx-api-key": "",
     },
-    triggerWelcomeIntent: true,
   },
   initiallyExpanded: true,
   theme: {
@@ -37,7 +36,7 @@ There is also a packaged version of the SDK that exposes the `nlxChat.widget.cre
 
 ```html
 <body>
-  <script src="https://unpkg.com/@nlxchat/widget@2.0.0/lib/umd/index.js"></script>
+  <script src="https://unpkg.com/@nlxai/chat-widget@0.1.0/lib/umd/index.js"></script>
   <script>
     window.nlxChat.widget.create({
       config: {

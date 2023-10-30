@@ -10,7 +10,7 @@ import tinycolor from "tinycolor2";
 import { createRoot } from "react-dom/client";
 import { createPortal } from "react-dom";
 import htm from "htm";
-import { type Config, type Response } from "@nlx/chat-core";
+import { type Config, type Response } from "@nlxai/chat-core";
 import {
   Widget,
   type Theme,
@@ -18,7 +18,7 @@ import {
   type TitleBar,
   defaultTheme,
   useConversationHandler,
-} from "@nlx/chat-widget";
+} from "@nlxai/chat-widget";
 import "./index.css";
 import { documentModalityCode, sendWelcomeOnTimeoutSnippet } from "./snippets";
 
@@ -655,7 +655,7 @@ const App = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <script defer src="https://unpkg.com/@nlxchat/widget@2.0.0-alpha.13/lib/umd/index.js"></script>
+    <script defer src="https://unpkg.com/@nlxai/chat-widget@0.1.0/lib/umd/index.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/htm/3.1.1/htm.js" integrity="sha512-RilD4H0wcNNxG2GvB+L1LRXCntT0zgRvRLnmGu+e9wWaLKGkPifz3Ozb6+WPsyEkTBLw6zWCwwEjs9JLL1KIHg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
       window.addEventListener("DOMContentLoaded", () => {

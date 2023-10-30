@@ -1,5 +1,5 @@
 {
-  "name": "@nlx/voice-compass",
+  "name": "@nlxai/voice-compass",
   "version": "0.0.1",
   "description": "NLX Chat SDK core",
   "main": "lib/index.js",

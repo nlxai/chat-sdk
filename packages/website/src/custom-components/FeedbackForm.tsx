@@ -1,7 +1,7 @@
 import "./FeedbackForm.css";
 import { useState, createElement } from "react";
 import htm from "htm";
-import { useConversationHandler } from "@nlx/chat-widget";
+import { useConversationHandler } from "@nlxai/chat-widget";
 
 const html = htm.bind(createElement);
 
