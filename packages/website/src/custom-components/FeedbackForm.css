@@ -1,6 +1,5 @@
 .chat-feedback-form {
-  padding: 10px;
-  border-radius: 6px;
+  padding: 15px 15px;
   background: #efefef;
 }
 
@@ -28,7 +27,7 @@
 .chat-feedback-form [type="submit"] {
   display: block;
   width: 100%;
-  background-color: var(--primaryColor);
+  background-color: rgb(14, 165, 233);
   padding: 8px 12px;
   border-radius: 6px;
   border: none;

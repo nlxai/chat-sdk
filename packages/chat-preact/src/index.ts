@@ -1,4 +1,4 @@
-import { type Ref, useState, useEffect, useRef, useMemo } from "preact/hooks";
+import { useState, useEffect, useRef, useMemo } from "preact/hooks";
 
 // Code from here on out is identical in the React and Preact packages
 import { last } from "ramda";
@@ -6,7 +6,7 @@ import createConversation, {
   Config,
   ConversationHandler,
   shouldReinitialize,
-  Response,
+  Response
 } from "@nlxai/chat-core";
 
 export interface ChatHook {
@@ -15,9 +15,6 @@ export interface ChatHook {
   setInputValue: (val: string) => void;
   responses: Array<Response>;
   waiting: boolean;
-  // DOM-specific helpers
-  messagesContainerRef: Ref<HTMLDivElement>;
-  scrollToBottom: () => void;
 }
 
 export const useChat = (config: Config): ChatHook => {
@@ -30,7 +27,11 @@ export const useChat = (config: Config): ChatHook => {
 
   const conversationHandler: ConversationHandler = useMemo(() => {
     // Prevent re-initialization if backend-related props have not changed
-    if (prevConfig.current && prevConversationHandler.current && !shouldReinitialize(prevConfig.current, config)) {
+    if (
+      prevConfig.current &&
+      prevConversationHandler.current &&
+      !shouldReinitialize(prevConfig.current, config)
+    ) {
       return prevConversationHandler.current;
     }
     const newHandler = createConversation(config);
@@ -42,8 +43,6 @@ export const useChat = (config: Config): ChatHook => {
 
   const [inputValue, setInputValue] = useState<string>("");
 
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     setResponses([]);
     conversationHandler.subscribe(setResponses);
@@ -51,17 +50,6 @@ export const useChat = (config: Config): ChatHook => {
       conversationHandler.destroy();
     };
   }, [conversationHandler]);
-
-  const scrollToBottom = () => {
-    const node = messagesContainerRef.current;
-    if (node) {
-      node.scrollTop = node.scrollHeight;
-    }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [responses]);
 
   const lastMessage = last<Response>(responses);
   const isWaiting = lastMessage ? lastMessage.type === "user" : false;
@@ -71,9 +59,7 @@ export const useChat = (config: Config): ChatHook => {
     inputValue,
     responses,
     waiting: isWaiting,
-    messagesContainerRef,
-    setInputValue,
-    scrollToBottom,
+    setInputValue
   };
 };
 

@@ -4,7 +4,7 @@ const fs = require("fs");
 fs.mkdir("lib/umd", () => {
   process.env.NODE_ENV = "production";
   browserify({
-    standalone: "nlx.voiceCompass"
+    standalone: "nlxai.voiceCompass"
   })
     .add("src/index.ts")
     .plugin("tsify")

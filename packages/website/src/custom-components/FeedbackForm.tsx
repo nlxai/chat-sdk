@@ -20,24 +20,12 @@ export const FeedbackForm = () => {
       onSubmit=${(ev: any) => {
         ev.preventDefault();
         setSubmitted(true);
-        handler?.sendSlots([
-          {
-            slotId: "Submitted",
-            value: "Yes"
-          },
-          {
-            slotId: "FirstName",
-            value: firstName
-          },
-          {
-            slotId: "LastName",
-            value: lastName
-          },
-          {
-            slotId: "Email",
-            value: email
-          }
-        ]);
+        handler?.sendSlots({
+          firstName,
+          lastName,
+          email,
+          feedback
+        });
       }}
     >
       <input

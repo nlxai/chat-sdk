@@ -1,18 +1,39 @@
 import React from "react";
 import { PageTitle } from "../components/PageTitle";
-import Markdown from "react-markdown";
-import { Prose } from "../components/Prose";
+import { PageContent } from "../components/PageContent";
+import { Note } from "../components/Note";
+import { Carousel, carouselExampleData } from "../custom-components/Carousel";
+import { InlineWidget } from "../components/InlineWidget";
+import { carouselSnippet } from "../snippets";
 
-const content = `
+export const content = `
+This carousel component presents list-type information in a rich, visually appealing manner.
+
+~~~js
+${carouselSnippet}
+~~~
 `;
 
 export const WebWidgetComponentsCarousel = () => {
   return (
     <>
       <PageTitle pretitle="Web widget components" title="Carousel" />
-      <Prose>
-        <Markdown>{content}</Markdown>
-      </Prose>
+      <InlineWidget
+        className="mb-8"
+        items={[
+          [
+            {
+              type: "custom",
+              element: <Carousel data={carouselExampleData} />
+            }
+          ]
+        ]}
+      />
+      <PageContent md={content} />
+      <Note
+        title="Note"
+        body="Compatible data must be sent from the bot configuration along with the 'Carousel' modality in order for the presentation layer to work."
+      />
     </>
   );
 };

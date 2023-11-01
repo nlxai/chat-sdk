@@ -125,8 +125,7 @@ export const Container = styled.div<{}>`
     }
   }
 
-  & > *,
-  & > button {
+  & * {
     font-family: ${props => props.theme.fontFamily};
   }
 `;
@@ -272,7 +271,6 @@ export const Input = styled.input<{}>`
   background-color: transparent;
   padding: ${props => `0 ${2 * props.theme.spacing}px`};
   font-size: ${constants.fontSize}px;
-  font-family: ${props => props.theme.fontFamily};
   border: none;
 
   :focus {
@@ -339,7 +337,6 @@ export const PinBubbleContainer = styled.div<{
   width: fit-content;
   white-space: pre;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.3);
-  font-family: ${props => props.theme.fontFamily};
   height: 32px;
   font-size: 14px;
   display: flex;
@@ -474,7 +471,6 @@ export const ChoiceButton = styled.button<{
   border-radius: ${props => props.theme.borderRadius}px;
   border: 1px solid ${props => props.theme.primaryColor};
   font-size: ${constants.fontSize}px;
-  font-family: ${props => props.theme.fontFamily};
   padding: 4px 12px;
 
   & p,
@@ -531,7 +527,6 @@ export const Title = styled.p<{}>`
   font-weight: bold;
   margin: 0;
   color: ${props => props.theme.white};
-  font-family: ${props => props.theme.fontFamily};
 `;
 
 // DiscreteButton

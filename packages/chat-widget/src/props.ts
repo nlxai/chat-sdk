@@ -3,9 +3,9 @@ import { type Config, type ConversationHandler } from "@nlxai/chat-core";
 import { type Theme } from "./theme";
 
 export interface TitleBar {
-  downloadable?: boolean;
   logo?: string;
   title: string;
+  downloadable?: boolean;
 }
 
 export type StorageType = "localStorage" | "sessionStorage";

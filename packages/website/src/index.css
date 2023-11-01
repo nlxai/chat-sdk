@@ -1,116 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-* {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  box-sizing: border-box;
-}
-
-input[type="text"],
-input[type="url"],
-select {
-  padding: 6px;
-  display: block;
-  width: 100%;
-  border: 1px solid #dedede;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-label {
-  padding: 4px 0;
-}
-
-label > * + * {
-  margin-top: 0px;
-}
-
-code,
-code * {
-  font-size: 0.75rem;
-  font-family: monospace !important;
-  line-height: 1.4;
-}
-
-.label-text {
-  margin: 0 0 4px 0;
-  color: #676767;
-  font-size: 0.75rem;
-}
-
-code {
-  padding: 4px;
-  border-radius: 8px;
-}
-
-section:not(:first-child) {
-  margin-top: 40px;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 6px;
-}
-
-section > * + * {
-  margin-top: 10px;
-}
-
-.radio {
-  display: flex;
-  align-items: center;
-}
-
-.radio > * + * {
-  margin-left: 10px;
-}
-
-.radio input {
-  margin: 0;
-}
-
-blockquote {
-  font-size: 1rem;
-  color: #898989;
-  padding-left: 12px;
-  margin: 10px 0 0 0;
-  border-left: 2px solid #cecece;
-}
-
-.body {
-  line-height: 1.4;
-}
-
-.code-editor {
-  position: relative;
-}
-
-.code-editor > a {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 24px;
-  height: 24px;
-  padding: 2px;
-  display: none;
-  color: #898989;
-  border-radius: 4px;
-}
-
-.code-editor > a:hover {
-  color: #000;
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.code-editor:hover > a {
-  display: block;
-}
 
 /* Carousel example */
 
@@ -365,4 +257,48 @@ blockquote {
 
 .chat-consent button:hover {
   color: var(--primaryColorLighter);
+}
+
+.token.class-name,
+.token.function,
+.token.selector,
+.token.selector .class,
+.token.selector.class,
+.token.tag {
+  color: #f472b6;
+}
+
+.token.attr-name,
+.token.important,
+.token.keyword,
+.token.pseudo-class,
+.token.rule {
+  color: #cbd5e1;
+}
+
+.token.module {
+  color: #f472b6;
+}
+
+.token.attr-value,
+.token.class,
+.token.property,
+.token.string {
+  color: #7dd3fc;
+}
+
+.token.attr-equals,
+.token.punctuation {
+  color: #64748b;
+}
+
+.language-css .token.function,
+.token.unit {
+  color: #99f6e4;
+}
+
+.token.combinator,
+.token.comment,
+.token.operator {
+  color: #94a3b8;
 }

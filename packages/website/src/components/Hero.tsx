@@ -2,7 +2,8 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { Disclaimer } from "../custom-components/Disclaimer";
 import { FeedbackForm } from "../custom-components/FeedbackForm";
-import { Carousel } from "../custom-components/Carousel";
+import { Carousel, carouselExampleData } from "../custom-components/Carousel";
+import { InlineWidget } from "../components/InlineWidget";
 
 export const Hero = () => {
   const location = useLocation();
@@ -18,20 +19,25 @@ export const Hero = () => {
           <div className="relative z-10 md:text-center lg:text-left">
             <div className="relative">
               <p className="inline bg-gradient-to-r from-indigo-200 via-sky-400 to-indigo-200 bg-clip-text font-display text-5xl tracking-tight text-transparent">
-                The NLX Chat Experience
+                SDK for rich conversational experiences
               </p>
               <p className="mt-3 text-2xl tracking-tight text-slate-400">
-                Install a beautiful chat widget on your website in seconds. Add
-                custom components using a low-code setup, or engineer it from
-                the ground up yourself.
+                Add chat and multimodal capabilities to your page in minutes.
+                Add fully custom components with a dozen lines of code, or
+                engineer from the ground up yourself.
               </p>
               <div className="mt-8 flex gap-4 md:justify-center lg:justify-start">
-                <a
+                <button
                   className="rounded-full bg-sky-300 py-2 px-4 text-sm font-semibold text-slate-900 hover:bg-sky-200 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300/50 active:bg-sky-500"
-                  href="/"
+                  onClick={() => {
+                    document.querySelector("article")?.scrollIntoView({
+                      block: "start",
+                      behavior: "smooth"
+                    });
+                  }}
                 >
                   Get started
-                </a>
+                </button>
                 <a
                   className="rounded-full bg-slate-800 py-2 px-4 text-sm font-medium text-white hover:bg-slate-700 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 active:text-slate-400"
                   href="https://github.com/nlxai/chat-sdk"
@@ -42,38 +48,66 @@ export const Hero = () => {
             </div>
           </div>
           <div className="relative lg:static xl:pl-10">
-            <div className="bg-white rounded-2xl max-h-[360px] overflow-auto p-4 space-y-4">
-              <Disclaimer />
-              <FeedbackForm />
-              <Carousel
-                data={[
+            <InlineWidget
+              className="mx-auto h-[480px]"
+              animated
+              items={[
+                [
                   {
-                    id: "1",
-                    name: "Name",
-                    description: "Description",
-                    imageUrl:
-                      "https://plus.unsplash.com/premium_photo-1694425773107-c3c44e345e1e?auto=format&fit=crop&q=80&w=388&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                    url: ""
-                  },
-                  {
-                    id: "2",
-                    name: "Name",
-                    description: "Description",
-                    imageUrl:
-                      "https://plus.unsplash.com/premium_photo-1695558759057-7922f0d53386?auto=format&fit=crop&q=80&w=387&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                    url: ""
-                  },
-                  {
-                    id: "3",
-                    name: "Name",
-                    description: "Description",
-                    imageUrl:
-                      "https://images.unsplash.com/photo-1668854360535-4537b57d615f?auto=format&fit=crop&q=80&w=387&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                    url: ""
+                    type: "user",
+                    message:
+                      "I would like to order a Friday afternoon snack for the office."
                   }
-                ]}
-              />
-            </div>
+                ],
+                [
+                  {
+                    type: "bot",
+                    message: "Sure, I have these options available:"
+                  },
+                  {
+                    type: "custom",
+                    element: <Disclaimer />
+                  },
+                  {
+                    type: "custom",
+                    element: <Carousel data={carouselExampleData} />
+                  }
+                ],
+                [
+                  {
+                    type: "user",
+                    message: "I would like the fancy coffees"
+                  }
+                ],
+                [
+                  {
+                    type: "bot",
+                    message: "Great, I added the coffees to your order."
+                  },
+                  {
+                    type: "bot",
+                    message:
+                      "Would you like to take a moment to give us feedback on your experience with us?"
+                  }
+                ],
+                [
+                  {
+                    type: "user",
+                    message: "Yes"
+                  }
+                ],
+                [
+                  {
+                    type: "bot",
+                    message: "Please fill out the following form:"
+                  },
+                  {
+                    type: "custom",
+                    element: <FeedbackForm />
+                  }
+                ]
+              ]}
+            />
           </div>
         </div>
       </div>

@@ -4,13 +4,13 @@ const fs = require("fs");
 fs.mkdir("lib/umd", () => {
   process.env.NODE_ENV = "production";
   browserify({
-    standalone: "nlxChat.widget",
+    standalone: "nlxai.chatWidget"
   })
     .add("src/index.tsx")
     .plugin("tsify")
     .transform("uglifyify", { global: true })
     .bundle()
-    .on("error", (error) => {
+    .on("error", error => {
       console.error(error.toString());
     })
     .pipe(fs.createWriteStream("lib/umd/index.js"));

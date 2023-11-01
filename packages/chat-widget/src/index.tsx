@@ -350,7 +350,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
 
   useEffect(() => {
     if (expanded) {
-      chat.scrollToBottom();
+      scrollToBottom();
     }
   }, [expanded]);
 
@@ -386,6 +386,19 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
       clearTimeout(timeout2);
     };
   }, []);
+
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    const node = messagesContainerRef.current;
+    if (node) {
+      node.scrollTop = node.scrollHeight;
+    }
+  }, [messagesContainerRef]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chat.responses]);
 
   // Download
 
@@ -429,7 +442,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
           ) : null}
           {expanded && (
             <C.Container>
-              <C.Main ref={chat.messagesContainerRef}>
+              <C.Main ref={messagesContainerRef}>
                 {props.titleBar && (
                   <C.TitleBar>
                     <C.TitleContainer>

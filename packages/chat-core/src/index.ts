@@ -63,13 +63,16 @@ export type UserResponsePayload =
   | {
       type: "text";
       text: string;
+      context?: Context;
     }
   | {
       type: "choice";
       choiceId: string;
+      context?: Context;
     }
   | ({
       type: "structured";
+      context?: Context;
     } & StructuredRequest);
 
 export type Response = BotResponse | UserResponse;
@@ -384,13 +387,17 @@ export const createConversation = (config: Config): ConversationHandler => {
     setupWebsocket();
   }
 
-  const appendStructuredUserResponse = (structured: StructuredRequest) => {
+  const appendStructuredUserResponse = (
+    structured: StructuredRequest,
+    context?: Context
+  ) => {
     const newResponse: Response = {
       type: "user",
       receivedAt: new Date().getTime(),
       payload: {
         type: "structured",
-        ...structured
+        ...structured,
+        context
       }
     };
     setState(
@@ -402,7 +409,7 @@ export const createConversation = (config: Config): ConversationHandler => {
   };
 
   const sendIntent = (intentId: string, context?: Context) => {
-    appendStructuredUserResponse({ intentId });
+    appendStructuredUserResponse({ intentId }, context);
     sendToBot({
       context,
       request: {
@@ -432,7 +439,8 @@ export const createConversation = (config: Config): ConversationHandler => {
         receivedAt: new Date().getTime(),
         payload: {
           type: "text",
-          text
+          text,
+          context
         }
       };
       setState(
@@ -451,7 +459,7 @@ export const createConversation = (config: Config): ConversationHandler => {
       });
     },
     sendStructured: (structured: StructuredRequest, context) => {
-      appendStructuredUserResponse(structured);
+      appendStructuredUserResponse(structured, context);
       sendToBot({
         context,
         request: {
@@ -461,7 +469,7 @@ export const createConversation = (config: Config): ConversationHandler => {
     },
     sendSlots: (slotsWithLegacy, context) => {
       const slots = normalizeSlots(slotsWithLegacy);
-      appendStructuredUserResponse({ slots });
+      appendStructuredUserResponse({ slots }, context);
       sendToBot({
         context,
         request: {
@@ -473,6 +481,7 @@ export const createConversation = (config: Config): ConversationHandler => {
     },
     sendIntent,
     sendWelcomeIntent: context => {
+      appendStructuredUserResponse({ intentId: welcomeIntent }, context);
       sendIntent(welcomeIntent, context);
     },
     sendChoice: (choiceId, context) => {
