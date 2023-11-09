@@ -1,23 +1,31 @@
 {
-  "name": "@nlxchat/website",
+  "name": "@nlxai/website",
   "private": true,
-  "version": "2.0.0-beta.1",
+  "version": "0.0.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@nlxchat/core": "^2.0.0-beta.1",
-    "@nlxchat/react": "^2.0.0-beta.1",
-    "@nlxchat/widget": "^2.0.0-beta.1",
+    "@nlxai/chat-core": "^0.0.0",
+    "@nlxai/chat-react": "^0.0.0",
+    "@nlxai/chat-widget": "^0.0.0",
+    "@react-hookz/web": "^23.1.0",
+    "fuse.js": "^7.0.0",
     "htm": "^3.1.1",
+    "ramda": "^0.29.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.0",
+    "react-router-dom": "^6.17.0",
     "tinycolor2": "^1.4.1"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/ramda": "^0.29.7",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/react-syntax-highlighter": "^15.5.10",
     "@types/tinycolor2": "^1.4.2",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",

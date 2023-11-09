@@ -1,0 +1,35 @@
+{
+  "name": "@nlxai/chat-core",
+  "version": "0.0.0",
+  "description": "NLX Chat SDK core",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build:umd": "node bin/build.js",
+    "build": "rm -rf lib && mkdir lib && tsc && npm run build:umd",
+    "prepublish": "npm run build"
+  },
+  "author": "Peter Szerzo <peter@nlx.ai>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.36",
+    "@types/node": "^11.15.11",
+    "@types/ramda": "^0.26.44",
+    "@types/uuid": "^8.3.4",
+    "browserify": "^17.0.0",
+    "prettier": "^1.19.1",
+    "tsify": "^5.0.4",
+    "typescript": "^5.2.2",
+    "uglifyify": "^5.0.2"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0",
+    "ramda": "^0.29.1",
+    "reconnecting-websocket": "^4.4.0",
+    "uuid": "^8.3.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "cb2ac6137bcbb9ecbc2f035dfffd29ea0461f0a3"
+}

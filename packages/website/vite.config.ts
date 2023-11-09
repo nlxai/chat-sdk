@@ -9,11 +9,11 @@ export default defineConfig({
     port: 3010
   },
   optimizeDeps: {
-    include: ["@nlxchat/core", "@nlxchat/react", "@nlxchat/widget"]
+    include: ["@nlxai/chat-core", "@nlxai/chat-react", "@nlxai/chat-widget"]
   },
   build: {
     commonjsOptions: {
-      include: [/node_modules/, /core/, /react/, /widget/]
+      include: [/node_modules/, /chat-core/, /chat-react/, /chat-widget/]
     }
   }
 });

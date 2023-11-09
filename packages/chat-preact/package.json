@@ -1,0 +1,30 @@
+{
+  "name": "@nlxai/chat-preact",
+  "version": "0.0.0",
+  "description": "Preact hook wrapper for the NLX Chat SDK",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rm -rf lib && mkdir lib && tsc",
+    "prepublish": "npm run build"
+  },
+  "author": "Peter Szerzo <peter@nlx.ai>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^11.15.11",
+    "@types/ramda": "^0.26.44",
+    "prettier": "^1.19.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@nlxai/chat-core": "^0.0.0",
+    "ramda": "^0.29.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "preact": "^10.18.1"
+  },
+  "gitHead": "cb2ac6137bcbb9ecbc2f035dfffd29ea0461f0a3"
+}
