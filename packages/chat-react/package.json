@@ -15,7 +15,7 @@
     "@types/ramda": "^0.26.44",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
-    "prettier": "^1.19.1",
+    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
   "dependencies": {
@@ -29,5 +29,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "cb2ac6137bcbb9ecbc2f035dfffd29ea0461f0a3"
+  "gitHead": "9ff614988b577329354ba1ab63f8ec351ea45fcf"
 }

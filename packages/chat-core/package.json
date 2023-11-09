@@ -17,7 +17,7 @@
     "@types/ramda": "^0.26.44",
     "@types/uuid": "^8.3.4",
     "browserify": "^17.0.0",
-    "prettier": "^1.19.1",
+    "prettier": "^3.0.3",
     "tsify": "^5.0.4",
     "typescript": "^5.2.2",
     "uglifyify": "^5.0.2"
@@ -31,5 +31,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "cb2ac6137bcbb9ecbc2f035dfffd29ea0461f0a3"
+  "gitHead": "9ff614988b577329354ba1ab63f8ec351ea45fcf"
 }

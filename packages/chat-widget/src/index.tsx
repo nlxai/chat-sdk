@@ -139,7 +139,7 @@ const MessageGroups: FC<{
                           : {
                               onClick: () => {
                                 props.chat.conversationHandler.sendChoice(
-                                  choice.choiceId
+                                  choice.choiceId,
                                 );
                               },
                             };
@@ -147,7 +147,7 @@ const MessageGroups: FC<{
                       dangerouslySetInnerHTML={{
                         __html: marked(
                           choice.choiceText +
-                            (false ? " asdf fadsfds  fdsa fdsa fdsa " : "")
+                            (false ? " asdf fadsfds  fdsa fdsa fdsa " : ""),
                         ),
                       }}
                     ></C.ChoiceButton>
@@ -163,7 +163,7 @@ const MessageGroups: FC<{
                 return <Component key={key} data={value} />;
               }
               return null;
-            }
+            },
           )}
         </C.MessageGroup>
       ) : response.payload.type === "text" ? (
@@ -176,7 +176,7 @@ const MessageGroups: FC<{
             />
           </C.Message>
         </C.MessageGroup>
-      ) : null
+      ) : null,
     )}
     {props.children}
   </C.MessageGroups>
@@ -192,7 +192,7 @@ const renderToStringWithStyles = (element: ReactElement): string => {
   };
 
   const markup = renderToStaticMarkup(
-    <CacheProvider value={cache}>{element}</CacheProvider>
+    <CacheProvider value={cache}>{element}</CacheProvider>,
   );
 
   const html = `<!DOCTYPE html>
@@ -224,7 +224,7 @@ const saveSession = (chat: ChatHook, storeIn: StorageType) => {
     JSON.stringify({
       responses: chat.responses,
       conversationId: chat.conversationHandler.currentConversationId(),
-    })
+    }),
   );
 };
 
@@ -260,7 +260,7 @@ export const retrieveSession = (storeIn: StorageType): SessionData | null => {
 };
 
 const ConversationHandlerContext = createContext<ConversationHandler | null>(
-  null
+  null,
 );
 
 export const useConversationHandler = () => {
@@ -285,7 +285,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
 
   const savedSessionData = useMemo(
     () => (props.storeIn ? retrieveSession(props.storeIn) : null),
-    [props.storeIn]
+    [props.storeIn],
   );
 
   const configWithSession = useMemo(() => {
@@ -412,9 +412,9 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
   const dateTimestamp = useMemo(() => {
     const d = new Date();
     return `${d.getFullYear()}-${toStringWithLeadingZero(
-      d.getMonth() + 1
+      d.getMonth() + 1,
     )}-${toStringWithLeadingZero(d.getDate())}-${toStringWithLeadingZero(
-      d.getHours()
+      d.getHours(),
     )}:${toStringWithLeadingZero(d.getMinutes())}`;
   }, [chat.responses]);
 
@@ -424,7 +424,7 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
       ...(props.theme || {}),
       windowInnerHeight: windowInnerHeightValue,
     }),
-    [props.theme, windowInnerHeightValue]
+    [props.theme, windowInnerHeightValue],
   );
 
   return (
@@ -463,13 +463,13 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                                       chat={chat}
                                       customModalities={{}}
                                     />
-                                  </ThemeProvider>
+                                  </ThemeProvider>,
                                 ),
                               ],
                               {
                                 type: "text/plain",
-                              }
-                            )
+                              },
+                            ),
                           )}
                           download={`chat-${dateTimestamp}.html`}
                         >
@@ -479,7 +479,10 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                     )}
                   </C.TitleBar>
                 )}
-                <MessageGroups chat={chat} customModalities={props.customModalities || {}}>
+                <MessageGroups
+                  chat={chat}
+                  customModalities={props.customModalities || {}}
+                >
                   {chat.waiting && (
                     <C.MessageGroup>
                       <C.Message type="bot">

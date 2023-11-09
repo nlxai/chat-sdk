@@ -1,15 +1,15 @@
 {
   "name": "@nlxai/website",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build"
   },
   "dependencies": {
-    "@nlxai/chat-core": "^0.0.0",
-    "@nlxai/chat-react": "^0.0.0",
-    "@nlxai/chat-widget": "^0.0.0",
+    "@nlxai/chat-core": "^0.0.1",
+    "@nlxai/chat-react": "^0.0.1",
+    "@nlxai/chat-widget": "^0.0.1",
     "@react-hookz/web": "^23.1.0",
     "fuse.js": "^7.0.0",
     "htm": "^3.1.1",
