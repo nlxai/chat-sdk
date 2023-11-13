@@ -5,7 +5,6 @@ import { type Theme } from "./theme";
 export interface TitleBar {
   logo?: string;
   title: string;
-  downloadable?: boolean;
 }
 
 export type StorageType = "localStorage" | "sessionStorage";

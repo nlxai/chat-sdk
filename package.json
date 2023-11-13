@@ -1,8 +1,8 @@
 {
-  "name": "nlx-chat-sdk",
-  "version": "1.0.17",
+  "name": "@nlxai/sdk",
+  "version": "0.0.1",
   "private": true,
-  "description": "SDK to talk to NLX bots",
+  "description": "SDK for rich conversational experiences",
   "workspaces": [
     "packages/*"
   ],

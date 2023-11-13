@@ -48,7 +48,7 @@ export const WebWidgetTryLive = () => {
   const [config, setConfig] = useState<Config>(getInitialConfig());
 
   const [theme, setTheme] = useState<Partial<Theme>>(
-    retrieveTheme() || defaultTheme
+    retrieveTheme() || defaultTheme,
   );
 
   useEffect(() => {
@@ -58,8 +58,7 @@ export const WebWidgetTryLive = () => {
   const [titleBar, setTitleBar] = useState<TitleBar>(
     retrieveTitleBar() || {
       title: "Support",
-      downloadable: false,
-    }
+    },
   );
 
   useEffect(() => {

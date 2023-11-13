@@ -2,34 +2,41 @@
   "name": "@nlxai/chat-core",
   "version": "0.0.3",
   "description": "NLX Chat SDK core",
-  "main": "lib/index.js",
+  "type": "module",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
+  "browser": "lib/index.umd.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build:umd": "node bin/build.js",
-    "build": "rm -rf lib && mkdir lib && tsc && npm run build:umd",
+    "build": "rollup -c",
     "prepublish": "npm run build"
   },
   "author": "Peter Szerzo <peter@nlx.ai>",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@types/isomorphic-fetch": "^0.0.36",
     "@types/node": "^11.15.11",
-    "@types/ramda": "^0.26.44",
-    "@types/uuid": "^8.3.4",
-    "browserify": "^17.0.0",
-    "prettier": "^3.0.3",
-    "tsify": "^5.0.4",
-    "typescript": "^5.2.2",
-    "uglifyify": "^5.0.2"
+    "@types/ramda": "^0.29.8",
+    "@types/uuid": "^9.0.7",
+    "prettier": "^3.1.0",
+    "rollup": "^4.3.0",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
     "ramda": "^0.29.1",
     "reconnecting-websocket": "^4.4.0",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.1"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "09938fc29f852edd946809ddf3240ed7130d13aa"
+  "gitHead": "8fd47dbf863057e6581713decd9e3bd1cf7a41f0"
 }

@@ -10,18 +10,14 @@ import React, {
   useState,
   useContext,
   useMemo,
-  ReactElement,
   createContext,
   forwardRef,
 } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { createRoot } from "react-dom/client";
-import createCache from "@emotion/cache";
-import { ThemeProvider, CacheProvider } from "@emotion/react";
-
+import { ThemeProvider } from "@emotion/react";
 import { useChat, type ChatHook } from "@nlxai/chat-react";
 import { type Response, type ConversationHandler } from "@nlxai/chat-core";
-import { CloseIcon, ChatIcon, AirplaneIcon, DownloadIcon } from "./icons";
+import { CloseIcon, ChatIcon, AirplaneIcon } from "./icons";
 import * as constants from "./ui/constants";
 import {
   type Props,
@@ -181,34 +177,6 @@ const MessageGroups: FC<{
     {props.children}
   </C.MessageGroups>
 );
-
-// Solution per https://github.com/emotion-js/emotion/issues/2102#issuecomment-727186154
-const renderToStringWithStyles = (element: ReactElement): string => {
-  const key = "foo";
-  const cache = createCache({ key });
-  let cssText = "";
-  cache.sheet.insert = (rule) => {
-    cssText += rule;
-  };
-
-  const markup = renderToStaticMarkup(
-    <CacheProvider value={cache}>{element}</CacheProvider>,
-  );
-
-  const html = `<!DOCTYPE html>
-  <html>
-    <head>
-        <meta charset="UTF-8">
-        <style>${cssText}</style>
-    </head>
-    <body>
-        <div>${markup}</div>
-    </body>
-  </html>
-`;
-
-  return html;
-};
 
 const storageKey = "nlxchat-session";
 
@@ -451,32 +419,6 @@ export const Widget = forwardRef<WidgetRef, Props>((props, ref) => {
                       )}
                       <C.Title>{props.titleBar.title}</C.Title>
                     </C.TitleContainer>
-                    {props.titleBar.downloadable && (
-                      <>
-                        <C.DiscreteLink
-                          href={window.URL.createObjectURL(
-                            new Blob(
-                              [
-                                renderToStringWithStyles(
-                                  <ThemeProvider theme={mergedTheme}>
-                                    <MessageGroups
-                                      chat={chat}
-                                      customModalities={{}}
-                                    />
-                                  </ThemeProvider>,
-                                ),
-                              ],
-                              {
-                                type: "text/plain",
-                              },
-                            ),
-                          )}
-                          download={`chat-${dateTimestamp}.html`}
-                        >
-                          <DownloadIcon />
-                        </C.DiscreteLink>
-                      </>
-                    )}
                   </C.TitleBar>
                 )}
                 <MessageGroups
