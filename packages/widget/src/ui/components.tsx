@@ -113,17 +113,11 @@ export const Container = styled.div<{}>`
   }};
   right: ${top}px;
   bottom: ${bottom}px;
-  width: calc(100% - 40px);
+  width: 800px;
   border-radius: ${props => props.theme.borderRadius}px;
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
   background-color: ${props => props.theme.white};
   z-index: ${constants.largeZIndex};
-
-  @media screen and (min-width: 360px) {
-    & {
-      width: 320px;
-    }
-  }
 
   & > *,
   & > button {
